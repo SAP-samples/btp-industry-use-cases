@@ -1,0 +1,7 @@
+ID,name,phoneNo,email,facebook,instagram,whatsapp,linkedin,twitter,slack,wechat,customer_ID
+1,John Smith,1234567890,john.smith@example.com,https://www.facebook.com/john.smith,https://www.instagram.com/john.smith,1234567890,https://www.linkedin.com/in/john.smith,https://twitter.com/john_smith,john.smith,john.smith,CST001
+2,Jane Doe,0987654321,jane.doe@example.com,https://www.facebook.com/jane.doe,https://www.instagram.com/jane.doe,0987654321,https://www.linkedin.com/in/jane.doe,https://twitter.com/jane_doe,jane.doe,jane.doe,CST002
+3,Michael Johnson,5551234567,michael.johnson@example.com,https://www.facebook.com/michael.johnson,https://www.instagram.com/michael.johnson,5551234567,https://www.linkedin.com/in/michael.johnson,https://twitter.com/michael_johnson,michael.johnson,michael.johnson,CST001
+4,Samantha Brown,5559876543,samantha.brown@example.com,https://www.facebook.com/samantha.brown,https://www.instagram.com/samantha.brown,5559876543,https://www.linkedin.com/in/samantha.brown,https://twitter.com/samantha_brown,samantha.brown,samantha.brown,CST003
+5,David Lee,5551112222,david.lee@example.com,https://www.facebook.com/david.lee,https://www.instagram.com/david.lee,5551112222,https://www.linkedin.com/in/david.lee,https://twitter.com/david_lee,david.lee,david.lee,CST002
+6,Kate Anderson,5553334444,kate.anderson@example.com,https://www.facebook.com/kate.anderson,https://www.instagram.com/kate.anderson,5553334444,https://www.linkedin.com/in/kate.anderson,https://twitter.com/kate_anderson,kate.anderson,kate.anderson,CST001

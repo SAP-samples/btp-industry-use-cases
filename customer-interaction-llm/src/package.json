@@ -1,0 +1,79 @@
+{
+  "name": "customer-interaction-llm",
+  "version": "1.0.0",
+  "description": "360 Customer Interaction Powered by Large Language Model",
+  "repository": "",
+  "license": "APACHE 2.0",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^5",
+    "express": "^4",
+    "hdb": "^0.19.2"
+  },
+  "engines": {
+    "node": "^16"
+  },
+  "devDependencies": {
+    "@sap/hdi-deploy": "^4.6.0",
+    "sqlite3": "^5.0.2"
+  },
+  "scripts": {
+    "start": "cds run"
+  },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "es2020": true,
+      "node": true,
+      "jest": true,
+      "mocha": true
+    },
+    "globals": {
+      "SELECT": true,
+      "INSERT": true,
+      "UPDATE": true,
+      "DELETE": true,
+      "CREATE": true,
+      "DROP": true,
+      "CDL": true,
+      "CQL": true,
+      "CXL": true,
+      "cds": true
+    },
+    "rules": {
+      "no-console": "off",
+      "require-atomic-updates": "off"
+    }
+  },
+  "cds": {
+    "build": {
+      "tasks": [
+        {
+          "for": "hana",
+          "dest": "./db"
+        },
+        {
+          "for": "node-cf"
+        }
+      ]
+    },
+    "requires": {
+      "db": {
+        "kind": "sql"
+      },
+      "[production]": {
+        "db": {
+          "kind": "hana-cloud"
+        }
+      },
+      "[hybrid]": {
+        "db": {
+          "kind": "hana-cloud"
+        }
+      }
+    },
+    "hana": {
+      "deploy-format": "hdbtable"
+    }
+  }
+}

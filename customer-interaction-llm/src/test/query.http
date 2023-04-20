@@ -1,0 +1,76 @@
+@server = http://localhost:4004
+#@me = Authorization: Basic {{$processEnv USER}}:
+
+### Service Document
+GET {{server}}/admin
+
+### Service $metadata document
+GET {{server}}/admin/$metadata
+
+### Get CustomerInteraction
+GET {{server}}/admin/CustomerInteraction?
+&$expand=inboundMsgs,outboundMsgs
+# &$filter=ID eq 1
+
+
+### ------------------------------------------------------------------------
+# Create a new CustomerInteraction with an IncomingCustomerMessage
+POST {{server}}/admin/CustomerInteraction
+Content-Type: application/json
+Accept: application/json
+
+{ "title" :"Great coffee machine",
+"category_code" :"PRD",
+"inboundMsgs": [
+    {
+        "contact_ID": 1,
+        "customer_ID": "CST001",
+        "inboundTextMsg": "I have purchased a Breville coffee machine the Barista Express™ Impress recently, which make me fine espresso. Love it",
+        "channel_code": "WEB"
+        }
+    ]
+}
+
+### ------------------------------------------------------------------------
+# Create a subsequence InboundCustomerMessage to a given CustomerInteraction
+# (send that three times to get out-of-stock message)
+POST {{server}}/admin/InboundCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+    "interaction_ID": 3,
+    "contact_ID": 1,
+    "customer_ID": "CST001",
+    "inboundTextMsg": "If no TV framework in oak color available, then a black one is fine.",
+    "channel_code": "WEB"
+}
+
+### ------------------------------------------------------------------------
+# Submit Order as authenticated user
+# (send that three times to get out-of-stock message)
+POST {{server}}/admin/Contact
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "name" :"yatseali"
+}
+
+### ------------------------------------------------------------------------
+# Update a given CustomerInteraction by override its inboundMsgs
+# Danger!!! Don't use it.
+PATCH {{server}}/admin/CustomerInteraction/3
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "inboundMsgs": [
+    {
+        "contact_ID": 1,
+        "customer_ID": "CST001",
+        "inboundTextMsg": "If no TV framework in oak color available, then a black one is fine.",
+        "channel_code": "WEB"
+    }
+  ]
+}
