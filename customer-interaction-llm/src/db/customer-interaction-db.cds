@@ -117,7 +117,7 @@ entity InboundCustomerMessageType {
 /**
  * The main topics about customer message could be 
  * Product Information: Customers may reach out to request information about a specific appliance, such as its features, specifications, and pricing.
- * Product Recommendations: Customers may be seeking advice on which appliance would best suit their needs or fit their kitchen space.
+ * Product Review: Customers may be seeking advice on which appliance would best suit their needs or fit their kitchen space.
  * Technical Support: Customers may need help troubleshooting issues with their appliance, such as a malfunctioning part or error message.
  * Installation and Setup: Customers may need guidance on how to properly install and set up their appliance, whether it's a refrigerator, dishwasher, or oven.
  * Maintenance and Cleaning: Customers may have questions about how to properly maintain and clean their appliance to ensure it runs efficiently and lasts longer.

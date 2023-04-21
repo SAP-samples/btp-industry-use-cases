@@ -58,6 +58,18 @@ Accept: application/json
 }
 
 ### ------------------------------------------------------------------------
+# Submit Order as authenticated user
+# (send that three times to get out-of-stock message)
+POST {{server}}/llm-proxy/invokeLLM
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "command" :0,
+    "text": "tell me something about australia"
+}
+
+### ------------------------------------------------------------------------
 # Update a given CustomerInteraction by override its inboundMsgs
 # Danger!!! Don't use it.
 PATCH {{server}}/admin/CustomerInteraction/3
