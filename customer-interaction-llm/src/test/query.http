@@ -47,8 +47,7 @@ Accept: application/json
 }
 
 ### ------------------------------------------------------------------------
-# Submit Order as authenticated user
-# (send that three times to get out-of-stock message)
+# POST contact
 POST {{server}}/admin/Contact
 Content-Type: application/json
 Accept: application/json
@@ -78,9 +77,19 @@ Accept: application/json
     "text": "It's makes good coffee but this is the second time my coffee machine has had an issue with it and dosent work\r\nEverything was working fine one day I went to make a shot of coffee it stopped brewing after 3 seconds\r\nThen I tried the milk frother it stopped after 3 seconds again I took it back they fixed it under warranty but it's happening again\r\nI don't see this machine lasting more then 2 years to be honest I'm spewing I actually really like the machine\r\nIt's almost like it's losing pressure somewhere, they wouldn't tell my what the problem was when they fixed it..\r\nPurchased at Harvey Norman for $1,349.\r\n Product is used: Several times a week"
 }
 
+
 ### ------------------------------------------------------------------------
-# Submit Order as authenticated user
-# (send that three times to get out-of-stock message)
+# Entities Extraction
+POST {{server}}/llm-proxy/extractEntities
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "It's makes good coffee but this is the second time my coffee machine has had an issue with it and dosent work\r\nEverything was working fine one day I went to make a shot of coffee it stopped brewing after 3 seconds\r\nThen I tried the milk frother it stopped after 3 seconds again I took it back they fixed it under warranty but it's happening again\r\nI don't see this machine lasting more then 2 years to be honest I'm spewing I actually really like the machine\r\nIt's almost like it's losing pressure somewhere, they wouldn't tell my what the problem was when they fixed it..\r\nPurchased at Harvey Norman for $1,349.\r\n Product is used: Several times a week"
+}
+
+### ------------------------------------------------------------------------
+# A generic API to invoke the LLM
 POST {{server}}/llm-proxy/invokeLLM
 Content-Type: application/json
 Accept: application/json
