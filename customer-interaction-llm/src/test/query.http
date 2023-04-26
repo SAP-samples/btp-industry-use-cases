@@ -58,6 +58,17 @@ Accept: application/json
 }
 
 ### ------------------------------------------------------------------------
+# Sentiment Analysis
+POST {{server}}/llm-proxy/sentimentAnalyse
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "Putting our review here as our review on the breville website just keeps on being taken down. Is it because we are not providing a good review about this product?\r\nAnyway .... Bought this coffee machine last Nov 2022. It's only 3 months old and it already started leaking water. Called Harvey Norman where we bought it hoping that we can get a replacement as it is not even 3 months old. We were advised to call Breville Australia 1300 139 798 to get our coffee machine fixed. Spoke to Breville rep and he was very professional. We asked if the unit can be replaced as it is not even 3 months old. He advised 'No' and that it needs to be fixed. Anyway, cut the story short ... he gave me a work order number and we have just dropped off our unit to be fixed.\r\nBest part, we were told by the repairer that it will take 2 weeks to get our coffee machine back (looks like back to buying coffee from our local again for the next 2 weeks). For a unit that cost thousand of dollars and breaking down within 3 months, not impressed at all.\r\nPurchased in Nov 2022 at Harvey Norman.\r\n Product is used: Several times a week"
+}
+
+
+### ------------------------------------------------------------------------
 # Submit Order as authenticated user
 # (send that three times to get out-of-stock message)
 POST {{server}}/llm-proxy/invokeLLM

@@ -107,34 +107,58 @@ module.exports = cds.service.impl(async function () {
     const { use_case, text } = req.data;
 
     const result = await invokeLLM(use_case, text);
-    let reply = {};
-    const replyText = result.choices[0].message.content.replace(/\n/g, " ");
-    console.debug(replyText);
-    reply.reply = JSON.parse(replyText);
-    reply.created_at = result.created;
-    reply.total_tokens = result.usage.total_tokens;
-    return reply;
+    return result;
+  });
 
+  this.on("sentimentAnalyse", async (req) => {
+    const { text } = req.data;
+
+    const result = await invokeLLM("sentiment-analysis", text);
+    return result;
+  });
+
+  this.on("summarise", async (req) => {
+    const { text } = req.data;
+
+    const result = await invokeLLM("text-summarisation", text);
+    return result;
+  });
+
+  this.on("extractEntities", async (req) => {
+    const { text } = req.data;
+
+    const result = await invokeLLM("entity-extraction", text);
+    return result;
   });
 });
 
 const invokeLLM = function (use_case, text) {
-  const target_use_case = VCAP_APPLICATION.use_cases.filter(entry => entry.name === use_case)[0];
-  const targetRole = VCAP_APPLICATION.llm.roles.filter(roleEntry => roleEntry.name === target_use_case.target_role)[0];
-  const api = VCAP_APPLICATION.llm.api.filter(apiEntry => apiEntry.name === targetRole.target_api)[0];
+  const target_use_case = VCAP_APPLICATION.use_cases.filter(
+    (entry) => entry.name === use_case
+  )[0];
+  const targetRole = VCAP_APPLICATION.llm.roles.filter(
+    (roleEntry) => roleEntry.name === target_use_case.target_role
+  )[0];
+  const api = VCAP_APPLICATION.llm.api.filter(
+    (apiEntry) => apiEntry.name === targetRole.target_api
+  )[0];
 
   //Special process for ' and " in the text
   //Replace all ' with \', " with \"
-  text = text.replaceAll("'","\'");
-  text = text.replaceAll('"',"\"");
+  text = text.replaceAll("'", "'");
+  text = text.replaceAll('"', '"');
 
   let messages = [{ role: "user", content: `${text}` }];
   //llm vendor as openai. To be refactored as LlmProvider class for handling vendor-specific API format
-  if(VCAP_APPLICATION.llm.vendor === 'openai')
-  {
-    messages = [{ role: "user", content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}` }];
-    if(api.api_path.endsWith('/chat/completions')){
-      messages.push({role: "system", content: `${targetRole.system_prompt}`});
+  if (VCAP_APPLICATION.llm.vendor === "openai") {
+    messages = [
+      {
+        role: "user",
+        content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}`,
+      },
+    ];
+    if (api.api_path.endsWith("/chat/completions")) {
+      messages.push({ role: "system", content: `${targetRole.system_prompt}` });
     }
   }
 
@@ -150,8 +174,17 @@ const invokeLLM = function (use_case, text) {
         },
       })
       .then((res) => {
-        console.log(res.data.choices[0].message);
-        resolve(res.data);
+        console.log(res.data);
+        const message = res.data.choices[0].message;
+        const replyText = message.content.replace(/\n/g, " ");
+        console.debug(replyText);
+        let result = {};
+        result.data = JSON.parse(replyText);
+        result.created_at = res.data.created;
+        result.total_tokens = res.data.usage.total_tokens;
+        console.debug(result);
+        resolve(result);
+        //resolve(res.data);
       })
       .catch((err) => {
         reject(err);

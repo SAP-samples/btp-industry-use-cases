@@ -26,16 +26,30 @@ service LlmProxyService @(path : '/llm-proxy') {
         temperature : Double default 0.8;
     };
 
-    type LlmReplyType {
-        reply : String;
+    type Entity{
+        field: String;
+        value: String;
+    };
+
+    type CustomerMsgResult
+    {
+        sentiment: String;
+        title: String;
+        summary: String;
+        entities: array of Entity;
+    }
+
+    type CustomerMsgReturnType {
+        data : CustomerMsgResult;
         created_at: Integer;
         total_tokens   : Integer;
     };
 
     //action invokeLLM(role : Role, text : String) returns LlmReplyType;
     //@(path: '/invoke-llm')
-    action invokeLLM(use_case : String, text : String) returns LlmReplyType;
-    action sentimentAnalyse(text : String) returns LlmReplyType;
-    action summarise(text : String) returns LlmReplyType;
-    action processCustomerMessage(text: String);
+    action invokeLLM(use_case : String, text : String) returns CustomerMsgReturnType;
+    action sentimentAnalyse(text : String) returns CustomerMsgReturnType;
+    action summarise(text : String) returns CustomerMsgReturnType;
+    action extractEntities(text : String) returns CustomerMsgReturnType;
+    action processCustomerMessage(text: String) returns CustomerMsgReturnType;
 }
