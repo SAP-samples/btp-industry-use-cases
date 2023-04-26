@@ -104,16 +104,41 @@ axiosInstance.interceptors.response.use(null, (error) => {
 //here are the service handlers
 module.exports = cds.service.impl(async function () {
   this.on("invokeLLM", async (req) => {
-    const { command, text } = req.data;
+    const { use_case, text } = req.data;
 
-    const result = await invokeLLM(command, text);
-    return result.choices[0].message;
+    const result = await invokeLLM(use_case, text);
+    let reply = {};
+    const replyText = result.choices[0].message.content.replace(/\n/g, " ");
+    console.debug(replyText);
+    reply.reply = JSON.parse(replyText);
+    reply.created_at = result.created;
+    reply.total_tokens = result.usage.total_tokens;
+    return reply;
 
   });
 });
 
-const invokeLLM = function (command, text) {
-  const api = VCAP_APPLICATION.llm.api[command]
+const invokeLLM = function (use_case, text) {
+  const target_use_case = VCAP_APPLICATION.use_cases.filter(entry => entry.name === use_case)[0];
+  const targetRole = VCAP_APPLICATION.llm.roles.filter(roleEntry => roleEntry.name === target_use_case.target_role)[0];
+  const api = VCAP_APPLICATION.llm.api.filter(apiEntry => apiEntry.name === targetRole.target_api)[0];
+
+  //Special process for ' and " in the text
+  //Replace all ' with \', " with \"
+  text = text.replaceAll("'","\'");
+  text = text.replaceAll('"',"\"");
+
+  let messages = [{ role: "user", content: `${text}` }];
+  //llm vendor as openai. To be refactored as LlmProvider class for handling vendor-specific API format
+  if(VCAP_APPLICATION.llm.vendor === 'openai')
+  {
+    messages = [{ role: "user", content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}` }];
+    if(api.api_path.endsWith('/chat/completions')){
+      messages.push({role: "system", content: `${targetRole.system_prompt}`});
+    }
+  }
+
+  //const api = VCAP_APPLICATION.llm.api[command]
   return new Promise(function (resolve, reject) {
     axiosInstance
       .request({
@@ -121,7 +146,7 @@ const invokeLLM = function (command, text) {
         method: "POST",
         data: {
           model: api.model,
-          messages: [{ role: "user", content: `${text}` }],
+          messages: messages,
         },
       })
       .then((res) => {
