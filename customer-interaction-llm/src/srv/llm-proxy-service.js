@@ -7,7 +7,7 @@ const llm_api_base_url = VCAP_APPLICATION.llm.api_base_url;
 const axiosInstance = axios.create({ baseURL: llm_api_base_url });
 
 const authorization = `Bearer ${VCAP_APPLICATION.llm.api_key}`;
-const organization = VCAP_APPLICATION.llm.organization;
+//const organization = VCAP_APPLICATION.llm.organization;
 axiosInstance.defaults.headers.common["Authorization"] = authorization;
 //axiosInstance.defaults.headers.common["OpenAI-Organization"] = organization;
 
@@ -15,14 +15,14 @@ const createSession = async () => {
   console.log("Creating session");
 
   const authorization = `Bearer ${VCAP_APPLICATION.llm.api_key}`;
-  const organization = VCAP_APPLICATION.llm.organization;
+  //const organization = VCAP_APPLICATION.llm.organization;
   axiosInstance.defaults.headers.common["Authorization"] = authorization;
   //axiosInstance.defaults.headers.common["OpenAI-Organization"] = organization;
 
   //Setup the cookie
   let context = {};
   context.authorization = authorization;
-  context.organization = organization;
+  //context.organization = organization;
   return context; // return Promise<cookie> cause func is async
 };
 
@@ -101,8 +101,12 @@ axiosInstance.interceptors.response.use(null, (error) => {
 });
 
 //here is the service implementation
-//here are the service handlers
 module.exports = cds.service.impl(async function () {
+
+  /**
+   * A generic API to invoke LLM API and turn it into your custom REST API
+   * Output as JSON
+   */
   this.on("invokeLLM", async (req) => {
     const { use_case, text } = req.data;
 
@@ -110,6 +114,11 @@ module.exports = cds.service.impl(async function () {
     return result;
   });
 
+  /**
+   * Prompt Engineering
+   * Turning the LLM next word completion API into a REST API of sentiment analysis 
+   * Output as JSON
+   */
   this.on("sentimentAnalyse", async (req) => {
     const { text } = req.data;
 
@@ -117,6 +126,12 @@ module.exports = cds.service.impl(async function () {
     return result;
   });
 
+  /**
+   * Prompt Engineering
+   * Turning the LLM next word completion API into a REST API of 
+   * summarising a input text into a title(<=100 characters) and a summary (<=300 characters)
+   * Output as JSON
+   */
   this.on("summarise", async (req) => {
     const { text } = req.data;
 
@@ -124,15 +139,39 @@ module.exports = cds.service.impl(async function () {
     return result;
   });
 
+  /**
+   * Prompt Engineering
+   * Turning the LLM next word completion API into a REST API of 
+   * extracting a list of entities(customer_no, product_name, order_no etc.) from a input text
+   * Output as JSON
+   */
   this.on("extractEntities", async (req) => {
     const { text } = req.data;
 
     const result = await invokeLLM("entity-extraction", text);
     return result;
   });
+
+  /**
+   * Prompt Engineering
+   * Turning the LLM next word completion API into a custom REST API of 
+   * processing customer text message including
+   * 1.Sentiment Analysis
+   * 2.Text Summarisation
+   * 3.Entities Extraction
+   * Output as JSON
+   */
+  this.on("processCustomerMessage", async (req) => {
+    const { text } = req.data;
+
+    const result = await invokeLLM("customer-message-process", text);
+    return result;
+  });
 });
 
 const invokeLLM = function (use_case, text) {
+  //Retrieve the configuration from environment variable process.VCAP_APPLICATION
+  //where the use_cases and access to the LLM API are defined
   const target_use_case = VCAP_APPLICATION.use_cases.filter(
     (entry) => entry.name === use_case
   )[0];
