@@ -10,7 +10,7 @@ GET {{server}}/admin/$metadata
 ### Get CustomerInteraction
 GET {{server}}/admin/CustomerInteraction?
 &$expand=inboundMsgs,outboundMsgs
-# &$filter=ID eq 1
+&$filter=ID eq 3
 
 
 ### ------------------------------------------------------------------------
