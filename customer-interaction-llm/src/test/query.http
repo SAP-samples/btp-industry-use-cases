@@ -32,6 +32,15 @@ Accept: application/json
 }
 
 ### ------------------------------------------------------------------------
+# Create a new CustomerInteraction with an IncomingCustomerMessage
+PATCH  {{server}}/admin/CustomerInteraction/3
+Content-Type: application/json
+Accept: application/json
+
+{ "title" :"test"
+}
+
+### ------------------------------------------------------------------------
 # Create a subsequence InboundCustomerMessage to a given CustomerInteraction
 # (send that three times to get out-of-stock message)
 POST {{server}}/admin/InboundCustomerMessage

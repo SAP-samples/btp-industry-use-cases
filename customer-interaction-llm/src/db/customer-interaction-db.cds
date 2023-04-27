@@ -77,6 +77,7 @@ entity InboundCustomerMessage : managed {
   customer : Association to Customer;
   language : String(10);
   inboundTextMsg : String(2000);
+  vector : LargeString; //embedding vector of inboundTextMsg
   audio : Association to AudioMessage;
   summary : String(200);
   channel : Association to CustomerInteractionChannel;

@@ -102,7 +102,6 @@ axiosInstance.interceptors.response.use(null, (error) => {
 
 //here is the service implementation
 module.exports = cds.service.impl(async function () {
-
   /**
    * A generic API to invoke LLM API and turn it into your custom REST API
    * Output as JSON
@@ -116,7 +115,7 @@ module.exports = cds.service.impl(async function () {
 
   /**
    * Prompt Engineering
-   * Turning the LLM next word completion API into a REST API of sentiment analysis 
+   * Turning the LLM next word completion API into a REST API of sentiment analysis
    * Output as JSON
    */
   this.on("sentimentAnalyse", async (req) => {
@@ -128,7 +127,7 @@ module.exports = cds.service.impl(async function () {
 
   /**
    * Prompt Engineering
-   * Turning the LLM next word completion API into a REST API of 
+   * Turning the LLM next word completion API into a REST API of
    * summarising a input text into a title(<=100 characters) and a summary (<=300 characters)
    * Output as JSON
    */
@@ -141,7 +140,7 @@ module.exports = cds.service.impl(async function () {
 
   /**
    * Prompt Engineering
-   * Turning the LLM next word completion API into a REST API of 
+   * Turning the LLM next word completion API into a REST API of
    * extracting a list of entities(customer_no, product_name, order_no etc.) from a input text
    * Output as JSON
    */
@@ -154,7 +153,7 @@ module.exports = cds.service.impl(async function () {
 
   /**
    * Prompt Engineering
-   * Turning the LLM next word completion API into a custom REST API of 
+   * Turning the LLM next word completion API into a custom REST API of
    * processing customer text message including
    * 1.Sentiment Analysis
    * 2.Text Summarisation
@@ -165,6 +164,18 @@ module.exports = cds.service.impl(async function () {
     const { text } = req.data;
 
     const result = await invokeLLM("customer-message-process", text);
+    return result;
+  });
+
+  /**
+   * Embedding
+   * API Proxy of LLM embedding API to embed the input text into vector
+   * Output as Vector string
+   */
+  this.on("embedding", async (req) => {
+    const { text } = req.data;
+
+    const result = await invokeLLM("words-embedding", text);
     return result;
   });
 });
@@ -187,46 +198,73 @@ const invokeLLM = function (use_case, text) {
   text = text.replaceAll("'", "'");
   text = text.replaceAll('"', '"');
 
-  let messages = [{ role: "user", content: `${text}` }];
   //llm vendor as openai. To be refactored as LlmProvider class for handling vendor-specific API format
   if (VCAP_APPLICATION.llm.vendor === "openai") {
-    messages = [
-      {
-        role: "user",
-        content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}`,
-      },
-    ];
-    if (api.api_path.endsWith("/chat/completions")) {
-      messages.push({ role: "system", content: `${targetRole.system_prompt}` });
+    //completions API
+    if (api.name === "completions") {
+      //completions api
+      let messages = [{ role: "user", content: `${text}` }];
+      //chat api
+      if (api.api_path.endsWith("/chat/completions")) {
+        messages = [
+          {
+            role: "system",
+            content: `${targetRole.system_prompt}`,
+          },
+          {
+            role: "user",
+            content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}`,
+          }
+        ];
+      }
+      return new Promise(function (resolve, reject) {
+        axiosInstance
+          .request({
+            url: api.api_path,
+            method: "POST",
+            data: {
+              model: api.model,
+              messages: messages,
+            },
+          })
+          .then((res) => {
+            console.log(res.data);
+            const message = res.data.choices[0].message;
+            const replyText = message.content.replace(/\n/g, " ");
+            console.debug(replyText);
+            let result = {};
+            result.data = JSON.parse(replyText);
+            result.created_at = res.data.created;
+            result.total_tokens = res.data.usage.total_tokens;
+            console.debug(result);
+            resolve(result);
+            //resolve(res.data);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
+    } else if (api.name === "embeddings") {
+      let data = { model: api.model, input: text };
+
+      return new Promise(function (resolve, reject) {
+        axiosInstance
+          .request({
+            url: api.api_path,
+            method: "POST",
+            data: data,
+          })
+          .then((res) => {
+            console.log(res.data);
+            const result = res.data.data[0].embedding.toString();
+            resolve(`[${result}]`);
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
     }
   }
 
   //const api = VCAP_APPLICATION.llm.api[command]
-  return new Promise(function (resolve, reject) {
-    axiosInstance
-      .request({
-        url: api.api_path,
-        method: "POST",
-        data: {
-          model: api.model,
-          messages: messages,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        const message = res.data.choices[0].message;
-        const replyText = message.content.replace(/\n/g, " ");
-        console.debug(replyText);
-        let result = {};
-        result.data = JSON.parse(replyText);
-        result.created_at = res.data.created;
-        result.total_tokens = res.data.usage.total_tokens;
-        console.debug(result);
-        resolve(result);
-        //resolve(res.data);
-      })
-      .catch((err) => {
-        reject(err);
-      });
-  });
 };

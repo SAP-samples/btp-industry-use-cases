@@ -63,4 +63,7 @@ service LlmProxyService @(path : '/llm-proxy') {
      * Output as JSON
      */
     action processCustomerMessage(text: String) returns CustomerMsgReturnType;
+
+    action embedding(text: String) returns LargeString;
+    action similaritySearch(inputVector: LargeString) returns String;
 }
