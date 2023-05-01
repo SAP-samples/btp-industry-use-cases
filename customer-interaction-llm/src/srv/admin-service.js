@@ -33,17 +33,25 @@ module.exports = class AdminService extends cds.ApplicationService {
             .where("interaction_ID=", req.data.interaction_ID)
         );
       let inMsgs = inboundTextMsgs.map(msg => msg.inboundTextMsg);
+      //at this point, the new record hasn't hit the database.
+      //so add the new instance of InboundCustomerMessage to the list.
+      //sum up all the inbound customer messages, and  
       inMsgs.push(req.data.inboundTextMsg);
       const text = { text: inMsgs.join("\n") };
       const LlmProxyService = await cds.connect.to("LlmProxyService");
+      //Invoke the LLM proxy to process the inbound customer message.
       const result = await LlmProxyService.processCustomerMessage(text);
-      const embedding = await LlmProxyService.embedding(text);
+      //embedding the text of incoming customer message to vector.
+      //and to be stored into IncomingCustomerMessage.vector field
+      //will be used for classifying the topics of the text
+      const embedding = await LlmProxyService.embedding(req.data.inboundTextMsg);
       req.data.vector = embedding;
+      //manual transaction
       cds.tx (async ()=>{
         await UPDATE(CustomerInteraction, req.data.interaction_ID).with({
           title: result.data.title,
           summary: result.data.summary
-        })
+        });
         await INSERT.into(InboundCustomerMessage, req.data);
       });
 
