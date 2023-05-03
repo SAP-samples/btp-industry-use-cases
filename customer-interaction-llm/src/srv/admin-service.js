@@ -45,7 +45,7 @@ module.exports = class AdminService extends cds.ApplicationService {
       //and to be stored into IncomingCustomerMessage.vector field
       //will be used for classifying the topics of the text
       const embedding = await LlmProxyService.embedding(req.data.inboundTextMsg);
-      req.data.vector = embedding;
+      req.data.embedding = embedding;
       //manual transaction
       cds.tx (async ()=>{
         await UPDATE(CustomerInteraction, req.data.interaction_ID).with({
