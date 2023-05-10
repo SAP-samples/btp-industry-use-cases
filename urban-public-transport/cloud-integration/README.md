@@ -1,5 +1,5 @@
 # Create a new integration package in SAP Cloud Integration
-![Create Package](./create-package.jpg 200x180)
+![Create Package](./create-package.jpg)
 
 # Containing Files
 
