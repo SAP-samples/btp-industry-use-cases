@@ -1,0 +1,33 @@
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" Version="1.0" xmlns:sap="http://www.sap.com/Protocols/SAPData" xmlns:ux="http://www.sap.com/Protocols/OData4SAP/UX" xmlns:gp="http://www.sap.com/Protocols/SAPData/GenericPlayer">
+    <edmx:DataServices m:DataServiceVersion="2.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+        <Schema Namespace="S1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+            <EntityType Name="Distruption">
+                <Key>
+                    <PropertyRef Name="disruptionId"/>
+                </Key>
+				<Property Name="type" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="streetName" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="closure" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="directions" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="lineString" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="distruptedStreetId" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="disruptionId" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="startLat" Type="Edm.Double" Nullable="false"></Property>
+                <Property Name="startLon" Type="Edm.Double" Nullable="false"></Property>
+                <Property Name="endLat" Type="Edm.Double" Nullable="false"></Property>
+                <Property Name="endLon" Type="Edm.Double" Nullable="false"></Property>
+                <Property Name="severity" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="category" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="subCategory" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="comments" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="startDateTime" Type="Edm.DateTime" Nullable="false"></Property>
+                <Property Name="endDateTime" Type="Edm.DateTime" Nullable="false"></Property>
+                <Property Name="levelOfInterest" Type="Edm.String" Nullable="false"></Property>
+                <Property Name="location" Type="Edm.String" Nullable="false"></Property>
+            </EntityType>
+            <EntityContainer Name="EC1" m:IsDefaultEntityContainer="true">
+                <EntitySet Name="DistruptionSet" EntityType="S1.Distruption"/>
+            </EntityContainer>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>
