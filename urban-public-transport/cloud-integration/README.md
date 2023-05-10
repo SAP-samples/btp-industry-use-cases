@@ -1,4 +1,4 @@
-# Create a new integration package in SAP Cloud Integration
+## Create a new integration package in SAP Cloud Integration
 <p align="center">
   <img width="300" height="270" src="./create-package.jpg">
 </p>
