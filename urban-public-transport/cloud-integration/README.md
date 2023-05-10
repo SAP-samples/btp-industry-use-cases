@@ -1,6 +1,7 @@
 # Create a new integration package in SAP Cloud Integration
-<img align="center" width="300" height="270" src="./create-package.jpg">
-
+<p align="center">
+  <img width="300" height="270" src="./create-package.jpg">
+</p>
 # Containing Files
 
 1. The LICENSE file:
