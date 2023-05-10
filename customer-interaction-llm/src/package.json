@@ -16,10 +16,12 @@
   },
   "devDependencies": {
     "@sap/hdi-deploy": "^4.6.0",
+    "@sap/ux-specification": "^1.108.4",
     "sqlite3": "^5.0.2"
   },
   "scripts": {
-    "start": "cds run"
+    "start": "cds run",
+    "watch-customer-interaction": "cds watch --open customer-interaction/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -76,5 +78,8 @@
     "hana": {
       "deploy-format": "hdbtable"
     }
-  }
+  },
+  "sapux": [
+    "app/customer-interaction"
+  ]
 }
