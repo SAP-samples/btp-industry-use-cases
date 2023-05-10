@@ -131,6 +131,8 @@ entity InboundCustomerMessageType {
 entity InboundCustomerMessageTopic {
   key code : String(2);
   name : String(50);
+  descr : String(1000);
+  embedding: LargeString;
 }
 
 /**
