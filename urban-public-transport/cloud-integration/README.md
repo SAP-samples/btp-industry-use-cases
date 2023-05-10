@@ -1,5 +1,5 @@
 # Create a new integration package in SAP Cloud Integration
-This default template for SAP Samples repositories includes files for README, LICENSE, and .reuse/dep5. All repositories on github.com/SAP-samples will be created based on this template.
+![Process Flow](./create-package.jpg)
 
 # Containing Files
 
