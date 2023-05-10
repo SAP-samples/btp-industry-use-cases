@@ -1,5 +1,5 @@
 # Create a new integration package in SAP Cloud Integration
-![Process Flow](./create-package.jpg)
+![Create Package](./create-package.jpg width="200" height="180")
 
 # Containing Files
 
