@@ -147,15 +147,15 @@
                             "content": {
                                 "body": {
                                     "sections": {
-                                        "customMessageSection": {
+                                        "CustomMessageTimeline": {
                                             "type": "XMLFragment",
-                                            "name": "customerinteraction.custom.CustomMessageSection",
-                                            "title": "{i18n>customMessageSection}",
+                                            "name": "customerinteraction.custom.CustomMessageTimeline",
+                                            "title": "{i18n>CustomMessageTimeline}",
                                             "position": {
                                                 "placement": "After",
                                                 "anchor": "General"
                                             },
-                                            "template": "customerinteraction.custom.CustomMessageSection"
+                                            "template": "customerinteraction.custom.CustomMessageTimeline"
                                         }
                                     }
                                 }
