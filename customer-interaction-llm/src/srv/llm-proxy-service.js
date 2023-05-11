@@ -6,99 +6,18 @@ const llm_api_base_url = VCAP_APPLICATION.llm.api_base_url;
 // Init instance of axios which works with llm_api_base_url
 const axiosInstance = axios.create({ baseURL: llm_api_base_url });
 
-const authorization = `Bearer ${VCAP_APPLICATION.llm.api_key}`;
-//const organization = VCAP_APPLICATION.llm.organization;
-axiosInstance.defaults.headers.common["Authorization"] = authorization;
-//axiosInstance.defaults.headers.common["OpenAI-Organization"] = organization;
-
-const createSession = async () => {
-  console.log("Creating session");
-
+//Authentication
+if (VCAP_APPLICATION.llm.auth_method === "bearer-api-key") {
+  //for example, openai
   const authorization = `Bearer ${VCAP_APPLICATION.llm.api_key}`;
   //const organization = VCAP_APPLICATION.llm.organization;
   axiosInstance.defaults.headers.common["Authorization"] = authorization;
   //axiosInstance.defaults.headers.common["OpenAI-Organization"] = organization;
-
-  //Setup the cookie
-  let context = {};
-  context.authorization = authorization;
-  //context.organization = organization;
-  return context; // return Promise<cookie> cause func is async
-};
-
-let isGetActiveSessionRequest = false;
-let requestQueue = [];
-const callRequestsFromQueue = (context) => {
-  requestQueue.forEach((sub) => sub(context));
-};
-const addRequestToQueue = (sub) => {
-  requestQueue.push(sub);
-};
-const clearQueue = () => {
-  requestQueue = [];
-};
-//register axios interceptor which handles responses errors
-
-axiosInstance.interceptors.response.use(null, (error) => {
-  console.error(error.message);
-  const { response = {}, config: sourceConfig } = error;
-  // check if request failed cause Unauthorized or forbidden
-  if (response.status === 408) {
-    console.log(
-      "The error is due to time out. \nWe'll create a new session and retry the request."
-    );
-    // if this request is first we set isGetActiveSessionRequest flag to true and run createSession
-    if (!isGetActiveSessionRequest) {
-      isGetActiveSessionRequest = true;
-      createSession()
-        .then((context) => {
-          // when createSession resolve with cookie value we run all request from queue with new cookie
-          isGetActiveSessionRequest = false;
-          callRequestsFromQueue(context);
-          clearQueue(); // and clean queue
-        })
-        .catch((e) => {
-          isGetActiveSessionRequest = false; // Very important!
-          console.error("Create session error: %s", e.message);
-          clearQueue();
-        });
-    }
-    // and while isGetActiveSessionRequest equal true we create and return new promise
-    const retryRequest = new Promise((resolve) => {
-      // we push new function to queue
-      addRequestToQueue((context) => {
-        // function takes one param 'cookie'
-        console.log(
-          "Retry with new session context %s request to %s",
-          sourceConfig.method,
-          sourceConfig.url
-        );
-        //******************************************************************************************/
-        // Option 1: Setup the required headers: cookie,token and authorization, reintialise
-        // an request with axios(sourceConfig)
-        //******************************************************************************************/
-
-        sourceConfig.headers.Authorization = context.authorization;
-        sourceConfig.headers["OpenAI-Organization"] = context.organization;
-        //resolve(axios(sourceConfig)); // and resolve promise with axios request by old config with cookie
-        // we resolve exactly axios request - NOT axiosInstance request cause it could call recursion
-        //******************************************************************************************/
-        // Option 2: Retry the request with axiosInstance with initialized session context
-        // Since the new session has been created, the session context has been initialized to axioInstance
-        // the easiest way is to retry the request with axiosInstance and the original request config-sourceConfig
-        // It might cause endless recursion if it is due to wrong credentials.
-        // Therefore, please assure the correct credentials, otherwise, you may think of implement the
-        // maximum retries.
-        //******************************************************************************************/
-        resolve(axiosInstance.request(sourceConfig));
-      });
-    });
-    return retryRequest;
-  } else {
-    // if error is not related with Unauthorized we reject promise
-    return Promise.reject(error);
-  }
-});
+} else if (VCAP_APPLICATION.llm.auth_method === "api-key") {
+  //for example, azure openai service
+  axiosInstance.defaults.headers.common["api-key"] =
+    VCAP_APPLICATION.llm.api_key;
+}
 
 //here is the service implementation
 module.exports = cds.service.impl(async function () {
@@ -199,13 +118,13 @@ const invokeLLM = function (use_case, text) {
   text = text.replaceAll('"', '"');
 
   //llm vendor as openai. To be refactored as LlmProvider class for handling vendor-specific API format
-  if (VCAP_APPLICATION.llm.vendor === "openai") {
+  if (VCAP_APPLICATION.llm.vendor === "openai" || VCAP_APPLICATION.llm.vendor === "azure-openai") {
     //completions API
     if (api.name === "completions") {
-      //completions api
+      //set default completions api for davinci-text series model
       let messages = [{ role: "user", content: `${text}` }];
-      //chat api
-      if (api.api_path.endsWith("/chat/completions")) {
+      //chat api is recommended GPT-3.5-Turbo onward
+      if (api.api_path.includes("/chat/completions")) {
         messages = [
           {
             role: "system",
@@ -214,7 +133,7 @@ const invokeLLM = function (use_case, text) {
           {
             role: "user",
             content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}`,
-          }
+          },
         ];
       }
       return new Promise(function (resolve, reject) {
@@ -245,7 +164,9 @@ const invokeLLM = function (use_case, text) {
           });
       });
     } else if (api.name === "embeddings") {
-      let data = { model: api.model, input: text };
+      //per best practice, https://learn.microsoft.com/en-us/azure/cognitive-services/openai/how-to/embeddings?tabs=console#replace-newlines-with-a-single-space
+      //Replace newlines with a single space
+      let data = { model: api.model, input: text.replaceAll("\n", " ") };
 
       return new Promise(function (resolve, reject) {
         axiosInstance
