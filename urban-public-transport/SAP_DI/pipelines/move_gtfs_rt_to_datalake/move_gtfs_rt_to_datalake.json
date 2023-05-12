@@ -19,68 +19,12 @@
 			"component": "com.sap.dh.terminator",
 			"metadata": {
 				"label": "Workflow Terminator",
-				"x": 703.9999990463257,
+				"x": 1156.9999980926514,
 				"y": 12,
 				"height": 80,
 				"width": 120,
 				"generation": 1,
 				"config": {}
-			}
-		},
-		"tableconsumer1": {
-			"component": "com.sap.database.table.consumer.v2",
-			"metadata": {
-				"label": "Table Consumer",
-				"x": 181,
-				"y": 12,
-				"height": 80,
-				"width": 120,
-				"extensible": false,
-				"generation": 1,
-				"config": {
-					"service": "HANA_DB",
-					"partitionType": "None",
-					"serviceConnection": {
-						"configurationType": "Configuration Manager",
-						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
-					},
-					"source": {
-						"remoteObjectReference": {
-							"connection": {
-								"id": "DS_URBAN_PUBLIC_TRANSPORT_CONN",
-								"type": "HANA_DB"
-							},
-							"name": "GTFS_RT",
-							"remoteObjectType": "TABLE",
-							"qualifiedName": "/URBANPUBLICTRANSPORT%23DI/GTFS_RT",
-							"nativeQualifiedName": "\"URBANPUBLICTRANSPORT#DI\".\"GTFS_RT\"",
-							"owner": "URBANPUBLICTRANSPORT#DI"
-						},
-						"schema": {
-							"genericType": "TABLE",
-							"tableBasedRepresentation": {
-								"attributes": []
-							}
-						},
-						"capabilityProperties": [
-							{
-								"name": "isProfileable",
-								"value": "true"
-							},
-							{
-								"name": "isDeltaEnabled",
-								"value": "true"
-							}
-						]
-					}
-				},
-				"outports": [
-					{
-						"name": "outTable",
-						"type": "table",
-						"vtype-ID": "$GRAPH.generated.tableconsumer1_outTable"
-					}
-				]
 			}
 		},
 		"tableproducer1": {
@@ -115,7 +59,7 @@
 							"Row Count": "0",
 							"TableType": "TABLE",
 							"Table_Subtype": "TABLE",
-							"MetadataResponseXML": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<MetadataReply xmlns=\"http://www.sap.com/DataServices/DataServicesXSD\">\n<MetadataObjects><Table Name=\"VEHICLE_ACTIVITY\"  Owner=\"krisztian\" ><Attributes><Attribute Name=\"Table_Subtype\"  Value=\"TABLE\" /></Attributes><Column Name=\"recorded_at_time\"  Nullable=\"false\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"item_identifier\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"valid_until_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"bearing\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"block_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"framed_vehicle_journey_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"vehicle_journey_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"destination_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"destination_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"origin_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"origin_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"origin_aimed_departure_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"direction_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"published_line_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"line_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"operator_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"vehicle_ref\"  Nullable=\"false\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"longitude\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"latitude\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"load_date\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"delta_time_sec\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"distance_km\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"avg_speed\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column></Table></MetadataObjects><Status><StatusCode>SUCCESS</StatusCode></Status></MetadataReply>"
+							"MetadataResponseXML": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<MetadataReply xmlns=\"http://www.sap.com/DataServices/DataServicesXSD\">\n<MetadataObjects><Table Name=\"VEHICLE_ACTIVITY\"  Owner=\"krisztian\" ><Attributes><Attribute Name=\"Table_Subtype\"  Value=\"TABLE\" /></Attributes><Column Name=\"recorded_at_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"item_identifier\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"valid_until_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"bearing\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"block_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"framed_vehicle_journey_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"vehicle_journey_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"destination_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"destination_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"origin_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"origin_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"origin_aimed_departure_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"direction_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"published_line_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"line_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"operator_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"vehicle_ref\"  Nullable=\"false\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_VARCSTR\" ></Column><Column Name=\"longitude\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"latitude\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"load_date\"  Nullable=\"false\" DataType=\"datetime\" Precision=\"26\"  Scale=\"6\"  NativeType=\"timestamp\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"delta_time_sec\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"distance_km\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"avg_speed\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column></Table></MetadataObjects><Status><StatusCode>SUCCESS</StatusCode></Status></MetadataReply>"
 						},
 						"schema": {
 							"genericType": "TABLE",
@@ -382,51 +326,275 @@
 							"expression": "\"avg_speed\"",
 							"target": "avg_speed"
 						}
-					]
+					],
+					"upsert": false
 				},
 				"inports": [
 					{
 						"name": "inTable",
 						"type": "table",
 						"isPropagated": true,
-						"vtype-ID": "$GRAPH.generated.tableconsumer1_outTable"
+						"vtype-ID": "$GRAPH.generated.sqlconsumer1_outTable"
 					}
 				]
 			}
 		},
-		"runhanasql1": {
-			"component": "com.sap.hana.runSQL",
+		"flowagentsqlexecutor1": {
+			"component": "com.sap.dh.ds.sql.executor",
 			"metadata": {
-				"label": "Run HANA SQL",
+				"label": "Flowagent SQL Executor",
+				"x": 971.9999990463257,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "HANA",
+					"hanaConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
+					},
+					"sqlStatements": "DELETE FROM \"GTFS_RT\" WHERE \"GTFS_RT\".\"load_date\" <= \n(\n\tSELECT \"vehicle_activity_last_update\".\"max_load_date\" \n\tFROM \"vehicle_activity_last_update\"\n)"
+				}
+			}
+		},
+		"tostringconverter1": {
+			"component": "com.sap.util.toStringConverter",
+			"metadata": {
+				"label": "ToString Converter",
+				"x": 872.9999990463257,
+				"y": 27,
+				"height": 50,
+				"width": 50,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"sqlconsumer1": {
+			"component": "com.sap.database.sql.consumer.v2",
+			"metadata": {
+				"label": "SQL Consumer",
+				"x": 181,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "HANA_DB",
+					"partitionType": "None",
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
+					},
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "DS_URBAN_PUBLIC_TRANSPORT_CONN",
+								"type": "HANA_DB"
+							},
+							"name": "SQL_Table",
+							"remoteObjectType": "TABLE",
+							"qualifiedName": "/SQL_Owner/SQL_Table",
+							"nativeQualifiedName": "SQL_Owner.SQL_Table",
+							"owner": "SQL_Owner"
+						},
+						"dataAccessConfiguration": {
+							"nativeSQL": "SELECT \"recorded_at_time\",\"item_identifier\",\"valid_until_time\",\"bearing\",\"block_ref\",\"framed_vehicle_journey_ref\",\"vehicle_journey_ref\",\"destination_name\",\"destination_ref\",\"origin_name\",\"origin_ref\",\"origin_aimed_departure_time\",\"direction_ref\",\"published_line_name\",\"line_ref\",\"operator_ref\",\"vehicle_ref\",\"longitude\",\"latitude\",\"load_date\",\"delta_time_sec\",\"distance_km\",\"avg_speed\" FROM \"GTFS_RT\" \nWHERE \"load_date\" < (SELECT MAX(\"load_date\") FROM \"GTFS_RT\")",
+							"Row Count": "0",
+							"TableType": "TABLE",
+							"Table_Subtype": "TABLE",
+							"MetadataResponseXML": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<MetadataReply xmlns=\"http://www.sap.com/DataServices/DataServicesXSD\">\n<MetadataObjects><Table Name=\"SQL_Table\"  Owner=\"SQL_Owner\" ><Attributes><Attribute Name=\"Table_Subtype\"  Value=\"TABLE\" /></Attributes><Column Name=\"recorded_at_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"27\"  Scale=\"0\"  NativeType=\"datetime\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"item_identifier\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"valid_until_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"27\"  Scale=\"0\"  NativeType=\"datetime\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"bearing\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"block_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"framed_vehicle_journey_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"vehicle_journey_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"destination_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"destination_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"origin_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"origin_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"origin_aimed_departure_time\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"27\"  Scale=\"0\"  NativeType=\"datetime\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"direction_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"published_line_name\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"line_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"operator_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"vehicle_ref\"  Nullable=\"true\" DataType=\"varchar\" Size=\"5000\"  NativeType=\"varchar\" ActaEnum=\"ACTA_NVARCSTR\" ></Column><Column Name=\"longitude\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"latitude\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"load_date\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"27\"  Scale=\"0\"  NativeType=\"datetime\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column><Column Name=\"delta_time_sec\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"distance_km\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column><Column Name=\"avg_speed\"  Nullable=\"true\" DataType=\"double\" NativeType=\"double\" ActaEnum=\"ACTA_DOUBLE\" ></Column></Table></MetadataObjects><Status><StatusCode>SUCCESS</StatusCode></Status></MetadataReply>"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": []
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							},
+							{
+								"name": "readOnly",
+								"value": "true"
+							}
+						]
+					},
+					"native_sql_statement": "SELECT \"recorded_at_time\",\"item_identifier\",\"valid_until_time\",\"bearing\",\"block_ref\",\"framed_vehicle_journey_ref\",\"vehicle_journey_ref\",\"destination_name\",\"destination_ref\",\"origin_name\",\"origin_ref\",\"origin_aimed_departure_time\",\"direction_ref\",\"published_line_name\",\"line_ref\",\"operator_ref\",\"vehicle_ref\",\"longitude\",\"latitude\",\"load_date\",\"delta_time_sec\",\"distance_km\",\"avg_speed\" FROM \"GTFS_RT\" \nWHERE \"load_date\" < (SELECT MAX(\"load_date\") FROM \"GTFS_RT\")"
+				},
+				"outports": [
+					{
+						"name": "outTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.sqlconsumer1_outTable"
+					}
+				]
+			}
+		},
+		"sqlconsumer2": {
+			"component": "com.sap.database.sql.consumer.v2",
+			"metadata": {
+				"label": "SQL Consumer",
 				"x": 519,
 				"y": 12,
 				"height": 80,
 				"width": 120,
+				"extensible": false,
 				"generation": 1,
 				"config": {
-					"configMode": "Static (from configuration)",
-					"connection": {
-						"connectionProperties": {
-							"additionalHosts": [],
-							"authenticationType": "Basic",
-							"host": "",
-							"password": "",
-							"port": 30015,
-							"useTLS": false,
-							"user": "",
-							"x509ClientCertificate": "",
-							"x509ClientPrivateKey": ""
+					"service": "HDL_DB",
+					"partitionType": "None",
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "HDL_URBAN_TRANSPORT_CONN"
+					},
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "HDL_URBAN_TRANSPORT_CONN",
+								"type": "HDL_DB"
+							},
+							"name": "SQL_Table",
+							"remoteObjectType": "TABLE",
+							"qualifiedName": "/SQL_Owner/SQL_Table",
+							"nativeQualifiedName": "SQL_Owner.SQL_Table",
+							"owner": "SQL_Owner"
 						},
+						"dataAccessConfiguration": {
+							"nativeSQL": "SELECT MAX(\"load_date\") max_load_date \nFROM \"krisztian\".\"VEHICLE_ACTIVITY\"",
+							"Row Count": "0",
+							"TableType": "TABLE",
+							"Table_Subtype": "TABLE",
+							"MetadataResponseXML": "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n<MetadataReply xmlns=\"http://www.sap.com/DataServices/DataServicesXSD\">\n<MetadataObjects><Table Name=\"SQL_Table\"  Owner=\"SQL_Owner\" ><Attributes><Attribute Name=\"Table_Subtype\"  Value=\"TABLE\" /></Attributes><Column Name=\"max_load_date\"  Nullable=\"true\" DataType=\"datetime\" Precision=\"26\"  Scale=\"0\"  NativeType=\"datetime\" ActaEnum=\"ACTA_TIMESTAMP\" ></Column></Table></MetadataObjects><Status><StatusCode>SUCCESS</StatusCode></Status></MetadataReply>"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": []
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							}
+						]
+					},
+					"native_sql_statement": "SELECT MAX(\"load_date\") max_load_date \nFROM \"krisztian\".\"VEHICLE_ACTIVITY\""
+				},
+				"outports": [
+					{
+						"name": "outTable",
+						"type": "table",
+						"vtype-ID": "$GRAPH.generated.sqlconsumer2_outTable"
+					}
+				]
+			}
+		},
+		"tableproducer2": {
+			"component": "com.sap.database.table.producer.v2",
+			"metadata": {
+				"label": "Table Producer",
+				"x": 688,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 1,
+				"config": {
+					"service": "HANA_DB",
+					"serviceConnection": {
 						"configurationType": "Configuration Manager",
 						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
 					},
-					"sql": "DELETE FROM GTFS_RT WHERE GTFS_RT.\"load_date\" < (SELECT MAX(GTFS_RT.\"load_date\") FROM GTFS_RT)"
-				}
+					"source": {
+						"remoteObjectReference": {
+							"connection": {
+								"id": "DS_URBAN_PUBLIC_TRANSPORT_CONN",
+								"type": "HANA_DB"
+							},
+							"name": "vehicle_activity_last_update",
+							"remoteObjectType": "TABLE",
+							"qualifiedName": "/URBANPUBLICTRANSPORT%23DI/vehicle_activity_last_update",
+							"nativeQualifiedName": "\"URBANPUBLICTRANSPORT#DI\".\"vehicle_activity_last_update\"",
+							"owner": "URBANPUBLICTRANSPORT#DI"
+						},
+						"schema": {
+							"genericType": "TABLE",
+							"tableBasedRepresentation": {
+								"attributes": [
+									{
+										"name": "max_load_date",
+										"templateType": "timestamp",
+										"datatype": "DATETIME",
+										"nativeDatatype": "TIMESTAMP",
+										"nativeLength": 27
+									}
+								]
+							}
+						},
+						"capabilityProperties": [
+							{
+								"name": "isProfileable",
+								"value": "true"
+							},
+							{
+								"name": "isDeltaEnabled",
+								"value": "true"
+							}
+						]
+					},
+					"attributeMappings": [
+						{
+							"expression": "\"max_load_date\"",
+							"target": "max_load_date"
+						}
+					],
+					"mode": "overwrite"
+				},
+				"inports": [
+					{
+						"name": "inTable",
+						"type": "table",
+						"isPropagated": true,
+						"vtype-ID": "$GRAPH.generated.sqlconsumer2_outTable"
+					}
+				]
 			}
 		}
 	},
 	"groups": [],
 	"connections": [
+		{
+			"metadata": {
+				"points": "1095.9999990463257,43 1123.9999985694885,43 1123.9999985694885,52 1151.9999980926514,52"
+			},
+			"src": {
+				"port": "result",
+				"process": "flowagentsqlexecutor1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "workflowterminator1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "926.9999990463257,52 966.9999990463257,52"
+			},
+			"src": {
+				"port": "outstring",
+				"process": "tostringconverter1"
+			},
+			"tgt": {
+				"port": "sql",
+				"process": "flowagentsqlexecutor1"
+			}
+		},
 		{
 			"metadata": {
 				"points": "136,52 176,52"
@@ -437,7 +605,7 @@
 			},
 			"tgt": {
 				"port": "inTrigger",
-				"process": "tableconsumer1"
+				"process": "sqlconsumer1"
 			}
 		},
 		{
@@ -446,7 +614,7 @@
 			},
 			"src": {
 				"port": "outTable",
-				"process": "tableconsumer1"
+				"process": "sqlconsumer1"
 			},
 			"tgt": {
 				"port": "inTable",
@@ -462,21 +630,34 @@
 				"process": "tableproducer1"
 			},
 			"tgt": {
-				"port": "input",
-				"process": "runhanasql1"
+				"port": "inTrigger",
+				"process": "sqlconsumer2"
 			}
 		},
 		{
 			"metadata": {
-				"points": "643,43 670.9999995231628,43 670.9999995231628,52 698.9999990463257,52"
+				"points": "643,52 683,52"
 			},
 			"src": {
-				"port": "success",
-				"process": "runhanasql1"
+				"port": "outTable",
+				"process": "sqlconsumer2"
 			},
 			"tgt": {
-				"port": "stop",
-				"process": "workflowterminator1"
+				"port": "inTable",
+				"process": "tableproducer2"
+			}
+		},
+		{
+			"metadata": {
+				"points": "812,52 839.9999995231628,52 839.9999995231628,61 867.9999990463257,61"
+			},
+			"src": {
+				"port": "outMessage",
+				"process": "tableproducer2"
+			},
+			"tgt": {
+				"port": "inmessage",
+				"process": "tostringconverter1"
 			}
 		}
 	],
