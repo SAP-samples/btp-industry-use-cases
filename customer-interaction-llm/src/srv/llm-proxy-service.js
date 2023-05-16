@@ -1,22 +1,26 @@
 const cds = require("@sap/cds");
 const axios = require("axios");
-const VCAP_APPLICATION = JSON.parse(process.env.VCAP_APPLICATION);
-const llm_api_base_url = VCAP_APPLICATION.llm.api_base_url;
+//load configuration of llm api access, prompts and use_cases.
+const config = require("./config.json");
+const llm_api_base_url = config.llm.api_base_url;
 
 // Init instance of axios which works with llm_api_base_url
 const axiosInstance = axios.create({ baseURL: llm_api_base_url });
 
 //Authentication
-if (VCAP_APPLICATION.llm.auth_method === "bearer-api-key") {
+//api_key or user_name/password etc credential must be configured in and loaded from 
+//process env variables:
+//process.env.api_key
+if (config.llm.auth_method === "bearer-api-key") {
   //for example, openai
-  const authorization = `Bearer ${VCAP_APPLICATION.llm.api_key}`;
-  //const organization = VCAP_APPLICATION.llm.organization;
+  const authorization = `Bearer ${process.env.api_key}`;
+  //const organization = config.llm.organization;
   axiosInstance.defaults.headers.common["Authorization"] = authorization;
   //axiosInstance.defaults.headers.common["OpenAI-Organization"] = organization;
-} else if (VCAP_APPLICATION.llm.auth_method === "api-key") {
+} else if (config.llm.auth_method === "api-key") {
   //for example, azure openai service
   axiosInstance.defaults.headers.common["api-key"] =
-    VCAP_APPLICATION.llm.api_key;
+  process.env.api_key;
 }
 
 //here is the service implementation
@@ -102,13 +106,13 @@ module.exports = cds.service.impl(async function () {
 const invokeLLM = function (use_case, text) {
   //Retrieve the configuration from environment variable process.VCAP_APPLICATION
   //where the use_cases and access to the LLM API are defined
-  const target_use_case = VCAP_APPLICATION.use_cases.filter(
+  const target_use_case = config.use_cases.filter(
     (entry) => entry.name === use_case
   )[0];
-  const targetRole = VCAP_APPLICATION.llm.roles.filter(
+  const targetRole = config.llm.roles.filter(
     (roleEntry) => roleEntry.name === target_use_case.target_role
   )[0];
-  const api = VCAP_APPLICATION.llm.api.filter(
+  const api = config.llm.api.filter(
     (apiEntry) => apiEntry.name === targetRole.target_api
   )[0];
 
@@ -118,7 +122,7 @@ const invokeLLM = function (use_case, text) {
   text = text.replaceAll('"', '"');
 
   //llm vendor as openai. To be refactored as LlmProvider class for handling vendor-specific API format
-  if (VCAP_APPLICATION.llm.vendor === "openai" || VCAP_APPLICATION.llm.vendor === "azure-openai") {
+  if (config.llm.vendor === "openai" || config.llm.vendor === "azure-openai") {
     //completions API
     if (api.name === "completions") {
       //set default completions api for davinci-text series model
@@ -132,7 +136,7 @@ const invokeLLM = function (use_case, text) {
           },
           {
             role: "user",
-            content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_prompt}`,
+            content: `${targetRole.input_indicator}\n${text}\n${targetRole.output_indicator}`,
           },
         ];
       }
@@ -187,5 +191,5 @@ const invokeLLM = function (use_case, text) {
     }
   }
 
-  //const api = VCAP_APPLICATION.llm.api[command]
+  //const api = config.llm.api[command]
 };
