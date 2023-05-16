@@ -20,7 +20,7 @@
                     "subtitle": "",
                     "info": "Manage Customer Interaction",
                     "icon": "sap-icon://line-chart",
-                    "targetURL": "#ManageCustomerInteraction-manage"
+                    "targetURL": "#CustomerInteraction-manage"
                   }
                 }
               ]
@@ -53,7 +53,7 @@
               "resolutionResult": {
                 "applicationType": "SAPUI5",
                 "additionalInformation": "SAPUI5.Component=customerinteraction",
-                "url": "./customer-interaction/webapp"
+                "url": "/customer-interaction/webapp"
               }
             }
           }
