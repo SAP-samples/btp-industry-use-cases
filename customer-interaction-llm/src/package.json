@@ -16,12 +16,13 @@
   },
   "devDependencies": {
     "@sap/hdi-deploy": "^4.6.0",
-    "@sap/ux-specification": "^1.108.4",
+    "@sap/ux-specification": "^1.108.5",
     "sqlite3": "^5.0.2"
   },
   "scripts": {
     "start": "cds run",
-    "watch-customer-interaction": "cds watch --open customer-interaction/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-customer-interaction": "cds watch --open customer-interaction/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-inbound-message-intent": "cds watch --open inbound-message-intent/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -80,6 +81,7 @@
     }
   },
   "sapux": [
-    "app/customer-interaction"
+    "app/customer-interaction",
+    "app/inbound-message-intent"
   ]
 }

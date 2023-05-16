@@ -1,0 +1,150 @@
+{
+    "_version": "1.40.0",
+    "sap.app": {
+        "id": "inbound_message_intent",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap-ux/fiori-elements-writer:lrop",
+            "version": "0.3.6",
+            "toolsId": "6680968e-a569-41f6-a528-ce227d9c679b"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/admin/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [
+                        "annotation"
+                    ],
+                    "localUri": "localService/metadata.xml",
+                    "odataVersion": "4.0"
+                }
+            },
+            "annotation": {
+                "type": "ODataAnnotation",
+                "uri": "annotations/annotation.xml",
+                "settings": {
+                    "localUri": "annotations/annotation.xml"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.112.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ushell": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "inbound_message_intent.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": []
+        },
+        "routing": {
+            "routes": [
+                {
+                    "pattern": ":?query:",
+                    "name": "InboundCustomerMessageTopicList",
+                    "target": "InboundCustomerMessageTopicList"
+                },
+                {
+                    "pattern": "InboundCustomerMessageTopic({key}):?query:",
+                    "name": "InboundCustomerMessageTopicObjectPage",
+                    "target": "InboundCustomerMessageTopicObjectPage"
+                }
+            ],
+            "targets": {
+                "InboundCustomerMessageTopicList": {
+                    "type": "Component",
+                    "id": "InboundCustomerMessageTopicList",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "entitySet": "InboundCustomerMessageTopic",
+                            "variantManagement": "Page",
+                            "navigation": {
+                                "InboundCustomerMessageTopic": {
+                                    "detail": {
+                                        "route": "InboundCustomerMessageTopicObjectPage"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "InboundCustomerMessageTopicObjectPage": {
+                    "type": "Component",
+                    "id": "InboundCustomerMessageTopicObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "entitySet": "InboundCustomerMessageTopic"
+                        }
+                    }
+                }
+            }
+        },
+        "extends": {
+            "extensions": {
+                "sap.ui.controllerExtensions": {}
+            }
+        }
+    },
+    "sap.fiori": {
+        "registrationIds": [],
+        "archeType": "transactional"
+    }
+}

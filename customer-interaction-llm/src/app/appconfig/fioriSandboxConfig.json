@@ -6,6 +6,48 @@
           "catalogs": [],
           "groups": [
             {
+              "id": "Configuration",
+              "title": "Customer Interaction Configuration",
+              "isPreset": true,
+              "isVisible": true,
+              "isGroupLocked": false,
+              "tiles": [
+                {
+                  "id": "ManageInboundCustomerMessageType",
+                  "tileType": "sap.ushell.ui.tile.StaticTile",
+                  "properties": {
+                    "title": "Manage Inbound Message Type",
+                    "subtitle": "",
+                    "info": "Manage Inbound Message Type",
+                    "icon": "sap-icon://customize",
+                    "targetURL": "#InboundCustomerMessageType-manage"
+                  }
+                },
+                {
+                  "id": "ManageInboundCustomerMessageIntent",
+                  "tileType": "sap.ushell.ui.tile.StaticTile",
+                  "properties": {
+                    "title": "Manage Inbound Message Intent",
+                    "subtitle": "",
+                    "info": "Manage Inbound Message Intent",
+                    "icon": "sap-icon://combine",
+                    "targetURL": "#InboundCustomerMessageTopic-manage"
+                  }
+                },
+                {
+                  "id": "ManageOutboundServiceMessageType",
+                  "tileType": "sap.ushell.ui.tile.StaticTile",
+                  "properties": {
+                    "title": "Manage Outbound Srv. Msg. Type",
+                    "subtitle": "",
+                    "info": "Manage Outbound Service Message Type",
+                    "icon": "sap-icon://action-settings",
+                    "targetURL": "#OutboundServiceMessageType-manage"
+                  }
+                }
+              ]
+            },
+            {
               "id": "CustomerInteraction",
               "title": "Intelligent Customer Interaction",
               "isPreset": true,
@@ -19,7 +61,7 @@
                     "title": "Intelligent Customer Interaction",
                     "subtitle": "",
                     "info": "Manage Customer Interaction",
-                    "icon": "sap-icon://line-chart",
+                    "icon": "sap-icon://customer-view",
                     "targetURL": "#CustomerInteraction-manage"
                   }
                 }
@@ -54,6 +96,24 @@
                 "applicationType": "SAPUI5",
                 "additionalInformation": "SAPUI5.Component=customerinteraction",
                 "url": "/customer-interaction/webapp"
+              }
+            },
+            "ManageInboundCustomerMessageIntent": {
+              "semanticObject": "InboundCustomerMessageTopic",
+              "action": "manage",
+              "title": "Manage Inbound Customer Message Topic",
+              "signature": {
+                "parameters": {
+                  "InboundCustomerMessageTopic": {
+                    "renameTo": "code"
+                  }
+                },
+                "additionalParameters": "ignored"
+              },
+              "resolutionResult": {
+                "applicationType": "SAPUI5",
+                "additionalInformation": "SAPUI5.Component=inbound_message_intent",
+                "url": "/inbound-message-intent/webapp"
               }
             }
           }
