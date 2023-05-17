@@ -72,7 +72,7 @@
                     "title": "Customer Message History",
                     "subtitle": "",
                     "info": "Customer Message History",
-                    "icon": "sap-icon://customer-view",
+                    "icon": "sap-icon://customer-history",
                     "targetURL": "#MessageThread-display"
                   }
                 }
