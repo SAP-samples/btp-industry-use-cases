@@ -58,7 +58,7 @@
                   "id": "ManageCustomerInteraction",
                   "tileType": "sap.ushell.ui.tile.StaticTile",
                   "properties": {
-                    "title": "Intelligent Customer Interaction",
+                    "title": "Intelligent Customer Interaction powered by LLM",
                     "subtitle": "",
                     "info": "Manage Customer Interaction",
                     "icon": "sap-icon://customer-view",
