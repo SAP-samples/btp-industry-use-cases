@@ -24,6 +24,55 @@ module.exports = class AdminService extends cds.ApplicationService {
      * 2.update the sentiment on the InboundCustomerMessage instance.
      * 3.update the title and summary on parent object CustomerInteraction
      */
+    this.on(["CREATE"], CustomerInteraction, async (req) => {
+      // const inboundTextMsgs = await cds
+      //   .tx(req)
+      //   .run(
+      //     SELECT.from(InboundCustomerMessage)
+      //       .columns("inboundTextMsg")
+      //       .where("interaction_ID=", req.data.interaction_ID)
+      //   );
+      let inboundTextMsgs = req.data.inboundMsgs;
+      let inMsgs = inboundTextMsgs.map(msg => msg.inboundTextMsg);
+      //at this point, the new record hasn't hit the database.
+      //so add the new instance of InboundCustomerMessage to the list.
+      //sum up all the inbound customer messages, and  
+      //inMsgs.push(req.data.inboundTextMsg);
+      const inboundText = { text: inMsgs[0] };
+      const LlmProxyService = await cds.connect.to("LlmProxyService");
+
+      //Invoke the LLM proxy to process the current inbound customer message.
+      const result = await LlmProxyService.processCustomerMessage(inboundText);
+      //reflect the summarised title to the inbound customer message
+      req.data.summary = result.data.summary;
+      req.data.title = result.data.title;
+      req.data.inboundMsgs[0].summary = result.data.title;
+
+      //embedding the text of incoming customer message to vector.
+      //and to be stored into IncomingCustomerMessage.vector field
+      //will be used for classifying the intents of the text
+      const embedding = await LlmProxyService.embedding(inboundText);
+      req.data.inboundMsgs[0].embedding = embedding;
+      
+      //manual transaction
+      cds.tx (async ()=>{
+        // await UPDATE(CustomerInteraction, req.data.interaction_ID).with({
+        //   title: result.data.title,
+        //   summary: result.data.summary
+        // });
+        await INSERT.into(CustomerInteraction, req.data);
+      });
+
+      return req.data;
+    });
+
+    /**
+     * Handler of on creating an inbound customer message
+     * 1.invoke the llm-proxy to perform sentiment analysis,
+     * text summarisation and entity extraction
+     * 2.update the sentiment on the InboundCustomerMessage instance.
+     * 3.update the title and summary on parent object CustomerInteraction
+     */
     this.on(["CREATE"], InboundCustomerMessage, async (req) => {
       const inboundTextMsgs = await cds
         .tx(req)
