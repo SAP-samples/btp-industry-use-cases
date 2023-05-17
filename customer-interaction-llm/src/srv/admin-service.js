@@ -37,20 +37,28 @@ module.exports = class AdminService extends cds.ApplicationService {
       //so add the new instance of InboundCustomerMessage to the list.
       //sum up all the inbound customer messages, and  
       inMsgs.push(req.data.inboundTextMsg);
-      const text = { text: inMsgs.join("\n") };
+      const allInboundText = { text: inMsgs.join("\n") };
       const LlmProxyService = await cds.connect.to("LlmProxyService");
-      //Invoke the LLM proxy to process the inbound customer message.
-      const result = await LlmProxyService.processCustomerMessage(text);
+      //Invoke the LLM proxy to summarise all the inbound customer messages of the interaction instance.
+      //which will be used update the title and summary of CustomerInteraction instance
+      const summaryResult = await LlmProxyService.summarise(allInboundText);
+
+      //Invoke the LLM proxy to process the current inbound customer message.
+      const result = await LlmProxyService.processCustomerMessage(req.data.inboundTextMsg);
+      //reflect the summarised title to the inbound customer message
+      req.data.summary = result.data.title;
+
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field
       //will be used for classifying the intents of the text
       const embedding = await LlmProxyService.embedding(req.data.inboundTextMsg);
       req.data.embedding = embedding;
+      
       //manual transaction
       cds.tx (async ()=>{
         await UPDATE(CustomerInteraction, req.data.interaction_ID).with({
-          title: result.data.title,
-          summary: result.data.summary
+          title: summaryResult.data.title,
+          summary: summaryResult.data.summary
         });
         await INSERT.into(InboundCustomerMessage, req.data);
       });
