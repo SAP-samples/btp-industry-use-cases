@@ -16,16 +16,11 @@ annotate service.InboundCustomerMessageIntent with @(
             $Type : 'UI.DataField',
             Label : '{i18n>descr}',
             Value : descr,
-        },
-        {
-            $Type : 'UI.DataField',
-            Label : '{i18n>embedding}',
-            Value : embedding,
-        },
+        }
     ]
 );
 annotate service.InboundCustomerMessageIntent with @(
-    UI.FieldGroup #GeneratedGroup1 : {
+    UI.FieldGroup #GeneralGroup : {
         $Type : 'UI.FieldGroupType',
         Data : [
             {
@@ -50,12 +45,27 @@ annotate service.InboundCustomerMessageIntent with @(
             },
         ],
     },
+    UI.FieldGroup #EmbeddingGroup : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : embedding,
+            }
+        ],
+    },
     UI.Facets : [
         {
             $Type : 'UI.ReferenceFacet',
-            ID : 'GeneratedFacet1',
-            Label : 'General Information',
-            Target : '@UI.FieldGroup#GeneratedGroup1',
+            ID : 'GeneralFacet',
+            Label : '{i18n>General}',
+            Target : '@UI.FieldGroup#GeneralGroup',
+        },
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID : 'EmbeddingFacet',
+            Label : '{i18n>embedding}',
+            Target : '@UI.FieldGroup#EmbeddingGroup',
         },
     ]
 );
