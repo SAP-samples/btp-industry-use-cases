@@ -37,12 +37,7 @@ annotate service.InboundCustomerMessageIntent with @(
                 $Type : 'UI.DataField',
                 Label : '{i18n>descr}',
                 Value : descr,
-            },
-            {
-                $Type : 'UI.DataField',
-                Label : '{i18n>embedding}',
-                Value : embedding,
-            },
+            }
         ],
     },
     UI.FieldGroup #EmbeddingGroup : {
