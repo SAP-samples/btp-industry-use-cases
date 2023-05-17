@@ -15,9 +15,13 @@
 				class="sapUiMediumMarginBottom"
 				visible="false">
 			</m:MessageStrip>
-			<core:Icon src="sap-icon://reset" press="handler.onReset" class="sapUiSmallMarginBegin" />
-			
 			<m:Panel height="700px">
+				<m:headerToolbar>
+					<m:OverflowToolbar>
+						<m:ToolbarSpacer />
+						<m:Button text="Synchronize Messages" icon="sap-icon://synchronize" type="Emphasized" press="handler.onReset"/>
+					</m:OverflowToolbar>
+				</m:headerToolbar>
 				<Timeline
 					id="idTimeline"
 					enableBusyIndicator="true"
