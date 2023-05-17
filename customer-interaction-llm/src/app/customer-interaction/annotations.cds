@@ -1,5 +1,21 @@
 using AdminService as service from '../../srv/admin-service';
 
+annotate service.CustomerInteraction with @(UI : {
+    HeaderInfo        : {
+        TypeName       : 'Customer Interaction',
+        TypeNamePlural : 'Customer Interactions',
+        Title          : {Value : ID},
+        Description    : {Value : extRef},
+        // ImageUrl       : image
+    },
+    // HeaderFacets      : [{
+    //     $Type  : 'UI.ReferenceFacet',
+    //     Label  : '{i18n>Description}',
+    //     Target : '@UI.FieldGroup#Descr'
+    // }],
+    // FieldGroup #Descr : {Data : [{Value : productId}]},
+});
+
 annotate service.CustomerInteraction with @(
     Common.SemanticKey : [ID],
     UI                 : {
