@@ -15,14 +15,18 @@
     "node": "^16"
   },
   "devDependencies": {
+    "@sap/eslint-plugin-ui5-jsdocs": "^2.0.5",
     "@sap/hdi-deploy": "^4.6.0",
     "@sap/ux-specification": "^1.108.5",
+    "@sapui5/ts-types": "^1.92.2",
+    "eslint": "^7.32.0",
     "sqlite3": "^5.0.2"
   },
   "scripts": {
     "start": "cds run",
     "watch-customer-interaction": "cds watch --open customer-interaction/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-inbound-message-intent": "cds watch --open inbound-message-intent/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-inbound-message-intent": "cds watch --open inbound-message-intent/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-customer-message-history": "cds watch --open customer-message-history/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -82,6 +86,7 @@
   },
   "sapux": [
     "app/customer-interaction",
-    "app/inbound-message-intent"
+    "app/inbound-message-intent",
+    "app/customer-message-history"
   ]
 }
