@@ -1,6 +1,6 @@
 using AdminService as service from '../../srv/admin-service';
 
-annotate service.InboundCustomerMessageTopic with @(
+annotate service.InboundCustomerMessageIntent with @(
     UI.LineItem : [
         {
             $Type : 'UI.DataField',
@@ -24,7 +24,7 @@ annotate service.InboundCustomerMessageTopic with @(
         },
     ]
 );
-annotate service.InboundCustomerMessageTopic with @(
+annotate service.InboundCustomerMessageIntent with @(
     UI.FieldGroup #GeneratedGroup1 : {
         $Type : 'UI.FieldGroupType',
         Data : [

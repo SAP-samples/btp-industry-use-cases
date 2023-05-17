@@ -9,17 +9,17 @@
 |**Service Type**<br>Local Cap|
 |**Service URL**<br>http://localhost:4004/admin/
 |**Module Name**<br>inbound-message-intent|
-|**Application Title**<br>Inbound Customer Message Topic|
-|**Namespace**<br>inbound.message.topic|
+|**Application Title**<br>Inbound Customer Message Intent|
+|**Namespace**<br>inbound.message.intent|
 |**UI5 Theme**<br>sap_horizon|
 |**UI5 Version**<br>1.112.1|
 |**Enable Code Assist Libraries**<br>False|
 |**Add Eslint configuration**<br>False|
-|**Main Entity**<br>InboundCustomerMessageTopic|
+|**Main Entity**<br>InboundCustomerMessageIntent|
 
 ## inbound-message-intent
 
-Configure Inbound Customer Message Topic
+Configure Inbound Customer Message Intent
 
 ### Starting the generated app
 

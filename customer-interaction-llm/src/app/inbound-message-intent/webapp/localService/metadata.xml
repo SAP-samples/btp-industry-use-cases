@@ -27,12 +27,12 @@
                 <EntitySet Name="CustomerInteractionStatus" EntityType="AdminService.CustomerInteractionStatus"/>
                 <EntitySet Name="CustomerInteractionPriority" EntityType="AdminService.CustomerInteractionPriority"/>
                 <EntitySet Name="InboundCustomerMessageType" EntityType="AdminService.InboundCustomerMessageType"/>
-                <EntitySet Name="InboundCustomerMessageTopic" EntityType="AdminService.InboundCustomerMessageTopic"/>
+                <EntitySet Name="InboundCustomerMessageIntent" EntityType="AdminService.InboundCustomerMessageIntent"/>
                 <EntitySet Name="InboundCustomerMessage" EntityType="AdminService.InboundCustomerMessage">
                     <NavigationPropertyBinding Path="interaction" Target="CustomerInteraction"/>
                     <NavigationPropertyBinding Path="contact" Target="Contact"/>
                     <NavigationPropertyBinding Path="type" Target="InboundCustomerMessageType"/>
-                    <NavigationPropertyBinding Path="topic" Target="InboundCustomerMessageTopic"/>
+                    <NavigationPropertyBinding Path="intent" Target="InboundCustomerMessageIntent"/>
                     <NavigationPropertyBinding Path="customer" Target="Customer"/>
                     <NavigationPropertyBinding Path="audio" Target="AudioMessage"/>
                     <NavigationPropertyBinding Path="channel" Target="CustomerInteractionChannel"/>
@@ -100,7 +100,7 @@
                 <Property Name="direction" Type="Edm.String" MaxLength="10"/>
                 <Property Name="sentiment" Type="Edm.String" MaxLength="10"/>
                 <Property Name="summary" Type="Edm.String" MaxLength="200"/>
-                <Property Name="topic" Type="Edm.String" MaxLength="50"/>
+                <Property Name="intent" Type="Edm.String" MaxLength="50"/>
                 <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
             </EntityType>
             <EntityType Name="CustomerInteractionCategory">
@@ -138,7 +138,7 @@
                 <Property Name="code" Type="Edm.String" MaxLength="2" Nullable="false"/>
                 <Property Name="name" Type="Edm.String" MaxLength="20"/>
             </EntityType>
-            <EntityType Name="InboundCustomerMessageTopic">
+            <EntityType Name="InboundCustomerMessageIntent">
                 <Key>
                     <PropertyRef Name="code"/>
                 </Key>
@@ -170,10 +170,10 @@
                     <ReferentialConstraint Property="type_code" ReferencedProperty="code"/>
                 </NavigationProperty>
                 <Property Name="type_code" Type="Edm.String" MaxLength="2"/>
-                <NavigationProperty Name="topic" Type="AdminService.InboundCustomerMessageTopic">
-                    <ReferentialConstraint Property="topic_code" ReferencedProperty="code"/>
+                <NavigationProperty Name="intent" Type="AdminService.InboundCustomerMessageIntent">
+                    <ReferentialConstraint Property="intent_code" ReferencedProperty="code"/>
                 </NavigationProperty>
-                <Property Name="topic_code" Type="Edm.String" MaxLength="2"/>
+                <Property Name="intent_code" Type="Edm.String" MaxLength="2"/>
                 <NavigationProperty Name="customer" Type="AdminService.Customer">
                     <ReferentialConstraint Property="customer_ID" ReferencedProperty="ID"/>
                 </NavigationProperty>

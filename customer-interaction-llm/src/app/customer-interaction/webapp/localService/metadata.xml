@@ -98,7 +98,7 @@
                 <Property Name="direction" Type="Edm.String" MaxLength="10"/>
                 <Property Name="sentiment" Type="Edm.String" MaxLength="10"/>
                 <Property Name="summary" Type="Edm.String" MaxLength="200"/>
-                <Property Name="topic" Type="Edm.String" MaxLength="50"/>
+                <Property Name="intent" Type="Edm.String" MaxLength="50"/>
                 <Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
             </EntityType>
             <EntityType Name="CustomerInteractionCategory">
@@ -159,7 +159,7 @@
                     <ReferentialConstraint Property="type_code" ReferencedProperty="code"/>
                 </NavigationProperty>
                 <Property Name="type_code" Type="Edm.String" MaxLength="2"/>
-                <Property Name="topic_code" Type="Edm.String" MaxLength="2"/>
+                <Property Name="intent_code" Type="Edm.String" MaxLength="2"/>
                 <NavigationProperty Name="customer" Type="AdminService.Customer">
                     <ReferentialConstraint Property="customer_ID" ReferencedProperty="ID"/>
                 </NavigationProperty>

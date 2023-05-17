@@ -1,7 +1,7 @@
 {
     "name": "inbound-message-intent",
     "version": "0.0.1",
-    "description": "Configure Inbound Customer Message Topic",
+    "description": "Configure Inbound Customer Message Intent",
     "keywords": [
         "ui5",
         "openui5",

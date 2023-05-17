@@ -96,42 +96,42 @@
             "routes": [
                 {
                     "pattern": ":?query:",
-                    "name": "InboundCustomerMessageTopicList",
-                    "target": "InboundCustomerMessageTopicList"
+                    "name": "InboundCustomerMessageIntentList",
+                    "target": "InboundCustomerMessageIntentList"
                 },
                 {
-                    "pattern": "InboundCustomerMessageTopic({key}):?query:",
-                    "name": "InboundCustomerMessageTopicObjectPage",
-                    "target": "InboundCustomerMessageTopicObjectPage"
+                    "pattern": "InboundCustomerMessageIntent({key}):?query:",
+                    "name": "InboundCustomerMessageIntentObjectPage",
+                    "target": "InboundCustomerMessageIntentObjectPage"
                 }
             ],
             "targets": {
-                "InboundCustomerMessageTopicList": {
+                "InboundCustomerMessageIntentList": {
                     "type": "Component",
-                    "id": "InboundCustomerMessageTopicList",
+                    "id": "InboundCustomerMessageIntentList",
                     "name": "sap.fe.templates.ListReport",
                     "options": {
                         "settings": {
-                            "entitySet": "InboundCustomerMessageTopic",
+                            "entitySet": "InboundCustomerMessageIntent",
                             "variantManagement": "Page",
                             "navigation": {
-                                "InboundCustomerMessageTopic": {
+                                "InboundCustomerMessageIntent": {
                                     "detail": {
-                                        "route": "InboundCustomerMessageTopicObjectPage"
+                                        "route": "InboundCustomerMessageIntentObjectPage"
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "InboundCustomerMessageTopicObjectPage": {
+                "InboundCustomerMessageIntentObjectPage": {
                     "type": "Component",
-                    "id": "InboundCustomerMessageTopicObjectPage",
+                    "id": "InboundCustomerMessageIntentObjectPage",
                     "name": "sap.fe.templates.ObjectPage",
                     "options": {
                         "settings": {
                             "editableHeaderContent": false,
-                            "entitySet": "InboundCustomerMessageTopic"
+                            "entitySet": "InboundCustomerMessageIntent"
                         }
                     }
                 }

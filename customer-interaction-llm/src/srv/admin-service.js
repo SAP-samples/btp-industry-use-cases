@@ -43,7 +43,7 @@ module.exports = class AdminService extends cds.ApplicationService {
       const result = await LlmProxyService.processCustomerMessage(text);
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field
-      //will be used for classifying the topics of the text
+      //will be used for classifying the intents of the text
       const embedding = await LlmProxyService.embedding(req.data.inboundTextMsg);
       req.data.embedding = embedding;
       //manual transaction

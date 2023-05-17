@@ -31,7 +31,7 @@
                     "subtitle": "",
                     "info": "Manage Inbound Message Intent",
                     "icon": "sap-icon://combine",
-                    "targetURL": "#InboundCustomerMessageTopic-manage"
+                    "targetURL": "#InboundCustomerMessageIntent-manage"
                   }
                 },
                 {
@@ -99,12 +99,12 @@
               }
             },
             "ManageInboundCustomerMessageIntent": {
-              "semanticObject": "InboundCustomerMessageTopic",
+              "semanticObject": "InboundCustomerMessageIntent",
               "action": "manage",
-              "title": "Manage Inbound Customer Message Topic",
+              "title": "Manage Inbound Customer Message Intent",
               "signature": {
                 "parameters": {
-                  "InboundCustomerMessageTopic": {
+                  "InboundCustomerMessageIntent": {
                     "renameTo": "code"
                   }
                 },

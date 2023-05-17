@@ -29,7 +29,7 @@ service AdminService {
         'Inbound' as direction:String(10),
         sentiment,
         summary,
-        topic.name as topic,
+        intent.name as intent,
         createdAt
       from InboundCustomerMessage
     union
@@ -40,7 +40,7 @@ service AdminService {
         'Outbound' as direction:String(10),
         'N/A' as sentiment,
         '' as summary,
-        type.name as topic,
+        type.name as intent,
         createdAt
       from OutboundServiceMessage;
 
@@ -50,6 +50,7 @@ service AdminService {
   entity CustomerInteractionPriority as projection on db.CustomerInteractionPriority;
 
   entity InboundCustomerMessageType  as projection on db.InboundCustomerMessageType;
+  entity InboundCustomerMessageIntent  as projection on db.InboundCustomerMessageIntent;
   entity InboundCustomerMessage      as projection on db.InboundCustomerMessage actions  
   {
     action reply();

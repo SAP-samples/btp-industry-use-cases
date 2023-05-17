@@ -73,7 +73,7 @@ entity InboundCustomerMessage : managed {
   contact : Association to Contact;
   sentiment : String(10);
   type : Association to InboundCustomerMessageType;
-  topic : Association to InboundCustomerMessageTopic;
+  intent : Association to InboundCustomerMessageIntent;
   customer : Association to Customer;
   language : String(10);
   inboundTextMsg : String(2000);
@@ -116,7 +116,7 @@ entity InboundCustomerMessageType {
 }
 
 /**
- * The main topics about customer message could be 
+ * The main intents about customer message could be 
  * Product Information: Customers may reach out to request information about a specific appliance, such as its features, specifications, and pricing.
  * Product Review: Customers may be seeking advice on which appliance would best suit their needs or fit their kitchen space.
  * Technical Support: Customers may need help troubleshooting issues with their appliance, such as a malfunctioning part or error message.
@@ -128,7 +128,7 @@ entity InboundCustomerMessageType {
  * Return and Refund Inquiries: Customers may need to initiate a return or request a refund for an appliance that does not meet their expectations.
  * Feedback and Suggestions: Customers may want to provide feedback or suggestions for improving the appliance or the vendor's service.
  */
-entity InboundCustomerMessageTopic {
+entity InboundCustomerMessageIntent {
   key code : String(2);
   name : String(50);
   descr : String(1000);
