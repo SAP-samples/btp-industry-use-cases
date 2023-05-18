@@ -46,7 +46,7 @@
   "sap.ui5": {
     "flexEnabled": true,
     "dependencies": {
-      "minUI5Version": "1.112.1",
+      "minUI5Version": "1.108.13",
       "libs": {
         "sap.m": {},
         "sap.ui.core": {},
@@ -94,12 +94,22 @@
   },
   "sap.ovp": {
     "globalFilterModel": "mainModel",
-    "globalFilterEntityType": "Customer",
+    "globalFilterEntityType": "InteractionInsight",
     "containerLayout": "resizable",
-    "enableLiveFilter": true,
+    "enableLiveFilter": false,
     "considerAnalyticalParameters": false,
-    "cards": {},
-    "globalFilterControlType": "MacroFilterBar"
+    "cards": {
+      "list01": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.list",
+        "settings": {
+          "title": "List of Message Threads",
+          "entitySet": "InteractionInsight",
+          "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification",
+          "annotationPath": "com.sap.vocabularies.UI.v1.LineItem"
+        }
+      }
+    }
   },
   "sap.fiori": {
     "registrationIds": [],
