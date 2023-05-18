@@ -19,12 +19,12 @@ POST {{server}}/admin/CustomerInteraction
 Content-Type: application/json
 Accept: application/json
 
-{ "title" :"Great coffee machine",
+{ 
 "category_code" :"PRD",
+"customer_ID": "CST001",
 "inboundMsgs": [
     {
         "contact_ID": 1,
-        "customer_ID": "CST001",
         "inboundTextMsg": "I have purchased a Breville coffee machine the Barista Express™ Impress recently, which make me fine espresso. Love it",
         "channel_code": "WEB"
         }
@@ -50,7 +50,6 @@ Accept: application/json
 {
     "interaction_ID": 3,
     "contact_ID": 1,
-    "customer_ID": "CST001",
     "inboundTextMsg": "If no TV frame in oak color available, then a black one is fine.",
     "channel_code": "WEB"
 }
@@ -142,7 +141,6 @@ Accept: application/json
     "inboundMsgs": [
     {
         "contact_ID": 1,
-        "customer_ID": "CST001",
         "inboundTextMsg": "If no TV frame in oak color available, then a black one is fine.",
         "channel_code": "WEB"
     }

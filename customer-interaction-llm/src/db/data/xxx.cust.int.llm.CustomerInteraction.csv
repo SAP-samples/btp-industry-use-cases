@@ -1,4 +1,4 @@
-ID,extRef,category_code,originChannel_code,status_code,priority_code,title,summary,tags
-1,INT001,PRD,WEB,NW,H,Positive product review on TV Frame,Positive product review on TV Frame,ProductReview Gaming
-2,INT002,CFD,TWT,NW,M,Negative customer exp with Frame TV,Negative customer exp with Frame TV,Feedback
-3,INT003,QNA,WAC,NW,L,Exchange Inquiry of TV Frame,Customer would like to change the TV's Frame to oak color,Question Orderstatus
+ID,extRef,category_code,customer_ID,originChannel_code,status_code,priority_code,title,summary,tags
+1,INT001,PRD,CST001,WEB,NW,H,Positive product review on TV Frame,Positive product review on TV Frame,ProductReview Gaming
+2,INT002,CFD,CST002,TWT,NW,M,Negative customer exp with Frame TV,Negative customer exp with Frame TV,Feedback
+3,INT003,QNA,CST003,WAC,NW,L,Exchange Inquiry of TV Frame,Customer would like to change the TV's Frame to oak color,Question Orderstatus

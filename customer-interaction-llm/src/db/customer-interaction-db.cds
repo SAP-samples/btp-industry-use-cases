@@ -21,6 +21,7 @@ entity CustomerInteraction : managed {
   originChannel : Association to CustomerInteractionChannel;
   status : Association to CustomerInteractionStatus;
   priority : Association to CustomerInteractionPriority;
+  customer : Association to Customer;
   title : String(100);
   summary : String(300);
   tags :  String(100);
@@ -74,7 +75,6 @@ entity InboundCustomerMessage : managed {
   sentiment : String(10);
   type : Association to InboundCustomerMessageType;
   intent : Association to InboundCustomerMessageIntent;
-  customer : Association to Customer;
   language : String(10);
   inboundTextMsg : String(2000);
   embedding : LargeString; //embedding vector of inboundTextMsg

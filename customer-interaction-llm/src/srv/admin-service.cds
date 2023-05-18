@@ -24,7 +24,7 @@ service AdminService {
   entity MessageThread               as
       select
         interaction.ID as interactionID,
-        customer.name as customer,
+        interaction.customer.name as customer,
         inboundTextMsg as message,
         contact.name   as name,
         'Inbound' as direction:String(10),
@@ -36,7 +36,7 @@ service AdminService {
     union
       select
         interaction.ID  as interactionID,
-        replyTo.customer.name as customer,
+        interaction.customer.name as customer,
         outboundTextMsg as message,
         processedBy     as name,
         'Outbound' as direction:String(10),
