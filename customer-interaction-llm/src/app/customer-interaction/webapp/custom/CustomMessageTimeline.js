@@ -67,6 +67,11 @@ sap.ui.define(["sap/m/MessageBox",
 				console.log(x.getCustomFilter());	// null
 				console.log(x.getFilterList());		// nothing
 
+				// location.reload();
+				// x.reset();
+				// x.destroyFilterList();
+				// console.log(x.getFilterList());
+
 				var filter = null;
 				filter = new Filter({
 					path: "interactionID",

@@ -19,13 +19,13 @@
 				<m:headerToolbar>
 					<m:OverflowToolbar>
 						<m:ToolbarSpacer />
-						<m:Button text="Synchronize Messages" icon="sap-icon://synchronize" type="Emphasized" press="handler.onReset"/>
+						<m:Button text="Refresh" icon="sap-icon://synchronize" type="Emphasized" press="handler.onReset"/>
 					</m:OverflowToolbar>
 				</m:headerToolbar>
 				<Timeline
 					id="idTimeline"
 					enableBusyIndicator="true"
-					enableDoubleSided="false"
+					enableDoubleSided="true"
 					enableModelFilter="true"
 					alignment="Top"
 					lazyLoading="true"

@@ -6,7 +6,7 @@ annotate service.CustomerInteraction with @(UI : {
         TypeNamePlural : 'Customer Interactions',
         Title          : {Value : ID},
         Description    : {Value : extRef},
-        // ImageUrl       : image
+        ImageUrl       : 'sap-icon://feedback'
     },
     // HeaderFacets      : [{
     //     $Type  : 'UI.ReferenceFacet',
