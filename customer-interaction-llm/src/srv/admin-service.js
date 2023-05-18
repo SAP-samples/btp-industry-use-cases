@@ -6,6 +6,7 @@ module.exports = class AdminService extends cds.ApplicationService {
     const {
       CustomerInteraction,
       InboundCustomerMessage,
+      InboundCustomerMessageIntent,
       OutboundServiceMessage,
       Contact,
     } = this.entities;
@@ -18,11 +19,11 @@ module.exports = class AdminService extends cds.ApplicationService {
     );
 
     /**
-     * Handler of on creating an inbound customer message
-     * 1.invoke the llm-proxy to perform sentiment analysis,
-     * text summarisation and entity extraction
+     * Handler of on creating an customer interaction with an inbound customer message
+     * 1.invoke the llm-proxy to perform sentiment analysis, text summarisation
+     * and entity extraction on the text message on inbound customer message
      * 2.update the sentiment on the InboundCustomerMessage instance.
-     * 3.update the title and summary on parent object CustomerInteraction
+     * 3.update the title and summary on CustomerInteraction
      */
     this.on(["CREATE"], CustomerInteraction, async (req) => {
       //prepare the default value for CustomerInteraction
@@ -134,6 +135,31 @@ module.exports = class AdminService extends cds.ApplicationService {
         });
         await INSERT.into(InboundCustomerMessage, req.data);
       });
+
+      return req.data;
+    });
+
+    /**
+     * Handler of before creating an inbound customer message intent
+     * 1.invoke the llm-proxy to perform embedding on the descr of 
+     * inbound customer message intent
+     * 2.set the value for embedding field on inbound customer message intent
+     */
+    this.before(["NEW","CREATE"], InboundCustomerMessageIntent, async (req) => {
+      //before NEW triggered by create button on UI.
+      //at this moment, only key(code) is available, thus skip embedding
+      //when it is POST http call or save from UI, before create will be triggered
+      if(typeof req.data.descr === 'undefined')
+        return req.data;
+
+      const descr = { text: req.data.descr };
+      const LlmProxyService = await cds.connect.to("LlmProxyService");
+
+      //embedding the description text of incoming customer message intent to vector.
+      //and to be stored into IncomingCustomerMessageIntent.embedding field
+      //will be used for classifying the intents of the inbound customer message
+      const embedding = await LlmProxyService.embedding(descr);
+      req.data.embedding = embedding;
 
       return req.data;
     });

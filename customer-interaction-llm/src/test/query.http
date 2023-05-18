@@ -54,6 +54,20 @@ Accept: application/json
     "channel_code": "WEB"
 }
 
+
+### ------------------------------------------------------------------------
+# Create a subsequence InboundCustomerMessage to a given CustomerInteraction
+# (send that three times to get out-of-stock message)
+POST {{server}}/admin/InboundCustomerMessageIntent
+Content-Type: application/json
+Accept: application/json
+
+{
+    "code": "W3",
+    "name": "Warranty and Returns",
+    "descr": "Queries about warranty or how to return the product."
+}
+
 ### ------------------------------------------------------------------------
 # POST contact
 POST {{server}}/admin/Contact
