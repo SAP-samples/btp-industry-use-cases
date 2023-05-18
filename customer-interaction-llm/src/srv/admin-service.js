@@ -25,19 +25,17 @@ module.exports = class AdminService extends cds.ApplicationService {
      * 3.update the title and summary on parent object CustomerInteraction
      */
     this.on(["CREATE"], CustomerInteraction, async (req) => {
-      // const inboundTextMsgs = await cds
-      //   .tx(req)
-      //   .run(
-      //     SELECT.from(InboundCustomerMessage)
-      //       .columns("inboundTextMsg")
-      //       .where("interaction_ID=", req.data.interaction_ID)
-      //   );
-      let inboundTextMsgs = req.data.inboundMsgs;
-      let inMsgs = inboundTextMsgs.map(msg => msg.inboundTextMsg);
-      //at this point, the new record hasn't hit the database.
-      //so add the new instance of InboundCustomerMessage to the list.
-      //sum up all the inbound customer messages, and  
-      //inMsgs.push(req.data.inboundTextMsg);
+      //prepare the default value for CustomerInteraction
+      //default status as New if missing
+      //default priority as Medium if missing
+      if(typeof req.data.status_code === 'undefined' || req.data.status_code.length === 0)
+        req.data.status_code = "NW";
+      if(typeof req.data.priority_code === 'undefined' || req.data.priority_code.length === 0)
+        req.data.priority_code = "M";
+      
+      req.data.extRef = generateExtRef();
+
+      const inMsgs = req.data.inboundMsgs.map((msg) => msg.inboundTextMsg);
       const inboundText = { text: inMsgs[0] };
       const LlmProxyService = await cds.connect.to("LlmProxyService");
 
@@ -47,19 +45,27 @@ module.exports = class AdminService extends cds.ApplicationService {
       req.data.summary = result.data.summary;
       req.data.title = result.data.title;
       req.data.inboundMsgs[0].summary = result.data.title;
-
+      if (result.data.sentiment) {
+        req.data.inboundMsgs[0].sentiment = result.data.sentiment;
+        if (result.data.sentiment === "Positive") {
+          //complement
+          req.data.inboundMsgs[0].type_code = "CL";
+        } else if (result.data.sentiment === "Negative") {
+          //complement
+          req.data.inboundMsgs[0].type_code = "CM";
+        } else {
+          //information
+          req.data.inboundMsgs[0].type_code = "IN";
+        }
+      }
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field
       //will be used for classifying the intents of the text
       const embedding = await LlmProxyService.embedding(inboundText);
       req.data.inboundMsgs[0].embedding = embedding;
-      
+
       //manual transaction
-      cds.tx (async ()=>{
-        // await UPDATE(CustomerInteraction, req.data.interaction_ID).with({
-        //   title: result.data.title,
-        //   summary: result.data.summary
-        // });
+      cds.tx(async () => {
         await INSERT.into(CustomerInteraction, req.data);
       });
 
@@ -81,10 +87,10 @@ module.exports = class AdminService extends cds.ApplicationService {
             .columns("inboundTextMsg")
             .where("interaction_ID=", req.data.interaction_ID)
         );
-      let inMsgs = inboundTextMsgs.map(msg => msg.inboundTextMsg);
+      let inMsgs = inboundTextMsgs.map((msg) => msg.inboundTextMsg);
       //at this point, the new record hasn't hit the database.
       //so add the new instance of InboundCustomerMessage to the list.
-      //sum up all the inbound customer messages, and  
+      //sum up all the inbound customer messages, and
       inMsgs.push(req.data.inboundTextMsg);
       const allInboundText = { text: inMsgs.join("\n") };
       const LlmProxyService = await cds.connect.to("LlmProxyService");
@@ -93,21 +99,38 @@ module.exports = class AdminService extends cds.ApplicationService {
       const summaryResult = await LlmProxyService.summarise(allInboundText);
 
       //Invoke the LLM proxy to process the current inbound customer message.
-      const result = await LlmProxyService.processCustomerMessage(req.data.inboundTextMsg);
+      const result = await LlmProxyService.processCustomerMessage(
+        req.data.inboundTextMsg
+      );
       //reflect the summarised title to the inbound customer message
       req.data.summary = result.data.title;
+      if (result.data.sentiment) {
+        req.data.sentiment = result.data.sentiment;
+        if (result.data.sentiment === "Positive") {
+          //complement
+          req.data.type_code = "CL";
+        } else if (result.data.sentiment === "Negative") {
+          //complement
+          req.data.type_code = "CM";
+        } else {
+          //information
+          req.data.type_code = "IN";
+        }
+      }
 
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field
       //will be used for classifying the intents of the text
-      const embedding = await LlmProxyService.embedding(req.data.inboundTextMsg);
+      const embedding = await LlmProxyService.embedding(
+        req.data.inboundTextMsg
+      );
       req.data.embedding = embedding;
-      
+
       //manual transaction
-      cds.tx (async ()=>{
+      cds.tx(async () => {
         await UPDATE(CustomerInteraction, req.data.interaction_ID).with({
           title: summaryResult.data.title,
-          summary: summaryResult.data.summary
+          summary: summaryResult.data.summary,
         });
         await INSERT.into(InboundCustomerMessage, req.data);
       });
@@ -137,4 +160,13 @@ async function genseq(req) {
         .where({ interaction_ID: req.data.interaction_ID })
     );
   req.data.sequence = sequence + 1;
+}
+
+function generateExtRef() {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 8; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
 }
