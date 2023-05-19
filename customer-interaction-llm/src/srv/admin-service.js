@@ -11,7 +11,8 @@ module.exports = class AdminService extends cds.ApplicationService {
       Contact,
     } = this.entities;
 
-    this.before(["NEW", "CREATE"], [CustomerInteraction, Contact], genid);
+    this.before(["NEW"], [CustomerInteraction, Contact], genid);
+    this.before(["CREATE"], [Contact], genid);
     this.before(
       ["NEW", "CREATE"],
       [InboundCustomerMessage, OutboundServiceMessage],
@@ -25,18 +26,52 @@ module.exports = class AdminService extends cds.ApplicationService {
      * 2.update the sentiment on the InboundCustomerMessage instance.
      * 3.update the title and summary on CustomerInteraction
      */
-    this.on(["CREATE"], CustomerInteraction, async (req) => {
+    this.before(["CREATE"], CustomerInteraction, async (req) => {
       //prepare the default value for CustomerInteraction
-      //default status as New if missing
-      //default priority as Medium if missing
-      if(typeof req.data.status_code === 'undefined' || req.data.status_code.length === 0)
-        req.data.status_code = "NW";
-      if(typeof req.data.priority_code === 'undefined' || req.data.priority_code.length === 0)
-        req.data.priority_code = "M";
-      
+      //generate the next ID if missing
+      if (typeof req.data.ID === "undefined") await genid(req);
+
+      //Generate external reference no.
       req.data.extRef = generateExtRef();
 
+      //set default status as New if missing
+      if (
+        typeof req.data.status_code === "undefined" ||
+        req.data.status_code.length === 0
+      )
+        req.data.status_code = "NW";
+
+      //set default priority as Medium if missing
+      if (
+        typeof req.data.priority_code === "undefined" ||
+        req.data.priority_code.length === 0
+      )
+        req.data.priority_code = "M";
+
+      if (
+        !req.data.inboundMsgs ||
+        !Array.isArray(req.data.inboundMsgs) ||
+        req.data.inboundMsgs.length === 0
+      ) {
+        //If no inboundMsgs provided in the payload, then skip preparing inbound customer message
+        return req.data;
+      }
+
+      //set default channel as WEB if missing
+      if (
+        typeof req.data.inboundMsgs[0].channel_code === "undefined" ||
+        req.data.inboundMsgs[0].channel_code.length === 0
+      )
+        req.data.inboundMsgs[0].channel_code = "WEB";
+
+      //replicate the channel code from inbound customer message to customer interaction
+      req.data.originChannel_code = req.data.inboundMsgs[0].channel_code;
+
       const inMsgs = req.data.inboundMsgs.map((msg) => msg.inboundTextMsg);
+      //if no text message derived from inbound customer message, then skip invoke LLM
+      if(typeof inMsgs[0] === 'undefined' || inMsgs[0].length === 0)
+        return req.data;
+
       const inboundText = { text: inMsgs[0] };
       const LlmProxyService = await cds.connect.to("LlmProxyService");
 
@@ -64,11 +99,6 @@ module.exports = class AdminService extends cds.ApplicationService {
       //will be used for classifying the intents of the text
       const embedding = await LlmProxyService.embedding(inboundText);
       req.data.inboundMsgs[0].embedding = embedding;
-
-      //manual transaction
-      cds.tx(async () => {
-        await INSERT.into(CustomerInteraction, req.data);
-      });
 
       return req.data;
     });
@@ -141,28 +171,31 @@ module.exports = class AdminService extends cds.ApplicationService {
 
     /**
      * Handler of before creating an inbound customer message intent
-     * 1.invoke the llm-proxy to perform embedding on the descr of 
+     * 1.invoke the llm-proxy to perform embedding on the descr of
      * inbound customer message intent
      * 2.set the value for embedding field on inbound customer message intent
      */
-    this.before(["NEW","CREATE"], InboundCustomerMessageIntent, async (req) => {
-      //before NEW triggered by create button on UI.
-      //at this moment, only key(code) is available, thus skip embedding
-      //when it is POST http call or save from UI, before create will be triggered
-      if(typeof req.data.descr === 'undefined')
+    this.before(
+      ["NEW", "CREATE"],
+      InboundCustomerMessageIntent,
+      async (req) => {
+        //before NEW triggered by create button on UI.
+        //at this moment, only key(code) is available, thus skip embedding
+        //when it is POST http call or save from UI, before create will be triggered
+        if (typeof req.data.descr === "undefined") return req.data;
+
+        const descr = { text: req.data.descr };
+        const LlmProxyService = await cds.connect.to("LlmProxyService");
+
+        //embedding the description text of incoming customer message intent to vector.
+        //and to be stored into IncomingCustomerMessageIntent.embedding field
+        //will be used for classifying the intents of the inbound customer message
+        const embedding = await LlmProxyService.embedding(descr);
+        req.data.embedding = embedding;
+
         return req.data;
-
-      const descr = { text: req.data.descr };
-      const LlmProxyService = await cds.connect.to("LlmProxyService");
-
-      //embedding the description text of incoming customer message intent to vector.
-      //and to be stored into IncomingCustomerMessageIntent.embedding field
-      //will be used for classifying the intents of the inbound customer message
-      const embedding = await LlmProxyService.embedding(descr);
-      req.data.embedding = embedding;
-
-      return req.data;
-    });
+      }
+    );
 
     return super.init();
   }
