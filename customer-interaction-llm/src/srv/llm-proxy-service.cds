@@ -73,7 +73,6 @@ service LlmProxyService @(path : '/llm-proxy') {
     action embedding(text: String) returns LargeString;
 
     //Actions and functions to classify a customer message based on intent with openAI embeddings
-    action similaritySearch(inputVector: LargeString) returns String;
     action zeroShotClassification(inputVector: LargeString) returns String;
     function dot(vec1:array of Double, vec2:array of Double) returns Double;
     function norm(vec:array of Double) returns Double;
