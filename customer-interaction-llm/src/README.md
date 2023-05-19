@@ -46,6 +46,7 @@ File or Folder | Purpose
     ```sh
     cd customer-customer-interaction-llm/src
     npm install
+    npm i -g @sap/cds-dk
     cds watch
     ``` 
 - (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
