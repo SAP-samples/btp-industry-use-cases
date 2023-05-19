@@ -114,8 +114,7 @@ module.exports = cds.service.impl(async function () {
       //get intent embedding from db
       const query= SELECT `name,embedding` .from `InboundCustomerMessageIntent`;
       const intents = await cds.db.run (query);
-      //const intentsString= JSON.stringify(intents)
-      console.log(intents);
+      //console.log(intents);
       const intent = await similaritySearch(embedding, intents);
       return intent;
     });
@@ -249,7 +248,7 @@ const similaritySearch = function(inputVector, intents) {
     embedding=cosineSimilarity(inputVector, JSON.parse(element.embedding.replace(/'/g, '"'))) ]; }),    
   );
 
-  console.log(similarities);
+  //console.log(similarities);
 
   //Take max similarity
   var max_key=null;
@@ -261,9 +260,6 @@ const similaritySearch = function(inputVector, intents) {
       max_key=k;
     }
   });
-    
-  console.log(max_key);
-  console.log(max_value);
 
   return max_key
 };
