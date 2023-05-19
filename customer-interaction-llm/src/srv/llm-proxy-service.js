@@ -101,6 +101,26 @@ module.exports = cds.service.impl(async function () {
     const result = await invokeLLM("words-embedding", text);
     return result;
   });
+
+  /**
+   * Zero-shot classification
+   * API Proxy of LLM embedding API to embed the input text into vector
+   * Output the customer message category as string based on cosine similarity
+   */
+    this.on("zeroShotClassification", async (req) => {
+      const { inputVector } = req.data;
+  
+      const embedding = await invokeLLM("words-embedding", inputVector);
+      //get intent embedding from db
+      const query= SELECT `name,embedding` .from `InboundCustomerMessageIntent`;
+      const intents = await cds.db.run (query);
+      //const intentsString= JSON.stringify(intents)
+      console.log(intents);
+      const intent = await similaritySearch(embedding, intents);
+      return intent;
+    });
+
+
 });
 
 const invokeLLM = function (use_case, text) {
@@ -192,4 +212,58 @@ const invokeLLM = function (use_case, text) {
   }
 
   //const api = config.llm.api[command]
+};
+
+// Scalar product between two vectors
+const dot= function (vec1, vec2){
+  var length = Math.min(vec1.length, vec2.length);
+  var dotprod = 0;
+  for (var i = 0; i < length; i++) {
+    dotprod += vec1[i] * vec2[i];
+  }
+  return dotprod;
+}
+// Norm of a vector
+const norm= function (vec){
+  var N = Math.sqrt(dot(vec, vec));
+  return N;
+}
+// Cosine similarity between two embeddings vectors
+const cosineSimilarity = function(vec1, vec2)  {
+  var cosim = dot(vec1, vec2) / (norm(vec1) * norm(vec2));
+  return cosim;
+};
+const convertEmbedding= function(intent){
+
+
+};
+// Function to associate the embedding of an input message to the closest message Intent category
+const similaritySearch = function(inputVector, intents) {
+  
+  //converting embeddings in LargeString format in array of doubles
+  inputVector = inputVector.replace(/'/g, '"') 
+  inputVector = JSON.parse(inputVector)
+
+  //compute cosine similarities
+  const similarities = new Map(intents.map( element =>  { return [element.name,
+    embedding=cosineSimilarity(inputVector, JSON.parse(element.embedding.replace(/'/g, '"'))) ]; }),    
+  );
+
+  console.log(similarities);
+
+  //Take max similarity
+  var max_key=null;
+  var max_value=0.;
+
+  similarities.forEach( (v,k) =>  { 
+    if( v > max_value){
+      max_value=v;
+      max_key=k;
+    }
+  });
+    
+  console.log(max_key);
+  console.log(max_value);
+
+  return max_key
 };
