@@ -64,3 +64,11 @@ annotate service.InboundCustomerMessageIntent with @(
         },
     ]
 );
+
+////////////////////////////////////////////////////////////
+//
+//  Draft for Localized Data
+//
+
+annotate xxx.cust.int.llm.InboundCustomerMessageIntent with @fiori.draft.enabled;
+annotate AdminService.InboundCustomerMessageIntent with @odata.draft.enabled;
