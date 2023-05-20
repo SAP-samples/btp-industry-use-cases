@@ -29,7 +29,8 @@ module.exports = class AdminService extends cds.ApplicationService {
     this.before(["CREATE"], CustomerInteraction, async (req) => {
       //prepare the default value for CustomerInteraction
       //generate the next ID if missing
-      if (typeof req.data.ID === "undefined") await genid(req);
+      //if (typeof req.data.ID === "undefined") 
+      await genid(req);
 
       //Generate external reference no.
       req.data.extRef = generateExtRef();
