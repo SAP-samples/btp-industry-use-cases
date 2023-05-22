@@ -5,7 +5,7 @@ extend service AdminService {
   @readonly
   entity InteractionInsight as projection on db.CustomerInteraction {
     *,
-    substring(createdAt,1,4) as riskyear:String,
+    substring(createdAt,1,4) as riskyear:Integer,
     cast (substring(createdAt,1,10) as Date) as createdAt
   };
 }

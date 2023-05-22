@@ -27,8 +27,8 @@ entity CustomerInteraction : managed {
       category             : Association to CustomerInteractionCategory;
       originChannel        : Association to CustomerInteractionChannel;
       status               : Association to CustomerInteractionStatus;
-      priority             : Association to CustomerInteractionPriority;
-      customer             : Association to Customer;
+      priority             : Association to CustomerInteractionPriority @(title: '{i18n>priority_code}');
+      customer             : Association to Customer @(title: '{i18n>customer}');
       title                : String(100);
       summary              : String(300);
       tags                 : String(100);
@@ -94,7 +94,7 @@ entity InboundCustomerMessage : managed {
       contact                     : Association to Contact;
       sentiment                   : String(10);
       type                        : Association to InboundCustomerMessageType;
-      intent                      : Association to InboundCustomerMessageIntent;
+      intent                      : Association to InboundCustomerMessageIntent @(title: '{i18n>intent}');
       language                    : String(10);
       inboundTextMsg              : String(2000);
       embedding                   : LargeString; //embedding vector of inboundTextMsg
