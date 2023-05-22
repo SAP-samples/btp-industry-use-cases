@@ -28,7 +28,8 @@
     "watch-inbound-message-intent": "cds watch --open inbound-message-intent/webapp/index.html?sap-ui-xx-viewCache=false",
     "watch-customer-message-history": "cds watch --open customer-message-history/webapp/index.html?sap-ui-xx-viewCache=false",
     "watch-interaction-insights": "cds watch --open interaction-insights/webapp/index.html?sap-ui-xx-viewCache=false",
-    "watch-inbound-message-type": "cds watch --open inbound-message-type/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-inbound-message-type": "cds watch --open inbound-message-type/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-outbound-message-type": "cds watch --open outbound-message-type/webapp/index.html?sap-ui-xx-viewCache=false"
   },
   "eslintConfig": {
     "extends": "eslint:recommended",
@@ -91,6 +92,7 @@
     "app/inbound-message-intent",
     "app/customer-message-history",
     "app/interaction-insights",
-    "app/inbound-message-type"
+    "app/inbound-message-type",
+    "app/outbound-message-type"
   ]
 }
