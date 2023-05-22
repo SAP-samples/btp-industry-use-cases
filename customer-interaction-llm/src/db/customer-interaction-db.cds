@@ -99,7 +99,7 @@ entity InboundCustomerMessage : managed {
       inboundTextMsg              : String(2000);
       //embedding                   : LargeString; //embedding vector of inboundTextMsg
       audio                       : Association to AudioMessage;
-      summary                     : String(200);
+      summary                     : String(300);
       channel                     : Association to CustomerInteractionChannel;
       outboundServiceMsg          : Association to many OutboundServiceMessage
                                       on outboundServiceMsg.replyTo = $self;
