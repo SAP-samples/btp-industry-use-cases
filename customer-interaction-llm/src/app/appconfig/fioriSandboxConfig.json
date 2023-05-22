@@ -55,6 +55,17 @@
               "isGroupLocked": false,
               "tiles": [
                 {
+                  "id": "AnalyseCustomerInteraction",
+                  "tileType": "sap.ushell.ui.tile.StaticTile",
+                  "properties": {
+                    "title": "Customer Interaction Insights",
+                    "subtitle": "",
+                    "info": "Customer Interaction Insights",
+                    "icon": "sap-icon://multiple-bar-chart",
+                    "targetURL": "#InteractionInsight-analyse"
+                  }
+                },
+                {
                   "id": "ManageCustomerInteraction",
                   "tileType": "sap.ushell.ui.tile.StaticTile",
                   "properties": {
@@ -91,6 +102,24 @@
       "adapter": {
         "config": {
           "inbounds": {
+            "AnalyseCustomerInteraction": {
+              "semanticObject": "InteractionInsight",
+              "action": "analyse",
+              "title": "Customer Interaction Insight",
+              "signature": {
+                "parameters": {
+                  "InteractionInsight": {
+                    "renameTo": "ID"
+                  }
+                },
+                "additionalParameters": "ignored"
+              },
+              "resolutionResult": {
+                "applicationType": "SAPUI5",
+                "additionalInformation": "SAPUI5.Component=interactioninsights.interactioninsights",
+                "url": "/interaction-insights/webapp"
+              }
+            },
             "ManageCustomerInteraction": {
               "semanticObject": "CustomerInteraction",
               "action": "manage",
