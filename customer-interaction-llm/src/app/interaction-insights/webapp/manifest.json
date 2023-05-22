@@ -127,6 +127,43 @@
           "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart02",
           "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification"
         }
+      },
+      "chart03": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Inbound Messages by Intent",
+          "entitySet": "InboundCustomerMessage",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart03"
+        }
+      },
+      "chart04": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Interactions by Category",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart04",
+          "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification"
+        }
+      },
+      "chart05": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Top Customers",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart06"
+        }
+      },
+      "chart01": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Interactions Insights",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart01"
+        }
       }
     }
   },
