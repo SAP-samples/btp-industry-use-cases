@@ -21,7 +21,7 @@ Accept: application/json
 
 { 
 "category_code" :"PRD",
-"customer_ID": "CST001",
+"customer_ID": "1006",
 "inboundMsgs": [
     {
         "contact_ID": 1,
