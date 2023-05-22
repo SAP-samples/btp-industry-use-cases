@@ -1,0 +1,173 @@
+@server = http://localhost:4004
+#@me = Authorization: Basic {{$processEnv USER}}:
+
+### Service Document
+GET {{server}}/admin
+
+### Service $metadata document
+GET {{server}}/admin/$metadata
+
+### Get CustomerInteraction
+GET {{server}}/admin/CustomerInteraction?
+&$expand=inboundMsgs,outboundMsgs
+&$filter=ID eq 3
+
+
+### ------------------------------------------------------------------------
+# Create a new CustomerInteraction with an IncomingCustomerMessage
+POST {{server}}/admin/CustomerInteraction
+Content-Type: application/json
+Accept: application/json
+
+{ 
+"category_code" :"PRD",
+"customer_ID": "CST001",
+"inboundMsgs": [
+    {
+        "contact_ID": 1,
+        "inboundTextMsg": "I have purchased a Breville coffee machine the Barista Express™ Impress recently, which make me fine espresso. Love it",
+        "channel_code": "WEB"
+        }
+    ]
+}
+
+### ------------------------------------------------------------------------
+# Create a new CustomerInteraction with an IncomingCustomerMessage
+PATCH  {{server}}/admin/CustomerInteraction/3
+Content-Type: application/json
+Accept: application/json
+
+{ "title" :"test"
+}
+
+### ------------------------------------------------------------------------
+# Create a subsequence InboundCustomerMessage to a given CustomerInteraction
+# (send that three times to get out-of-stock message)
+POST {{server}}/admin/InboundCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+    "interaction_ID": 3,
+    "contact_ID": 1,
+    "inboundTextMsg": "If no TV frame in oak color available, then a black one is fine.",
+    "channel_code": "WEB"
+}
+
+
+### ------------------------------------------------------------------------
+# Create a subsequence InboundCustomerMessage to a given CustomerInteraction
+# (send that three times to get out-of-stock message)
+POST {{server}}/admin/InboundCustomerMessageIntent
+Content-Type: application/json
+Accept: application/json
+
+{
+    "code": "W3",
+    "name": "Warranty and Returns",
+    "descr": "Queries about warranty or how to return the product."
+}
+
+### ------------------------------------------------------------------------
+# POST contact
+POST {{server}}/admin/Contact
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "name" :"yatseali"
+}
+
+### ------------------------------------------------------------------------
+# Sentiment Analysis
+POST {{server}}/llm-proxy/sentimentAnalyse
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "Putting our review here as our review on the breville website just keeps on being taken down. Is it because we are not providing a good review about this product?\r\nAnyway .... Bought this coffee machine last Nov 2022. It's only 3 months old and it already started leaking water. Called Harvey Norman where we bought it hoping that we can get a replacement as it is not even 3 months old. We were advised to call Breville Australia 1300 139 798 to get our coffee machine fixed. Spoke to Breville rep and he was very professional. We asked if the unit can be replaced as it is not even 3 months old. He advised 'No' and that it needs to be fixed. Anyway, cut the story short ... he gave me a work order number and we have just dropped off our unit to be fixed.\r\nBest part, we were told by the repairer that it will take 2 weeks to get our coffee machine back (looks like back to buying coffee from our local again for the next 2 weeks). For a unit that cost thousand of dollars and breaking down within 3 months, not impressed at all.\r\nPurchased in Nov 2022 at Harvey Norman.\r\n Product is used: Several times a week"
+}
+
+
+### ------------------------------------------------------------------------
+# Turning LLM  completion api into a REST API of Text Summarisation
+POST {{server}}/llm-proxy/summarise
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "It's makes good coffee but this is the second time my coffee machine has had an issue with it and dosent work\r\nEverything was working fine one day I went to make a shot of coffee it stopped brewing after 3 seconds\r\nThen I tried the milk frother it stopped after 3 seconds again I took it back they fixed it under warranty but it's happening again\r\nI don't see this machine lasting more then 2 years to be honest I'm spewing I actually really like the machine\r\nIt's almost like it's losing pressure somewhere, they wouldn't tell my what the problem was when they fixed it..\r\nPurchased at Harvey Norman for $1,349.\r\n Product is used: Several times a week"
+}
+
+
+### ------------------------------------------------------------------------
+# Turning LLM  completion api into a REST API of extracting entities from text
+POST {{server}}/llm-proxy/extractEntities
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "It's makes good coffee but this is the second time my coffee machine has had an issue with it and dosent work\r\nEverything was working fine one day I went to make a shot of coffee it stopped brewing after 3 seconds\r\nThen I tried the milk frother it stopped after 3 seconds again I took it back they fixed it under warranty but it's happening again\r\nI don't see this machine lasting more then 2 years to be honest I'm spewing I actually really like the machine\r\nIt's almost like it's losing pressure somewhere, they wouldn't tell my what the problem was when they fixed it..\r\nPurchased at Harvey Norman for $1,349.\r\n Product is used: Several times a week"
+}
+
+### ------------------------------------------------------------------------
+# A generic API to invoke the LLM API and turning it into your custom REST API
+# use_case is configured in enviroment variable in VCAP_APPLICATION
+POST {{server}}/llm-proxy/processCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "Brilliant Coffee Machine\r\nI brought this machine last year. It is absolutely brilliant. You can choose several presetting coffee options or add your own choice. It has a built-in coffee grinder where you can select the size of the grind. The milk frother has an adjustable temperature setting, ideal for people like me who prefer their coffee piping hot. The water tank comes with a replaceable filter to take all the nasties out of the tap water. It's probably the best machine on the market today. Each cup is as good as the first one.\r\nPurchased in May 2021.\r\n Product is used: Daily"
+}
+
+### ------------------------------------------------------------------------
+# Embedding
+# use_case is configured in enviroment variable in VCAP_APPLICATION
+POST {{server}}/llm-proxy/embedding
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "text": "Brilliant Coffee Machine\r\nI brought this machine last year. It is absolutely brilliant. You can choose several presetting coffee options or add your own choice. It has a built-in coffee grinder where you can select the size of the grind. The milk frother has an adjustable temperature setting, ideal for people like me who prefer their coffee piping hot. The water tank comes with a replaceable filter to take all the nasties out of the tap water. It's probably the best machine on the market today. Each cup is as good as the first one.\r\nPurchased in May 2021.\r\n Product is used: Daily"
+}
+
+### ------------------------------------------------------------------------
+# zeroShotClassification
+# use_case is configured in enviroment variable in VCAP_APPLICATION
+POST {{server}}/llm-proxy/zeroShotClassification
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "inputVector": "Brilliant Coffee Machine\r\nI brought this machine last year. It is absolutely brilliant. You can choose several presetting coffee options or add your own choice. It has a built-in coffee grinder where you can select the size of the grind. The milk frother has an adjustable temperature setting, ideal for people like me who prefer their coffee piping hot. The water tank comes with a replaceable filter to take all the nasties out of the tap water. It's probably the best machine on the market today. Each cup is as good as the first one.\r\nPurchased in May 2021.\r\n Product is used: Daily"
+}
+
+### ------------------------------------------------------------------------
+# A generic API to invoke the LLM API and turning it into your custom REST API
+# use_case is configured in enviroment variable in VCAP_APPLICATION
+POST {{server}}/llm-proxy/invokeLLM
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "use_case" : "customer-message-process",
+    "text": "Brilliant Coffee Machine\r\nI brought this machine last year. It is absolutely brilliant. You can choose several presetting coffee options or add your own choice. It has a built-in coffee grinder where you can select the size of the grind. The milk frother has an adjustable temperature setting, ideal for people like me who prefer their coffee piping hot. The water tank comes with a replaceable filter to take all the nasties out of the tap water. It's probably the best machine on the market today. Each cup is as good as the first one.\r\nPurchased in May 2021.\r\n Product is used: Daily"
+}
+
+### ------------------------------------------------------------------------
+# Update a given CustomerInteraction by override its inboundMsgs
+# Danger!!! Don't use it.
+PATCH {{server}}/admin/CustomerInteraction/3
+Content-Type: application/json
+Accept: application/json
+
+{ 
+    "inboundMsgs": [
+    {
+        "contact_ID": 1,
+        "inboundTextMsg": "If no TV frame in oak color available, then a black one is fine.",
+        "channel_code": "WEB"
+    }
+  ]
+}

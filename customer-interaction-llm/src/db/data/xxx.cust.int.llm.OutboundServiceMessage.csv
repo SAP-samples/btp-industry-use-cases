@@ -1,0 +1,4 @@
+sequence,interaction_ID,type_code,outboundTextMsg,processedBy,remark,replyTo_sequence,replyTo_interaction_ID
+1,1,AR,Thank you for the positive review!,Virtual Assistant,,1,1
+1,2,HA,Thanks for the feedback!,John Doe,,1,2
+1,3,IM,Mary will check your order status.,Mary,,1,3

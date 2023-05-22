@@ -1,0 +1,61 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.suite.ui.commons"
+	width="100%"
+	height="100%"
+	xmlns:m="sap.m"
+	xmlns:l="sap.ui.layout">
+	<l:VerticalLayout id="VerticalLayout" class="sapUiTinyMargin" width="100%" height="1000px" core:require="{handler: 'customerinteraction/custom/CustomMessageTimeline'}">
+		<l:content>
+			<m:MessageStrip
+				id="msInteractionSelection"
+				text="{ID}"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom"
+				visible="false">
+			</m:MessageStrip>
+			<m:Panel height="700px">
+				<m:headerToolbar>
+					<m:OverflowToolbar>
+						<m:ToolbarSpacer />
+						<m:Button text="Refresh" icon="sap-icon://synchronize" type="Emphasized" press="handler.onReset"/>
+					</m:OverflowToolbar>
+				</m:headerToolbar>
+				<Timeline
+					id="idTimeline"
+					enableBusyIndicator="true"
+					enableDoubleSided="true"
+					enableModelFilter="true"
+					alignment="Top"
+					lazyLoading="true"
+					axisOrientation="Vertical"
+					content="{
+							path: '/MessageThread'
+					}"
+					showHeaderBar="false"
+					filterTitle="Interaction"
+					growingThreshold="10"
+					textHeight="automatic"
+					showIcons="true">
+					<content>
+						<TimelineItem
+							id="idTemplateItem"
+							dateTime="{createdAt}"
+							title="{summary}"
+							text="{message}"
+							userName="{name}"
+							filterValue="{interactionID}"
+							icon="{path: 'direction', formatter: 'handler.directionIcon'}"
+							userPicture="{path: 'name', formatter: 'handler.userIcon'}"
+							status="{path: 'sentiment', formatter: 'handler.sentimentColour'}"
+						>
+						</TimelineItem>
+					</content>
+				</Timeline>
+			</m:Panel>
+		</l:content>
+	</l:VerticalLayout>
+
+	<!-- "{path: 'plantStatus', formatter: '.plantConditionStatusIcon'}"> -->
+</core:FragmentDefinition>

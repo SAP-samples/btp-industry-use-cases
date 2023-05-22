@@ -1,0 +1,190 @@
+{
+    "_version": "1.40.0",
+    "sap.app": {
+        "id": "customerinteraction",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap-ux/fiori-elements-writer:lrop",
+            "version": "0.3.6",
+            "toolsId": "97e0bdb0-b7fe-4a55-9ea9-0d39b03bbadb"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/admin/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [
+                        "annotation"
+                    ],
+                    "localUri": "localService/metadata.xml",
+                    "odataVersion": "4.0"
+                }
+            },
+            "annotation": {
+                "type": "ODataAnnotation",
+                "uri": "annotations/annotation.xml",
+                "settings": {
+                    "localUri": "annotations/annotation.xml"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": false,
+        "dependencies": {
+            "minUI5Version": "1.112.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ushell": {},
+                "sap.fe.templates": {},
+                "sap.suite.ui.commons": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "customerinteraction.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": []
+        },
+        "routing": {
+            "routes": [
+                {
+                    "pattern": ":?query:",
+                    "name": "CustomerInteractionList",
+                    "target": "CustomerInteractionList"
+                },
+                {
+                    "pattern": "CustomerInteraction({key}):?query:",
+                    "name": "CustomerInteractionObjectPage",
+                    "target": "CustomerInteractionObjectPage"
+                },
+                {
+                    "pattern": "CustomerInteraction({key})/messages({key2}):?query:",
+                    "name": "MessageThreadObjectPage",
+                    "target": "MessageThreadObjectPage"
+                }
+            ],
+            "targets": {
+                "CustomerInteractionList": {
+                    "type": "Component",
+                    "id": "CustomerInteractionList",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "entitySet": "CustomerInteraction",
+                            "variantManagement": "Page",
+                            "navigation": {
+                                "CustomerInteraction": {
+                                    "detail": {
+                                        "route": "CustomerInteractionObjectPage"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "CustomerInteractionObjectPage": {
+                    "type": "Component",
+                    "id": "CustomerInteractionObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "entitySet": "CustomerInteraction",
+                            "navigation": {
+                                "messages": {
+                                    "detail": {
+                                        "route": "MessageThreadObjectPage"
+                                    }
+                                }
+                            },
+                            "content": {
+                                "body": {
+                                    "sections": {
+                                        "CustomMessageTimeline": {
+                                            "type": "XMLFragment",
+                                            "name": "customerinteraction.custom.CustomMessageTimeline",
+                                            "title": "{i18n>CustomMessageTimeline}",
+                                            "position": {
+                                                "placement": "After",
+                                                "anchor": "General"
+                                            },
+                                            "template": "customerinteraction.custom.CustomMessageTimeline"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "MessageThreadObjectPage": {
+                    "type": "Component",
+                    "id": "MessageThreadObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "entitySet": "MessageThread"
+                        }
+                    }
+                }
+            }
+        },
+        "extends": {
+            "extensions": {
+                "sap.ui.controllerExtensions": {}
+            }
+        }
+    },
+    "sap.fiori": {
+        "registrationIds": [],
+        "archeType": "transactional"
+    }
+}
