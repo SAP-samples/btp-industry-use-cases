@@ -43,8 +43,8 @@ service AdminService {
         processedBy     as name,
         'Outbound' as direction:String(10),
         'N/A' as sentiment,
-        '' as summary,
-        type.name as intent,
+        type.name as summary,
+        replyTo.intent.name as intent,
         createdAt
       from OutboundServiceMessage;
 
