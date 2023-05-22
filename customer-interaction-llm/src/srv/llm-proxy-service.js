@@ -108,11 +108,11 @@ module.exports = cds.service.impl(async function () {
    * Output the customer message category as string based on cosine similarity
    */
     this.on("zeroShotClassification", async (req) => {
-      const { inputVector } = req.data;
+      const { text } = req.data;
   
-      const embedding = await invokeLLM("words-embedding", inputVector);
+      const embedding = await invokeLLM("words-embedding", text);
       //get intent embedding from db
-      const query= SELECT `name,embedding` .from `InboundCustomerMessageIntent`;
+      const query= SELECT `code,embedding` .from `InboundCustomerMessageIntent`;
       const intents = await cds.db.run (query);
       //console.log(intents);
       const intent = await similaritySearch(embedding, intents);
@@ -244,7 +244,7 @@ const similaritySearch = function(inputVector, intents) {
   inputVector = JSON.parse(inputVector)
 
   //compute cosine similarities
-  const similarities = new Map(intents.map( element =>  { return [element.name,
+  const similarities = new Map(intents.map( element =>  { return [element.code,
     embedding=cosineSimilarity(inputVector, JSON.parse(element.embedding.replace(/'/g, '"'))) ]; }),    
   );
 

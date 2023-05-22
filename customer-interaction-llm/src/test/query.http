@@ -140,7 +140,7 @@ Content-Type: application/json
 Accept: application/json
 
 { 
-    "inputVector": "Brilliant Coffee Machine\r\nI brought this machine last year. It is absolutely brilliant. You can choose several presetting coffee options or add your own choice. It has a built-in coffee grinder where you can select the size of the grind. The milk frother has an adjustable temperature setting, ideal for people like me who prefer their coffee piping hot. The water tank comes with a replaceable filter to take all the nasties out of the tap water. It's probably the best machine on the market today. Each cup is as good as the first one.\r\nPurchased in May 2021.\r\n Product is used: Daily"
+    "text": "Brilliant Coffee Machine\r\nI brought this machine last year. It is absolutely brilliant. You can choose several presetting coffee options or add your own choice. It has a built-in coffee grinder where you can select the size of the grind. The milk frother has an adjustable temperature setting, ideal for people like me who prefer their coffee piping hot. The water tank comes with a replaceable filter to take all the nasties out of the tap water. It's probably the best machine on the market today. Each cup is as good as the first one.\r\nPurchased in May 2021.\r\n Product is used: Daily"
 }
 
 ### ------------------------------------------------------------------------
