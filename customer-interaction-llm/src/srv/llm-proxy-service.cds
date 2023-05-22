@@ -24,6 +24,12 @@ service LlmProxyService @(path : '/llm-proxy') {
         total_tokens   : Integer;
     };
 
+    //type defintion for the final result of an process result of a customer text message
+    type intentType {
+        name : String;
+        embedding: LargeString;
+    };
+
     /**
      * A generic API to invoke LLM API and turn it into your custom REST API
      * Output as JSON
@@ -65,5 +71,12 @@ service LlmProxyService @(path : '/llm-proxy') {
     action processCustomerMessage(text: String) returns CustomerMsgReturnType;
 
     action embedding(text: String) returns LargeString;
-    action similaritySearch(inputVector: LargeString) returns String;
+
+    //Actions and functions to classify a customer message based on intent with openAI embeddings
+    action zeroShotClassification(inputVector: LargeString) returns String;
+    function dot(vec1:array of Double, vec2:array of Double) returns Double;
+    function norm(vec:array of Double) returns Double;
+    function cosineSimilarity(vec1:LargeString, vec2:LargeString ) returns Double;
+    function similaritySearch(inputVector: LargeString, intents: array of intentType ) returns String;
+
 }
