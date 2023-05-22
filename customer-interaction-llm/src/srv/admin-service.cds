@@ -38,13 +38,13 @@ service AdminService {
       select
         interaction.ID            as interactionID,
         interaction.customer.name as customer,
-        interaction.customer.ID   as customerID,
-        outboundTextMsg           as message,
-        processedBy               as name,
-        'Outbound'                as direction : String(10),
-        'N/A'                     as sentiment,
-        ''                        as summary,
-        type.name                 as intent,
+        interaction.customer.ID as customerID,
+        outboundTextMsg as message,
+        processedBy     as name,
+        'Outbound' as direction:String(10),
+        'N/A' as sentiment,
+        type.name as summary,
+        replyTo.intent.name as intent,
         createdAt
       from OutboundServiceMessage;
 
