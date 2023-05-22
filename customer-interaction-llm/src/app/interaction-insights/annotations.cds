@@ -51,9 +51,9 @@ annotate service.InboundCustomerMessage with @(UI: {
     PresentationVariant #chart03: {Visualizations: ['@UI.Chart#chart03', ], },
     Chart #chart03              : {
         ChartType          : #Column,
-        Dimensions         : [intent_code],
+        Dimensions         : [intname],
         DimensionAttributes: [{
-            Dimension: intent_code,
+            Dimension: intname,
             Role     : #Category
         }],
         Measures           : [numberOfInboundCustomerMsgs],
@@ -118,9 +118,9 @@ annotate service.InteractionInsight with @(UI: {
     PresentationVariant #chart02: {Visualizations: ['@UI.Chart#chart02', ], },
     Chart #chart02              : {
         ChartType          : #Donut,
-        Dimensions         : [priority_code],
+        Dimensions         : [priorname],
         DimensionAttributes: [{
-            Dimension: priority_code,
+            Dimension: priorname,
             Role     : #Category
         }],
         Measures           : [numberOfInteractions],
@@ -135,9 +135,9 @@ annotate service.InteractionInsight with @(UI: {
     PresentationVariant #chart04: {Visualizations: ['@UI.Chart#chart04', ], },
     Chart #chart04              : {
         ChartType          : #Donut,
-        Dimensions         : [category_code],
+        Dimensions         : [catname],
         DimensionAttributes: [{
-            Dimension: category_code,
+            Dimension: catname,
             Role     : #Category
         }],
         Measures           : [numberOfInteractions],
