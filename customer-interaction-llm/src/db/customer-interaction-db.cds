@@ -97,7 +97,7 @@ entity InboundCustomerMessage : managed {
       intent                      : Association to InboundCustomerMessageIntent @(title: '{i18n>intent}');
       language                    : String(10);
       inboundTextMsg              : String(2000);
-      embedding                   : LargeString; //embedding vector of inboundTextMsg
+      //embedding                   : LargeString; //embedding vector of inboundTextMsg
       audio                       : Association to AudioMessage;
       summary                     : String(200);
       channel                     : Association to CustomerInteractionChannel;
@@ -118,7 +118,7 @@ entity Contact {
       email     : String(50);
       facebook  : String(100);
       instagram : String(100);
-      whatsapp  : String(20);
+      whatsapp  : String(50);
       linkedin  : String(100);
       twitter   : String(100);
       slack     : String(100);
