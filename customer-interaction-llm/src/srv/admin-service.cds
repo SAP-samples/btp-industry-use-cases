@@ -38,6 +38,7 @@ service AdminService {
       select
         interaction.ID  as interactionID,
         interaction.customer.name as customer,
+        interaction.customer.ID as customerID,
         outboundTextMsg as message,
         processedBy     as name,
         'Outbound' as direction:String(10),
