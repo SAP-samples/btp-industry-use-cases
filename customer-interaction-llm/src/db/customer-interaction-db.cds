@@ -92,7 +92,7 @@ entity InboundCustomerMessage : managed {
   key sequence                    : Integer default 1;
   key interaction                 : Association to CustomerInteraction;
       contact                     : Association to Contact;
-      sentiment                   : String(10);
+      sentiment                   : String(11);
       type                        : Association to InboundCustomerMessageType;
       intent                      : Association to InboundCustomerMessageIntent @(title: '{i18n>intent}');
       language                    : String(10);
