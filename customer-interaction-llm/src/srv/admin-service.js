@@ -29,7 +29,8 @@ module.exports = class AdminService extends cds.ApplicationService {
     this.before(["CREATE"], CustomerInteraction, async (req) => {
       //prepare the default value for CustomerInteraction
       //generate the next ID if missing
-      if (typeof req.data.ID === "undefined") await genid(req);
+      //if (typeof req.data.ID === "undefined") 
+      await genid(req);
 
       //Generate external reference no.
       req.data.extRef = generateExtRef();
@@ -97,8 +98,12 @@ module.exports = class AdminService extends cds.ApplicationService {
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field
       //will be used for classifying the intents of the text
-      const embedding = await LlmProxyService.embedding(inboundText);
-      req.data.inboundMsgs[0].embedding = embedding;
+      // const embedding = await LlmProxyService.embedding(inboundText);
+      // req.data.inboundMsgs[0].embedding = embedding;
+      
+      //Classify the intent for the message intent with embedding and similarity search
+      const intentCode = await LlmProxyService.zeroShotClassification(inboundText)
+      req.data.inboundMsgs[0].intent_code = intentCode;
 
       return req.data;
     });
@@ -130,8 +135,10 @@ module.exports = class AdminService extends cds.ApplicationService {
       const summaryResult = await LlmProxyService.summarise(allInboundText);
 
       //Invoke the LLM proxy to process the current inbound customer message.
+      const message = { text: req.data.inboundTextMsg}
       const result = await LlmProxyService.processCustomerMessage(
-        req.data.inboundTextMsg
+        //req.data.inboundTextMsg
+        message
       );
       //reflect the summarised title to the inbound customer message
       req.data.summary = result.data.title;
@@ -152,10 +159,14 @@ module.exports = class AdminService extends cds.ApplicationService {
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field
       //will be used for classifying the intents of the text
-      const embedding = await LlmProxyService.embedding(
-        req.data.inboundTextMsg
-      );
-      req.data.embedding = embedding;
+      // const embedding = await LlmProxyService.embedding(
+      //   req.data.inboundTextMsg
+      // );
+      // req.data.embedding = embedding;
+
+      //Classify the intent for the message intent with embedding and similarity search
+      const intentCode = await LlmProxyService.zeroShotClassification(message)
+      req.data.intent_code = intentCode;
 
       //manual transaction
       cds.tx(async () => {

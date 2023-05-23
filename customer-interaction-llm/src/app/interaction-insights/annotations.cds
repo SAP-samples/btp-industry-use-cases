@@ -47,23 +47,26 @@ annotate service.InteractionInsight with @(
     }
 );
 
-annotate service.InteractionInsight with @(UI: {
-    PresentationVariant #StatusTxt  : {Visualizations: ['@UI.Chart#StatusTxt', ], },
-    PresentationVariant #chart01: {Visualizations: ['@UI.Chart#chart01', ], },
-    Chart                           : {
+annotate service.InboundCustomerMessage with @(UI: {
+    PresentationVariant #chart03: {Visualizations: ['@UI.Chart#chart03', ], },
+    Chart #chart03              : {
         ChartType          : #Column,
-        Dimensions         : [StatusTxt],
+        Dimensions         : [intname],
         DimensionAttributes: [{
-            Dimension: StatusTxt,
+            Dimension: intname,
             Role     : #Category
         }],
-        Measures           : [numberOfInteractions],
+        Measures           : [numberOfInboundCustomerMsgs],
         MeasureAttributes  : [{
-            Measure: numberOfInteractions,
+            Measure: numberOfInboundCustomerMsgs,
             Role   : #Axis1
         }]
-    },
-    Chart #StatusTxt                : {
+    }
+});
+
+annotate service.InteractionInsight with @(UI: {
+    PresentationVariant #chart01: {Visualizations: ['@UI.Chart#chart01', ], },
+    Chart                       : {
         ChartType          : #Column,
         Dimensions         : [StatusTxt],
         DimensionAttributes: [{
@@ -89,18 +92,18 @@ annotate service.InteractionInsight with @(UI: {
             Role   : #Axis1
         }]
     },
-    HeaderInfo                      : {
+    HeaderInfo                  : {
         TypeName      : '{i18n>Message}',
         TypeNamePlural: '{i18n>Messages}',
         Title         : {Value: Aedate},
         Description   : {Value: Aedate}
     },
-    Facets                          : [{
+    Facets                      : [{
         $Type : 'UI.ReferenceFacet',
         Label : '{i18n>Details}',
         Target: '@UI.FieldGroup#Details'
     }, ],
-    FieldGroup #Details             : {Data: [
+    FieldGroup #Details         : {Data: [
         {Value: Pointer},
         {Value: Aedate},
         {Value: Status},
@@ -115,9 +118,156 @@ annotate service.InteractionInsight with @(UI: {
     PresentationVariant #chart02: {Visualizations: ['@UI.Chart#chart02', ], },
     Chart #chart02              : {
         ChartType          : #Donut,
-        Dimensions         : [priority_code],
+        Dimensions         : [priorname],
         DimensionAttributes: [{
-            Dimension: priority_code,
+            Dimension: priorname,
+            Role     : #Category
+        }],
+        Measures           : [numberOfInteractions],
+        MeasureAttributes  : [{
+            Measure: numberOfInteractions,
+            Role   : #Axis1
+        }]
+    }
+});
+
+annotate service.InteractionInsight with @(UI: {
+    PresentationVariant #chart04: {Visualizations: ['@UI.Chart#chart04', ], },
+    Chart #chart04              : {
+        ChartType          : #Donut,
+        Dimensions         : [catname],
+        DimensionAttributes: [{
+            Dimension: catname,
+            Role     : #Category
+        }],
+        Measures           : [numberOfInteractions],
+        MeasureAttributes  : [{
+            Measure: numberOfInteractions,
+            Role   : #Axis1
+        }]
+    }
+});
+
+annotate service.InboundCustomerMessage with @(UI: {
+    PresentationVariant #chart05: {Visualizations: ['@UI.Chart#chart05', ], },
+    Chart #chart05              : {
+        ChartType          : #Donut,
+        Dimensions         : [sentiment],
+        DimensionAttributes: [{
+            Dimension: sentiment,
+            Role     : #Category
+        }],
+        Measures           : [numberOfInboundCustomerMsgs],
+        MeasureAttributes  : [{
+            Measure: numberOfInboundCustomerMsgs,
+            Role   : #Axis1
+        }]
+    }
+});
+
+annotate service.InteractionInsight with @(UI: {
+    PresentationVariant #chart05: {Visualizations: ['@UI.Chart#chart05', ], },
+    Chart #chart05              : {
+        ChartType          : #Bar,
+        Dimensions         : [customer_ID],
+        DimensionAttributes: [{
+            Dimension: customer_ID,
+            Role     : #Category
+        }],
+        Measures           : [numberOfInteractions],
+        MeasureAttributes  : [{
+            Measure: numberOfInteractions,
+            Role   : #Axis1
+        }]
+    }
+});
+
+annotate service.InteractionInsight with @(UI: {
+    PresentationVariant #chart06: {Visualizations: ['@UI.Chart#chart06', ], },
+    Chart #chart06              : {
+        ChartType          : #Bar,
+        Dimensions         : [customer_ID],
+        DimensionAttributes: [{
+            Dimension: customer_ID,
+            Role     : #Category
+        }],
+        Measures           : [numberOfInteractions],
+        MeasureAttributes  : [{
+            Measure: numberOfInteractions,
+            Role   : #Axis1
+        }]
+    },
+    DataPoint #chart06          : {
+        $Type                 : 'UI.DataPointType',
+        Title                 : 'KPI Card',
+        Value                 : numberOfInteractions,
+        ValueFormat           : {
+            ScaleFactor             : 2,
+            NumberOfFractionalDigits: 1
+        },
+        CriticalityCalculation: {
+            ImprovementDirection   : #Minimizing,
+            DeviationRangeHighValue: '7300',
+            ToleranceRangeHighValue: '7200'
+        },
+        TargetValue           : '2.000 ',
+        TrendCalculation      : {
+            ReferenceValue: '5201680',
+            DownDifference: 10000000.0
+        }
+    },
+    KPI #chart06                : {
+        $Type           : 'UI.KPIType',
+        Detail          : {
+            $Type                     : 'UI.KPIDetailType',
+            DefaultPresentationVariant: ![@UI.PresentationVariant#chart06],
+            SemanticObject            : 'Action',
+            Action                    : 'toappnavsample'
+        },
+        SelectionVariant: ![@UI.SelectionVariant#chart06],
+        DataPoint       : ![@UI.DataPoint#chart06],
+        ID              : 'String for KPI Annotation'
+    },
+    PresentationVariant #chart06: {
+        MaxItems : 5,
+        GroupBy  : [category_code],
+        SortOrder: [{
+            Property  : ID,
+            Descending: true
+        }, ]
+    },
+    SelectionVariant #chart06   : {
+        SelectOptions: [{
+            PropertyName: category_code,
+            Ranges      : [{
+                Sign  : #I,
+                Option: #EQ,
+                Low   : 'PRD'
+            }]
+        }],
+        Parameters   : [
+            {
+                $Type        : 'UI.Parameter',
+                PropertyName : status_code,
+                PropertyValue: 'NW'
+            },
+            {
+                $Type        : 'UI.Parameter',
+                PropertyName : priority_code,
+                PropertyValue: 'H'
+            }
+        ]
+    }
+
+});
+
+annotate service.InteractionInsight with @(UI: {
+    PresentationVariant #chart07: {Visualizations: ['@UI.Chart#chart07', ], },
+    Chart #chart07              : {
+        ChartType          : #Line,
+        Dimensions         : [customer_ID],
+        DimensionAttributes: [{
+            Dimension: customer_ID,
             Role     : #Category
         }],
         Measures           : [numberOfInteractions],

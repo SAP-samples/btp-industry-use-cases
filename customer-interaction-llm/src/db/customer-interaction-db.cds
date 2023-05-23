@@ -27,8 +27,8 @@ entity CustomerInteraction : managed {
       category             : Association to CustomerInteractionCategory;
       originChannel        : Association to CustomerInteractionChannel;
       status               : Association to CustomerInteractionStatus;
-      priority             : Association to CustomerInteractionPriority;
-      customer             : Association to Customer;
+      priority             : Association to CustomerInteractionPriority @(title: '{i18n>priority_code}');
+      customer             : Association to Customer @(title: '{i18n>customer}');
       title                : String(100);
       summary              : String(300);
       tags                 : String(100);
@@ -92,14 +92,14 @@ entity InboundCustomerMessage : managed {
   key sequence                    : Integer default 1;
   key interaction                 : Association to CustomerInteraction;
       contact                     : Association to Contact;
-      sentiment                   : String(10);
+      sentiment                   : String(11);
       type                        : Association to InboundCustomerMessageType;
-      intent                      : Association to InboundCustomerMessageIntent;
+      intent                      : Association to InboundCustomerMessageIntent @(title: '{i18n>intent}');
       language                    : String(10);
       inboundTextMsg              : String(2000);
-      embedding                   : LargeString; //embedding vector of inboundTextMsg
+      //embedding                   : LargeString; //embedding vector of inboundTextMsg
       audio                       : Association to AudioMessage;
-      summary                     : String(200);
+      summary                     : String(300);
       channel                     : Association to CustomerInteractionChannel;
       outboundServiceMsg          : Association to many OutboundServiceMessage
                                       on outboundServiceMsg.replyTo = $self;
@@ -118,7 +118,7 @@ entity Contact {
       email     : String(50);
       facebook  : String(100);
       instagram : String(100);
-      whatsapp  : String(20);
+      whatsapp  : String(50);
       linkedin  : String(100);
       twitter   : String(100);
       slack     : String(100);
