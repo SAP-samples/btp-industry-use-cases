@@ -1,33 +1,27 @@
-# SAP-samples/repository-template
-This default template for SAP Samples repositories includes files for README, LICENSE, and .reuse/dep5. All repositories on github.com/SAP-samples will be created based on this template.
+# SAP BTP Industry Use Cases
+[![License: Apache2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/btp'industry'use'cases)](https://api.reuse.software/info/github.com/SAP-samples/btp-industry-use-cases)
 
-# Containing Files
-
-1. The LICENSE file:
-In most cases, the license for SAP sample projects is `Apache 2.0`.
+<!--- Register repository https://api.reuse.software/register, then add REUSE badge:
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/REPO-NAME)](https://api.reuse.software/info/github.com/SAP-samples/REPO-NAME)
 
 2. The .reuse/dep5 file: 
 The [Reuse Tool](https://reuse.software/) must be used for your samples project. You can find the .reuse/dep5 in the project initial. Please replace the parts inside the single angle quotation marks < > by the specific information for your repository.
 
 3. The README.md file (this file):
 Please edit this file as it is the primary description file for your project. You can find some placeholder titles for sections below.
-
-# [Title]
-<!-- Please include descriptive title -->
-
-<!--- Register repository https://api.reuse.software/register, then add REUSE badge:
-[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/REPO-NAME)](https://api.reuse.software/info/github.com/SAP-samples/REPO-NAME)
 -->
 
 ## Description
-<!-- Please include SEO-friendly description -->
+This is the main repository for the code presented during the [SAP BTP Industry Use Cases series](https://blogs.sap.com/2023/02/10/deliver-real-life-use-cases-with-sap-btp/). Each numbered folder you see in the structure is comprised by the code presented on an individual session.
 
 ## Requirements
+Please check individual folders for specific requirements.
 
 ## Download and Installation
 
 ## Known Issues
-<!-- You may simply state "No known issues. -->
+"No known issues.
 
 ## How to obtain support
 [Create an issue](https://github.com/SAP-samples/<repository-name>/issues) in this repository if you find a bug or have questions about the content.
