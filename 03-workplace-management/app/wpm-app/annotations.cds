@@ -1,0 +1,1 @@
+using wpm.srv.WPMService as service from '../../srv/service';

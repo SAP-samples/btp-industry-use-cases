@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+    <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="s4.eam" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityContainer Name="EntityContainer">
+        <EntitySet Name="YY1_Vehicles1710" EntityType="s4.eam.YY1_Vehicles1710"/>
+      </EntityContainer>
+      <EntityType Name="YY1_Vehicles1710">
+        <Key>
+          <PropertyRef Name="CompanyCode"/>
+          <PropertyRef Name="MasterFixedAsset"/>
+          <PropertyRef Name="FixedAsset"/>
+        </Key>
+        <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="MasterFixedAsset" Type="Edm.String" MaxLength="12" Nullable="false"/>
+        <Property Name="FixedAsset" Type="Edm.String" MaxLength="4" Nullable="false"/>
+        <Property Name="AssetClass" Type="Edm.String" MaxLength="8"/>
+        <Property Name="AssetClassName" Type="Edm.String" MaxLength="20"/>
+        <Property Name="FixedAssetDescription" Type="Edm.String" MaxLength="50"/>
+        <Property Name="VehicleLicensePlateNumber" Type="Edm.String" MaxLength="15"/>
+      </EntityType>
+      <Annotation Term="Core.SchemaVersion" String="1"/>
+      <Annotations Target="s4.eam.EntityContainer">
+        <Annotation Term="Capabilities.KeyAsSegmentSupported" Bool="true"/>
+        <Annotation Term="Common.Label" String="Graph service for s4.eam"/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710">
+        <Annotation Term="Common.Label" String="Vehicles from Company 1710"/>
+      </Annotations>
+      <Annotations Target="s4.eam.EntityContainer/YY1_Vehicles1710">
+        <Annotation Term="Capabilities.InsertRestrictions">
+          <Record Type="Capabilities.InsertRestrictionsType">
+            <PropertyValue Property="Insertable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.UpdateRestrictions">
+          <Record Type="Capabilities.UpdateRestrictionsType">
+            <PropertyValue Property="Updatable" Bool="false"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="Capabilities.DeleteRestrictions">
+          <Record Type="Capabilities.DeleteRestrictionsType">
+            <PropertyValue Property="Deletable" Bool="false"/>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/CompanyCode">
+        <Annotation Term="Common.Label" String="Company Code"/>
+        <Annotation Term="Core.Description" String="The company code is an organizational unit within financial accounting."/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/MasterFixedAsset">
+        <Annotation Term="Common.Label" String="Asset"/>
+        <Annotation Term="Core.Description" String="This is the number which, together with the asset sub-number, identifies a fixed asset in Asset Accounting."/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/FixedAsset">
+        <Annotation Term="Common.Label" String="Subnumber"/>
+        <Annotation Term="Core.Description" String="This is the number which, together with the main asset number, uniquely identifies a fixed asset in Asset Accounting.&#xA;&#xA;Using the asset sub-number, you can:&#xA;Provide for separate management of later acquisitions to assets.&#xA;Represent complex fixed assets with their component parts.&#xA;In contrast to the main asset number, the asset sub-number must be numerical."/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/AssetClass">
+        <Annotation Term="Common.Label" String="Asset Class"/>
+        <Annotation Term="Core.Description" String="Specifies the asset class."/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/AssetClassName">
+        <Annotation Term="Common.Label" String="Class Name"/>
+        <Annotation Term="Core.Description" String="Specifies the asset class."/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/FixedAssetDescription">
+        <Annotation Term="Common.Label" String="Description"/>
+        <Annotation Term="Core.Description" String="Enter a name for the asset in this field."/>
+      </Annotations>
+      <Annotations Target="s4.eam.YY1_Vehicles1710/VehicleLicensePlateNumber">
+        <Annotation Term="Common.Label" String="License Plate No."/>
+        <Annotation Term="Core.Description" String="You can enter the license plate number for a vehicle here.&#xA;&#xA;Your entry is saved as time-dependent data, so that a history is created when there is a change in the license plate number."/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

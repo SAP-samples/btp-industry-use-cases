@@ -1,0 +1,105 @@
+{
+  "name": "wpm-app",
+  "version": "1.0.0",
+  "description": "Workplace Management Backend Service.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap-cloud-sdk/http-client": "^3.0.2",
+    "@sap/audit-logging": "^5.7.0",
+    "@sap/cds": "^6.6",
+    "@sap/cds-mtxs": "^1.7.1",
+    "@sap/xsenv": "^3.4.0",
+    "@sap/xssec": "^3.2.17",
+    "cfenv": "^1.2.4",
+    "debug": "^4.3.4",
+    "express": "^4",
+    "hdb": "^0.19.0",
+    "passport": "^0.6.0"
+  },
+  "devDependencies": {
+    "@sap/ux-specification": "^1.108.2",
+    "rimraf": "^3.0.2",
+    "sqlite3": "^5.0.4"
+  },
+  "scripts": {
+    "start": "cds serve",
+    "watch-wpm-app": "cds watch --open wpm-app/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy wpm-app --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-wpm-adm": "cds watch --open wpm-adm/webapp/index.html?sap-ui-xx-viewCache=false"
+  },
+  "engines": {
+    "node": "^16.15"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "[development]": {
+          "kind": "sql-mt",
+          "model": "db",
+          "credentials": {
+            "database": "db/data/wpm.db"
+          }
+        },
+        "[production]": {
+          "kind": "hana-mt",
+          "model": "db"
+        },
+        "model": [
+          "db",
+          "srv"
+        ],
+        "vcap": {
+          "label": "service-manager"
+        }
+      },
+      "C4RE": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "C4RE"
+        }
+      },
+      "auth": {
+        "[production]": {
+          "strategy": "JWT"
+        },
+        "[development]": {
+          "strategy": "mock",
+          "users": {
+            "john": {
+              "roles": [
+                "Employee"
+              ],
+              "tenant": "t1"
+            },
+            "mary": {
+              "roles": [
+                "Employee",
+                "FacilitiesManager"
+              ],
+              "tenant": "t2"
+            }
+          }
+        },
+        "kind": "xsuaa"
+      },
+      "uaa": {
+        "kind": "xsuaa"
+      },
+      "multitenancy": true,
+      "toggles": false,
+      "extensibility": false
+    },
+    "features": {
+      "fiori_preview": false,
+      "in_memory_db": false
+    }
+  },
+  "sapux": [
+    "app/wpm-app",
+    "app/wpm-adm"
+  ]
+}

@@ -1,0 +1,29 @@
+{
+    "welcomeFile": "/cp.portal",
+    "authenticationMethod": "route",
+    "routes": [
+        {
+            "source": "^/wpm/service/(.*)",
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.Employee",
+            "destination": "srv"
+        },
+        {
+            "source": "^/wpm/admin/(.*)",
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.FacilitiesManager",
+            "destination": "srv"
+        },
+        {
+            "source": "^/-/cds/.*",
+            "authenticationType": "none",
+            "destination": "mtx"
+        },
+        {
+            "source": "^(.*)$",
+            "target": "$1",
+            "service": "html5-apps-repo-rt",
+            "authenticationType": "xsuaa"
+        }
+    ]
+}

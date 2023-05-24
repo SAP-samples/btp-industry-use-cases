@@ -1,0 +1,19 @@
+# Generated manifest.yml based on template version 0.1.0
+# appName = int-ticket
+# language=nodejs
+# multitenancy=false
+---
+applications:
+# -----------------------------------------------------------------------------------
+# Backend Service
+# -----------------------------------------------------------------------------------
+- name: int-ticket-srv
+  random-route: false  # for development only
+  path: gen/srv
+  memory: 128M
+  disk_quota: 256M
+  instances: 1
+  routes:
+  - route: int-ticket-srv-biagi-dev.cfapps.eu11.hana.ondemand.com
+  buildpack: nodejs_buildpack
+

@@ -1,0 +1,86 @@
+{
+  "meta": {
+    "creator": "cds-dk 6.3.1"
+  },
+  "$version": "2.0",
+  "definitions": {
+    "S4.YY1_Vehicles1710": {
+      "kind": "entity",
+      "@cds.external": true,
+      "@cds.persistence.skip": true,
+      "elements": {
+        "CompanyCode": {
+          "key": true,
+          "notNull": true,
+          "type": "cds.String",
+          "length": 4,
+          "@Common.Label": "Company",
+          "doc": "The company code is an organizational unit within financial accounting."
+        },
+        "MasterFixedAsset": {
+          "key": true,
+          "notNull": true,
+          "type": "cds.String",
+          "length": 12,
+          "@Common.Label": "Code",
+          "doc": "This is the number which, together with the asset sub-number, identifies a fixed asset in Asset Accounting."
+        },
+        "FixedAsset": {
+          "key": true,
+          "notNull": true,
+          "type": "cds.String",
+          "length": 4,
+          "@Common.Label": "Subnumber",
+          "doc": "This is the number which, together with the main asset number, uniquely identifies a fixed asset in Asset Accounting. Using the asset sub-number, you can: Provide for separate management of later acquisitions to assets. Represent complex fixed assets with their component parts. In contrast to the main asset number, the asset sub-number must be numerical."
+        },
+        "AssetClass": {
+          "notNull": false,
+          "type": "cds.String",
+          "length": 8,
+          "@Common.Label": "Class",
+          "doc": "Specifies the asset class."
+        },
+        "AssetClassName": {
+          "notNull": false,
+          "type": "cds.String",
+          "length": 20,
+          "@Common.Label": "Category",
+          "doc": "Specifies the asset class."
+        },
+        "FixedAssetDescription": {
+          "notNull": false,
+          "type": "cds.String",
+          "length": 50,
+          "@Common.Label": "  Vehicle",
+          "doc": "Enter a name for the asset in this field."
+        },
+        "VehicleLicensePlateNumber": {
+          "notNull": false,
+          "type": "cds.String",
+          "length": 15,
+          "@Common.Label": "License Plate",
+          "doc": "You can enter the license plate number for a vehicle here. Your entry is saved as time-dependent data, so that a history is created when there is a change in the license plate number."
+        }
+      },
+      "@Common.Label": "Vehicles from Company 1710",
+      "@Capabilities.InsertRestrictions": {
+        "$Type": "Capabilities.InsertRestrictionsType",
+        "Insertable": false
+      },
+      "@Capabilities.UpdateRestrictions": {
+        "$Type": "Capabilities.UpdateRestrictionsType",
+        "Updatable": false
+      },
+      "@Capabilities.DeleteRestrictions": {
+        "$Type": "Capabilities.DeleteRestrictionsType",
+        "Deletable": false
+      }
+    },
+    "S4": {
+      "kind": "service",
+      "@cds.external": true,
+      "@Capabilities.KeyAsSegmentSupported": true,
+      "@Common.Label": "Graph service for s4.eam"
+    }
+  }
+}

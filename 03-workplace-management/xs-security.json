@@ -1,0 +1,104 @@
+{
+  "xsappname": "wpm-app",
+  "tenant-mode": "shared",
+  "description": "Security profile of Workplace Management Application",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.mtcallback",
+      "description": "Subscription via SaaS Registry",
+      "grant-as-authority-to-apps": [
+        "$XSAPPNAME(application,sap-provisioning,tenant-onboarding)"
+      ]
+    },
+    {
+      "name": "$XSAPPNAME.cds.Subscriber",
+      "description": "Subscribe to applications"
+    },
+    {
+      "name": "uaa.user",
+      "description": "UAA"
+    },
+    {
+      "name": "$XSAPPNAME.FacilitiesManager",
+      "description": "Facilities Manager"
+    },
+    {
+      "name": "$XSAPPNAME.EmployeeManager",
+      "description": "Employee Manager"
+    },
+    {
+      "name": "$XSAPPNAME.Employee",
+      "description": "Employee"
+    }
+  ],
+  "attributes": [],
+  "foreign-scope-references": [
+    "$ACCEPT_GRANTED_SCOPES"
+  ],
+  "authorities-inheritance": false,
+  "authorities": [
+    "$XSAPPNAME.cds.Subscriber"
+  ],
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA",
+      "scope-references": [
+        "uaa.user"
+      ]
+    },
+    {
+      "name": "WPMApp_FacilitiesManager",
+      "description": "Facilities Manager authorization",
+      "scope-references": [
+        "$XSAPPNAME.FacilitiesManager"
+      ]
+    },
+    {
+      "name": "WPMApp_EmployeeManager",
+      "description": "Employee Manager authorization",
+      "scope-references": [
+        "$XSAPPNAME.EmployeeManager"
+      ]
+    },
+    {
+      "name": "WPMApp_Employee",
+      "description": "Employee authorization",
+      "scope-references": [
+        "$XSAPPNAME.Employee"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "WPMApp_FacilitiesManager",
+      "description": "Administrator of the Workplace Management application",
+      "role-template-references": [
+        "$XSAPPNAME.WPMApp_Employee",
+        "$XSAPPNAME.WPMApp_FacilitiesManager"
+      ]
+    },
+    {
+      "name": "WPMApp_EmployeeManager",
+      "description": "User Manager of the Workplace Management application",
+      "role-template-references": [
+        "$XSAPPNAME.WPMApp_Employee",
+        "$XSAPPNAME.WPMApp_EmployeeManager"
+      ]
+    },
+    {
+      "name": "WPMApp_Employee",
+      "description": "User of the Workplace Management application",
+      "role-template-references": [
+        "$XSAPPNAME.WPMApp_Employee"
+      ]
+    }
+  ],
+  "oauth2-configuration": {
+    "token-validity": 3600,
+    "redirect-uris": [
+      "https://*.hana.ondemand.com/**",
+      "https://*.applicationstudio.cloud.sap/**"
+    ]
+  }
+}

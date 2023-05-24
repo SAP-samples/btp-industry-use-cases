@@ -1,0 +1,12 @@
+---
+applications:
+- name: sentiment-analysis
+  memory: 128M
+  disk_quota: 256M
+  instances: 1
+  routes:
+  - route: sentiment-analysis-biagi-dev.cfapps.eu11.hana.ondemand.com
+  buildpack: https://github.com/cloudfoundry/python-buildpack.git
+  health-check-type: http
+  health-check-http-endpoint: /
+

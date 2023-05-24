@@ -1,0 +1,15 @@
+@server = http://localhost:4004
+
+##
+# POST OPERRATIONS
+##
+
+### Create New Project
+POST {{server}}/int-ticket/handleMessage
+Content-Type: application/json
+
+{ 
+    "message" : {
+        "text" : "I'm extremely happy with the service level I'm getting from your store. Thank you!"
+    }
+}

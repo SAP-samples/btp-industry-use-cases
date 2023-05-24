@@ -1,0 +1,1130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Graph.xml">
+        <edmx:Include Alias="Graph" Namespace="com.sap.vocabularies.Graph.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="FDTAppService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Employee" EntityType="FDTAppService.Employee">
+                    <NavigationPropertyBinding Path="history" Target="DriveHistory"/>
+                </EntitySet>
+                <EntitySet Name="Vehicle" EntityType="FDTAppService.Vehicle"/>
+                <EntitySet Name="VehicleDrive" EntityType="FDTAppService.VehicleDrive"/>
+                <EntitySet Name="DriveHistory" EntityType="FDTAppService.DriveHistory">
+                    <NavigationPropertyBinding Path="driver" Target="Employee"/>
+                    <NavigationPropertyBinding Path="vehicle" Target="VehicleDrive"/>
+                </EntitySet>
+            </EntityContainer>
+            <EntityType Name="Employee">
+                <Key>
+                    <PropertyRef Name="userId"/>
+                </Key>
+                <Property Name="userId" Type="Edm.String" MaxLength="100" Nullable="false"/>
+                <Property Name="defaultFullName" Type="Edm.String"/>
+                <Property Name="department" Type="Edm.String" MaxLength="128"/>
+                <Property Name="division" Type="Edm.String" MaxLength="128"/>
+                <Property Name="email" Type="Edm.String"/>
+                <Property Name="firstName" Type="Edm.String" MaxLength="128"/>
+                <Property Name="lastName" Type="Edm.String" MaxLength="128"/>
+                <Property Name="title" Type="Edm.String" MaxLength="255"/>
+                <NavigationProperty Name="history" Type="Collection(FDTAppService.DriveHistory)" Partner="driver"/>
+            </EntityType>
+            <EntityType Name="Vehicle">
+                <Key>
+                    <PropertyRef Name="company"/>
+                    <PropertyRef Name="code"/>
+                    <PropertyRef Name="asset"/>
+                </Key>
+                <Property Name="company" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="code" Type="Edm.String" MaxLength="12" Nullable="false"/>
+                <Property Name="asset" Type="Edm.String" MaxLength="4" Nullable="false"/>
+                <Property Name="className" Type="Edm.String" MaxLength="20"/>
+                <Property Name="name" Type="Edm.String" MaxLength="50"/>
+                <Property Name="licensePlate" Type="Edm.String" MaxLength="15"/>
+            </EntityType>
+            <EntityType Name="VehicleDrive">
+                <Key>
+                    <PropertyRef Name="code"/>
+                </Key>
+                <Property Name="code" Type="Edm.String" MaxLength="12" Nullable="false"/>
+                <Property Name="name" Type="Edm.String" MaxLength="50"/>
+                <Property Name="licensePlate" Type="Edm.String" MaxLength="15"/>
+            </EntityType>
+            <EntityType Name="DriveHistory">
+                <Key>
+                    <PropertyRef Name="driver_userId"/>
+                    <PropertyRef Name="startDateTime"/>
+                    <PropertyRef Name="endDateTime"/>
+                </Key>
+                <NavigationProperty Name="driver" Type="FDTAppService.Employee" Partner="history">
+                    <ReferentialConstraint Property="driver_userId" ReferencedProperty="userId"/>
+                </NavigationProperty>
+                <Property Name="driver_userId" Type="Edm.String" MaxLength="100" Nullable="false"/>
+                <Property Name="startDateTime" Type="Edm.DateTimeOffset" Nullable="false"/>
+                <Property Name="endDateTime" Type="Edm.DateTimeOffset" Nullable="false"/>
+                <NavigationProperty Name="vehicle" Type="FDTAppService.VehicleDrive">
+                    <ReferentialConstraint Property="vehicle_code" ReferencedProperty="code"/>
+                </NavigationProperty>
+                <Property Name="vehicle_code" Type="Edm.String" MaxLength="12"/>
+                <Property Name="distance" Type="Edm.Int32"/>
+                <Property Name="fuelConsumption" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="maxRPM" Type="Edm.Int32"/>
+                <Property Name="maxSpeed" Type="Edm.Int32"/>
+                <Property Name="nbHarshBraking" Type="Edm.Int32"/>
+                <Property Name="nbHarshCornering" Type="Edm.Int32"/>
+                <Property Name="nbRapidAcceleration" Type="Edm.Int32"/>
+                <Property Name="nbTailGating" Type="Edm.Int32"/>
+                <Property Name="nbInfoTainmentUsageWhileDriving" Type="Edm.Int32"/>
+            </EntityType>
+            <Annotations Target="FDTAppService.Employee">
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="defaultFullName"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="defaultFullName"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="title"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="email"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="division"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="department"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Driver"/>
+                        <PropertyValue Property="TypeNamePlural" String="Drivers"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="defaultFullName"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="title"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="General">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="email"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="division"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="department"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="General"/>
+                            <PropertyValue Property="Label" String="General"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#General"/>
+                        </Record>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="History"/>
+                            <PropertyValue Property="Label" String="Drive History"/>
+                            <PropertyValue Property="Target" AnnotationPath="history/@UI.LineItem#History"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>firstName</PropertyPath>
+                        <PropertyPath>lastName</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="Graph.CompositionRoot" Bool="true"/>
+                <Annotation Term="Common.Label" String="User"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.EntityContainer/Employee">
+                <Annotation Term="Capabilities.SearchRestrictions">
+                    <Record Type="Capabilities.SearchRestrictionsType">
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.SortRestrictions">
+                    <Record Type="Capabilities.SortRestrictionsType">
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>addressLine1</PropertyPath>
+                                <PropertyPath>addressLine2</PropertyPath>
+                                <PropertyPath>addressLine3</PropertyPath>
+                                <PropertyPath>benchStrength</PropertyPath>
+                                <PropertyPath>bonusBudgetAmount</PropertyPath>
+                                <PropertyPath>bonusTarget</PropertyPath>
+                                <PropertyPath>businessPhone</PropertyPath>
+                                <PropertyPath>businessSegment</PropertyPath>
+                                <PropertyPath>cellPhone</PropertyPath>
+                                <PropertyPath>citizenship</PropertyPath>
+                                <PropertyPath>city</PropertyPath>
+                                <PropertyPath>companyExitDate</PropertyPath>
+                                <PropertyPath>compensationBonusEligible</PropertyPath>
+                                <PropertyPath>compensationEligible</PropertyPath>
+                                <PropertyPath>compensationReadOnly</PropertyPath>
+                                <PropertyPath>compensationSalaryEligible</PropertyPath>
+                                <PropertyPath>compensationSalaryRateType</PropertyPath>
+                                <PropertyPath>compensationSalaryRateUnits</PropertyPath>
+                                <PropertyPath>compensationStockEligible</PropertyPath>
+                                <PropertyPath>competency</PropertyPath>
+                                <PropertyPath>country</PropertyPath>
+                                <PropertyPath>criticalTalentComments</PropertyPath>
+                                <PropertyPath>custom01</PropertyPath>
+                                <PropertyPath>custom02</PropertyPath>
+                                <PropertyPath>custom03</PropertyPath>
+                                <PropertyPath>custom04</PropertyPath>
+                                <PropertyPath>custom05</PropertyPath>
+                                <PropertyPath>custom06</PropertyPath>
+                                <PropertyPath>custom07</PropertyPath>
+                                <PropertyPath>custom08</PropertyPath>
+                                <PropertyPath>custom09</PropertyPath>
+                                <PropertyPath>custom10</PropertyPath>
+                                <PropertyPath>custom11</PropertyPath>
+                                <PropertyPath>custom12</PropertyPath>
+                                <PropertyPath>custom13</PropertyPath>
+                                <PropertyPath>custom14</PropertyPath>
+                                <PropertyPath>custom15</PropertyPath>
+                                <PropertyPath>dateOfBirth</PropertyPath>
+                                <PropertyPath>dateOfCurrentPosition</PropertyPath>
+                                <PropertyPath>dateOfPosition</PropertyPath>
+                                <PropertyPath>defaultFullName</PropertyPath>
+                                <PropertyPath>defaultLocale</PropertyPath>
+                                <PropertyPath>email</PropertyPath>
+                                <PropertyPath>empId</PropertyPath>
+                                <PropertyPath>employeeClass</PropertyPath>
+                                <PropertyPath>ethnicity</PropertyPath>
+                                <PropertyPath>fax</PropertyPath>
+                                <PropertyPath>finalJobCode</PropertyPath>
+                                <PropertyPath>finalJobFamily</PropertyPath>
+                                <PropertyPath>finalJobRole</PropertyPath>
+                                <PropertyPath>futureLeader</PropertyPath>
+                                <PropertyPath>gender</PropertyPath>
+                                <PropertyPath>hireDate</PropertyPath>
+                                <PropertyPath>homePhone</PropertyPath>
+                                <PropertyPath>impactOfLoss</PropertyPath>
+                                <PropertyPath>impactOfLossComments</PropertyPath>
+                                <PropertyPath>isPrimaryAssignment</PropertyPath>
+                                <PropertyPath>issueComments</PropertyPath>
+                                <PropertyPath>jobFamily</PropertyPath>
+                                <PropertyPath>jobLevel</PropertyPath>
+                                <PropertyPath>jobRole</PropertyPath>
+                                <PropertyPath>jobTitle</PropertyPath>
+                                <PropertyPath>keyPosition</PropertyPath>
+                                <PropertyPath>lastReviewDate</PropertyPath>
+                                <PropertyPath>level</PropertyPath>
+                                <PropertyPath>localCurrencyCode</PropertyPath>
+                                <PropertyPath>lumpsum2Target</PropertyPath>
+                                <PropertyPath>lumpsumTarget</PropertyPath>
+                                <PropertyPath>married</PropertyPath>
+                                <PropertyPath>matrix1Label</PropertyPath>
+                                <PropertyPath>matrix2Label</PropertyPath>
+                                <PropertyPath>matrixManaged</PropertyPath>
+                                <PropertyPath>meritEffectiveDate</PropertyPath>
+                                <PropertyPath>meritTarget</PropertyPath>
+                                <PropertyPath>mi</PropertyPath>
+                                <PropertyPath>minority</PropertyPath>
+                                <PropertyPath>nationality</PropertyPath>
+                                <PropertyPath>newToPosition</PropertyPath>
+                                <PropertyPath>nickname</PropertyPath>
+                                <PropertyPath>objective</PropertyPath>
+                                <PropertyPath>onboardingId</PropertyPath>
+                                <PropertyPath>origHireDate</PropertyPath>
+                                <PropertyPath>password</PropertyPath>
+                                <PropertyPath>payGrade</PropertyPath>
+                                <PropertyPath>performance</PropertyPath>
+                                <PropertyPath>potential</PropertyPath>
+                                <PropertyPath>promotionAmount</PropertyPath>
+                                <PropertyPath>raiseProrating</PropertyPath>
+                                <PropertyPath>reasonForLeaving</PropertyPath>
+                                <PropertyPath>reloComments</PropertyPath>
+                                <PropertyPath>reloLocation</PropertyPath>
+                                <PropertyPath>reloWilling</PropertyPath>
+                                <PropertyPath>reviewFreq</PropertyPath>
+                                <PropertyPath>riskOfLoss</PropertyPath>
+                                <PropertyPath>salary</PropertyPath>
+                                <PropertyPath>salaryBudgetExtra2Percentage</PropertyPath>
+                                <PropertyPath>salaryBudgetExtraPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetFinalSalaryPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetLumpsumPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetMeritPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetPromotionPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetTotalRaisePercentage</PropertyPath>
+                                <PropertyPath>salaryLocal</PropertyPath>
+                                <PropertyPath>salaryProrating</PropertyPath>
+                                <PropertyPath>salutation</PropertyPath>
+                                <PropertyPath>seatingChart</PropertyPath>
+                                <PropertyPath>serviceDate</PropertyPath>
+                                <PropertyPath>ssn</PropertyPath>
+                                <PropertyPath>state</PropertyPath>
+                                <PropertyPath>stockBudgetOptionAmount</PropertyPath>
+                                <PropertyPath>stockBudgetOther1Amount</PropertyPath>
+                                <PropertyPath>stockBudgetOther2Amount</PropertyPath>
+                                <PropertyPath>stockBudgetOther3Amount</PropertyPath>
+                                <PropertyPath>stockBudgetStockAmount</PropertyPath>
+                                <PropertyPath>stockBudgetUnitAmount</PropertyPath>
+                                <PropertyPath>suffix</PropertyPath>
+                                <PropertyPath>sysCostOfSource</PropertyPath>
+                                <PropertyPath>sysSource</PropertyPath>
+                                <PropertyPath>sysStartingSalary</PropertyPath>
+                                <PropertyPath>teamMembersSize</PropertyPath>
+                                <PropertyPath>timeZone</PropertyPath>
+                                <PropertyPath>title</PropertyPath>
+                                <PropertyPath>totalTeamSize</PropertyPath>
+                                <PropertyPath>veteranDisabled</PropertyPath>
+                                <PropertyPath>veteranMedal</PropertyPath>
+                                <PropertyPath>veteranProtected</PropertyPath>
+                                <PropertyPath>veteranSeparated</PropertyPath>
+                                <PropertyPath>zipCode</PropertyPath>
+                                <PropertyPath>approverOfAdvanceNav</PropertyPath>
+                                <PropertyPath>approverOfAdvanceNav_1</PropertyPath>
+                                <PropertyPath>assignedAddSupervisorOfApprenticeNav</PropertyPath>
+                                <PropertyPath>assignedAddSupervisorOfApprenticeNav_1</PropertyPath>
+                                <PropertyPath>assigneeUserIdOfDomainEventAlertNav</PropertyPath>
+                                <PropertyPath>assigneeUserIdOfDomainEventAlertNav_1</PropertyPath>
+                                <PropertyPath>auditUserSysIdOfOneTimeDeductionNav</PropertyPath>
+                                <PropertyPath>auditUserSysIdOfOneTimeDeductionNav_1</PropertyPath>
+                                <PropertyPath>budgetHolderIdOfSpotAwardNav</PropertyPath>
+                                <PropertyPath>budgetHolderIdOfSpotAwardNav_1</PropertyPath>
+                                <PropertyPath>codeOfRightToReturnNav</PropertyPath>
+                                <PropertyPath>codeOfRightToReturnNav_1</PropertyPath>
+                                <PropertyPath>competencyRatingNav</PropertyPath>
+                                <PropertyPath>concurrentUserOfOnboardingCandidateInfoNav</PropertyPath>
+                                <PropertyPath>concurrentUserOfOnboardingCandidateInfoNav_1</PropertyPath>
+                                <PropertyPath>contactEmployeeIdOfBenefitContactNav</PropertyPath>
+                                <PropertyPath>contactEmployeeIdOfBenefitContactNav_1</PropertyPath>
+                                <PropertyPath>costCenterManagerOfFOCostCenterNav</PropertyPath>
+                                <PropertyPath>costCenterManagerOfFOCostCenterNav_1</PropertyPath>
+                                <PropertyPath>cust_attendGrievanceCommOfcust_grievancesNav</PropertyPath>
+                                <PropertyPath>cust_attendGrievanceCommOfcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>cust_heardGrievanceOfcust_grievancesNav</PropertyPath>
+                                <PropertyPath>cust_heardGrievanceOfcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>cust_mngrRep1Ofcust_grievancesNav</PropertyPath>
+                                <PropertyPath>cust_mngrRep1Ofcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>cust_mngrRep2Ofcust_grievancesNav</PropertyPath>
+                                <PropertyPath>cust_mngrRep2Ofcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>cust_unionRep1Ofcust_grievancesNav</PropertyPath>
+                                <PropertyPath>cust_unionRep1Ofcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>cust_unionRep2Ofcust_grievancesNav</PropertyPath>
+                                <PropertyPath>cust_unionRep2Ofcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>cust_unionRepOfcust_ProgressiveDisciplinaryActionNav</PropertyPath>
+                                <PropertyPath>cust_unionRepOfcust_ProgressiveDisciplinaryActionNav_1</PropertyPath>
+                                <PropertyPath>customReports</PropertyPath>
+                                <PropertyPath>decentralTrainerUserIdOfDepartmentApprenticeDetailNav</PropertyPath>
+                                <PropertyPath>decentralTrainerUserIdOfDepartmentApprenticeDetailNav_1</PropertyPath>
+                                <PropertyPath>delegateeOfAutoDelegateDetailNav</PropertyPath>
+                                <PropertyPath>delegateeOfAutoDelegateDetailNav_1</PropertyPath>
+                                <PropertyPath>delegatorOfAutoDelegateConfigNav</PropertyPath>
+                                <PropertyPath>delegatorOfAutoDelegateConfigNav_1</PropertyPath>
+                                <PropertyPath>directReports</PropertyPath>
+                                <PropertyPath>employmentIdentityOfDRTMPurgeFreezeNav</PropertyPath>
+                                <PropertyPath>employmentIdentityOfDRTMPurgeFreezeNav_1</PropertyPath>
+                                <PropertyPath>eventPublishedByOfBenefitEventProcessingLogNav</PropertyPath>
+                                <PropertyPath>eventPublishedByOfBenefitEventProcessingLogNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfSkillProfileNav</PropertyPath>
+                                <PropertyPath>externalCodeOfSkillProfileNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_CommutingAllowanceNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_CommutingAllowanceNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_EmpLetterRequestNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_EmpLetterRequestNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_ProgressiveDisciplinaryActionNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_ProgressiveDisciplinaryActionNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_RecruitInterviewJPNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_RecruitInterviewJPNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_auth_signNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_auth_signNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_counselling_reqNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_counselling_reqNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_grievancesNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_grievancesNav_1</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_voluntarySeparationRequestNav</PropertyPath>
+                                <PropertyPath>externalCodeOfcust_voluntarySeparationRequestNav_1</PropertyPath>
+                                <PropertyPath>headOfUnitOfFOBusinessUnitNav</PropertyPath>
+                                <PropertyPath>headOfUnitOfFOBusinessUnitNav_1</PropertyPath>
+                                <PropertyPath>headOfUnitOfFODepartmentNav</PropertyPath>
+                                <PropertyPath>headOfUnitOfFODepartmentNav_1</PropertyPath>
+                                <PropertyPath>headOfUnitOfFODivisionNav</PropertyPath>
+                                <PropertyPath>headOfUnitOfFODivisionNav_1</PropertyPath>
+                                <PropertyPath>hrManagerIdOfOnboardingCandidateInfoNav</PropertyPath>
+                                <PropertyPath>hrManagerIdOfOnboardingCandidateInfoNav_1</PropertyPath>
+                                <PropertyPath>hrReports</PropertyPath>
+                                <PropertyPath>incumbentOfPositionNav</PropertyPath>
+                                <PropertyPath>incumbentOfPositionNav_1</PropertyPath>
+                                <PropertyPath>managerIdOfOnboardingCandidateInfoNav</PropertyPath>
+                                <PropertyPath>managerIdOfOnboardingCandidateInfoNav_1</PropertyPath>
+                                <PropertyPath>matrixReports</PropertyPath>
+                                <PropertyPath>menteeOfMentoringProgramMatchedParticipantNav</PropertyPath>
+                                <PropertyPath>menteeOfMentoringProgramMatchedParticipantNav_1</PropertyPath>
+                                <PropertyPath>mentorOfMentoringProgramMatchedParticipantNav</PropertyPath>
+                                <PropertyPath>mentorOfMentoringProgramMatchedParticipantNav_1</PropertyPath>
+                                <PropertyPath>nominatorIdOfSpotAwardNav</PropertyPath>
+                                <PropertyPath>nominatorIdOfSpotAwardNav_1</PropertyPath>
+                                <PropertyPath>ownerOfTalentPoolNav</PropertyPath>
+                                <PropertyPath>ownerOfTalentPoolNav_1</PropertyPath>
+                                <PropertyPath>participantUserId1OfOnboardingMeetingEventNav</PropertyPath>
+                                <PropertyPath>participantUserId1OfOnboardingMeetingEventNav_1</PropertyPath>
+                                <PropertyPath>participantUserId2OfOnboardingMeetingEventNav</PropertyPath>
+                                <PropertyPath>participantUserId2OfOnboardingMeetingEventNav_1</PropertyPath>
+                                <PropertyPath>participantUserId3OfOnboardingMeetingEventNav</PropertyPath>
+                                <PropertyPath>participantUserId3OfOnboardingMeetingEventNav_1</PropertyPath>
+                                <PropertyPath>participantUserId4OfOnboardingMeetingEventNav</PropertyPath>
+                                <PropertyPath>participantUserId4OfOnboardingMeetingEventNav_1</PropertyPath>
+                                <PropertyPath>participantUserId5OfOnboardingMeetingEventNav</PropertyPath>
+                                <PropertyPath>participantUserId5OfOnboardingMeetingEventNav_1</PropertyPath>
+                                <PropertyPath>passiveUserOfMentoringProgramMatchedParticipantNav</PropertyPath>
+                                <PropertyPath>passiveUserOfMentoringProgramMatchedParticipantNav_1</PropertyPath>
+                                <PropertyPath>personKeyNav</PropertyPath>
+                                <PropertyPath>processorIdOfOnboardingCandidateInfoNav</PropertyPath>
+                                <PropertyPath>processorIdOfOnboardingCandidateInfoNav_1</PropertyPath>
+                                <PropertyPath>secondReports</PropertyPath>
+                                <PropertyPath>subjectUserIdOfAchievementNav</PropertyPath>
+                                <PropertyPath>subjectUserIdOfAchievementNav_1</PropertyPath>
+                                <PropertyPath>subjectUserIdOfActivityNav</PropertyPath>
+                                <PropertyPath>subjectUserIdOfActivityNav_1</PropertyPath>
+                                <PropertyPath>targetIdOfTimeManagementAlertNav</PropertyPath>
+                                <PropertyPath>targetIdOfTimeManagementAlertNav_1</PropertyPath>
+                                <PropertyPath>userIdOfAccrualCalculationBaseNav</PropertyPath>
+                                <PropertyPath>userIdOfAccrualCalculationBaseNav_1</PropertyPath>
+                                <PropertyPath>userIdOfBudgetGroupNav</PropertyPath>
+                                <PropertyPath>userIdOfBudgetGroupNav_1</PropertyPath>
+                                <PropertyPath>userIdOfDataReplicationProxyNav</PropertyPath>
+                                <PropertyPath>userIdOfDataReplicationProxyNav_1</PropertyPath>
+                                <PropertyPath>userIdOfEmployeePayrollRunResultsNav</PropertyPath>
+                                <PropertyPath>userIdOfEmployeePayrollRunResultsNav_1</PropertyPath>
+                                <PropertyPath>userIdOfEmployeeTimeGroupNav</PropertyPath>
+                                <PropertyPath>userIdOfEmployeeTimeGroupNav_1</PropertyPath>
+                                <PropertyPath>userIdOfEmployeeTimeNav</PropertyPath>
+                                <PropertyPath>userIdOfEmployeeTimeNav_1</PropertyPath>
+                                <PropertyPath>userIdOfEmployeeTimeSheetNav</PropertyPath>
+                                <PropertyPath>userIdOfEmployeeTimeSheetNav_1</PropertyPath>
+                                <PropertyPath>userIdOfExternalTimeDataNav</PropertyPath>
+                                <PropertyPath>userIdOfExternalTimeDataNav_1</PropertyPath>
+                                <PropertyPath>userIdOfExternalTimeRecordNav</PropertyPath>
+                                <PropertyPath>userIdOfExternalTimeRecordNav_1</PropertyPath>
+                                <PropertyPath>userIdOfHRISChangeLogDataReplicationNav</PropertyPath>
+                                <PropertyPath>userIdOfHRISChangeLogDataReplicationNav_1</PropertyPath>
+                                <PropertyPath>userIdOfOnboardingCandidateInfoNav</PropertyPath>
+                                <PropertyPath>userIdOfOnboardingCandidateInfoNav_1</PropertyPath>
+                                <PropertyPath>userIdOfPositionRightToReturnNav</PropertyPath>
+                                <PropertyPath>userIdOfPositionRightToReturnNav_1</PropertyPath>
+                                <PropertyPath>userIdOfSpotAwardBudgetNav</PropertyPath>
+                                <PropertyPath>userIdOfSpotAwardBudgetNav_1</PropertyPath>
+                                <PropertyPath>userIdOfSpotAwardNav</PropertyPath>
+                                <PropertyPath>userIdOfSpotAwardNav_1</PropertyPath>
+                                <PropertyPath>userIdOfSpotAwardRedemptionNav</PropertyPath>
+                                <PropertyPath>userIdOfSpotAwardRedemptionNav_1</PropertyPath>
+                                <PropertyPath>userIdOfTemporaryTimeInformationNav</PropertyPath>
+                                <PropertyPath>userIdOfTemporaryTimeInformationNav_1</PropertyPath>
+                                <PropertyPath>userIdOfTimeAccountNav</PropertyPath>
+                                <PropertyPath>userIdOfTimeAccountNav_1</PropertyPath>
+                                <PropertyPath>userIdOfTimeAccountSnapshotNav</PropertyPath>
+                                <PropertyPath>userIdOfTimeAccountSnapshotNav_1</PropertyPath>
+                                <PropertyPath>userIdOfTimeCollectorNav</PropertyPath>
+                                <PropertyPath>userIdOfTimeCollectorNav_1</PropertyPath>
+                                <PropertyPath>userIdOfWorkScheduleNav</PropertyPath>
+                                <PropertyPath>userIdOfWorkScheduleNav_1</PropertyPath>
+                                <PropertyPath>userOfApprenticeNav</PropertyPath>
+                                <PropertyPath>userOfApprenticeNav_1</PropertyPath>
+                                <PropertyPath>userPermissionsNav</PropertyPath>
+                                <PropertyPath>userSysIdCopyOfItDeclarationNav</PropertyPath>
+                                <PropertyPath>userSysIdCopyOfItDeclarationNav_1</PropertyPath>
+                                <PropertyPath>userSysIdOfAdvancesAccumulationNav</PropertyPath>
+                                <PropertyPath>userSysIdOfAdvancesAccumulationNav_1</PropertyPath>
+                                <PropertyPath>userSysIdOfItDeclarationNav</PropertyPath>
+                                <PropertyPath>userSysIdOfItDeclarationNav_1</PropertyPath>
+                                <PropertyPath>userSysIdOfNonRecurringPaymentNav</PropertyPath>
+                                <PropertyPath>userSysIdOfNonRecurringPaymentNav_1</PropertyPath>
+                                <PropertyPath>userSysIdOfOneTimeDeductionNav</PropertyPath>
+                                <PropertyPath>userSysIdOfOneTimeDeductionNav_1</PropertyPath>
+                                <PropertyPath>userSysIdOfRecurringDeductionNav</PropertyPath>
+                                <PropertyPath>userSysIdOfRecurringDeductionNav_1</PropertyPath>
+                                <PropertyPath>userSysIdOfWorkOrderNav</PropertyPath>
+                                <PropertyPath>userSysIdOfWorkOrderNav_1</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmpCostDistributionNav</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmpCostDistributionNav_1</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmployeeDataReplicationConfirmationNav</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmployeeDataReplicationConfirmationNav_1</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmployeeDataReplicationElementNav</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmployeeDataReplicationElementNav_1</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmployeeDataReplicationNotificationNav</PropertyPath>
+                                <PropertyPath>usersSysIdOfEmployeeDataReplicationNotificationNav_1</PropertyPath>
+                                <PropertyPath>usersSysIdOfHireDateChangeNav</PropertyPath>
+                                <PropertyPath>usersSysIdOfHireDateChangeNav_1</PropertyPath>
+                                <PropertyPath>usersSysIdOfSecondaryAssignmentsItemNav</PropertyPath>
+                                <PropertyPath>usersSysIdOfSecondaryAssignmentsItemNav_1</PropertyPath>
+                                <PropertyPath>workOrderOwnerIdOfWorkOrderNav</PropertyPath>
+                                <PropertyPath>workOrderOwnerIdOfWorkOrderNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfACAReportingInformationNav</PropertyPath>
+                                <PropertyPath>workerIdOfACAReportingInformationNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitClaimAccumulationNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitClaimAccumulationNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEmployeeClaimNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEmployeeClaimNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEmployeeLifeEventDeclarationFormNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEmployeeLifeEventDeclarationFormNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEmployeeOptoutRequestsNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEmployeeOptoutRequestsNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEnrollmentGroupNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEnrollmentGroupNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEnrollmentNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEnrollmentNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEventProcessingLogNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitEventProcessingLogNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitProgramEnrollmentNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitProgramEnrollmentNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitsExceptionNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitsExceptionNav_1</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitsIntegrationRecurringInfoNav</PropertyPath>
+                                <PropertyPath>workerIdOfBenefitsIntegrationRecurringInfoNav_1</PropertyPath>
+                                <PropertyPath>workerOfPaymentInformationV3Nav</PropertyPath>
+                                <PropertyPath>workerOfPaymentInformationV3Nav_1</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.FilterRestrictions">
+                    <Record Type="Capabilities.FilterRestrictionsType">
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>addressLine1</PropertyPath>
+                                <PropertyPath>addressLine2</PropertyPath>
+                                <PropertyPath>addressLine3</PropertyPath>
+                                <PropertyPath>benchStrength</PropertyPath>
+                                <PropertyPath>bonusBudgetAmount</PropertyPath>
+                                <PropertyPath>bonusTarget</PropertyPath>
+                                <PropertyPath>businessPhone</PropertyPath>
+                                <PropertyPath>businessSegment</PropertyPath>
+                                <PropertyPath>cellPhone</PropertyPath>
+                                <PropertyPath>citizenship</PropertyPath>
+                                <PropertyPath>city</PropertyPath>
+                                <PropertyPath>companyExitDate</PropertyPath>
+                                <PropertyPath>compensationBonusEligible</PropertyPath>
+                                <PropertyPath>compensationEligible</PropertyPath>
+                                <PropertyPath>compensationReadOnly</PropertyPath>
+                                <PropertyPath>compensationSalaryEligible</PropertyPath>
+                                <PropertyPath>compensationSalaryRateType</PropertyPath>
+                                <PropertyPath>compensationSalaryRateUnits</PropertyPath>
+                                <PropertyPath>compensationStockEligible</PropertyPath>
+                                <PropertyPath>competency</PropertyPath>
+                                <PropertyPath>country</PropertyPath>
+                                <PropertyPath>criticalTalentComments</PropertyPath>
+                                <PropertyPath>custom01</PropertyPath>
+                                <PropertyPath>custom02</PropertyPath>
+                                <PropertyPath>custom03</PropertyPath>
+                                <PropertyPath>custom04</PropertyPath>
+                                <PropertyPath>custom05</PropertyPath>
+                                <PropertyPath>custom06</PropertyPath>
+                                <PropertyPath>custom07</PropertyPath>
+                                <PropertyPath>custom08</PropertyPath>
+                                <PropertyPath>custom09</PropertyPath>
+                                <PropertyPath>custom10</PropertyPath>
+                                <PropertyPath>custom11</PropertyPath>
+                                <PropertyPath>custom12</PropertyPath>
+                                <PropertyPath>custom13</PropertyPath>
+                                <PropertyPath>custom14</PropertyPath>
+                                <PropertyPath>custom15</PropertyPath>
+                                <PropertyPath>dateOfBirth</PropertyPath>
+                                <PropertyPath>dateOfCurrentPosition</PropertyPath>
+                                <PropertyPath>dateOfPosition</PropertyPath>
+                                <PropertyPath>defaultFullName</PropertyPath>
+                                <PropertyPath>defaultLocale</PropertyPath>
+                                <PropertyPath>email</PropertyPath>
+                                <PropertyPath>empId</PropertyPath>
+                                <PropertyPath>employeeClass</PropertyPath>
+                                <PropertyPath>ethnicity</PropertyPath>
+                                <PropertyPath>fax</PropertyPath>
+                                <PropertyPath>finalJobCode</PropertyPath>
+                                <PropertyPath>finalJobFamily</PropertyPath>
+                                <PropertyPath>finalJobRole</PropertyPath>
+                                <PropertyPath>futureLeader</PropertyPath>
+                                <PropertyPath>gender</PropertyPath>
+                                <PropertyPath>hireDate</PropertyPath>
+                                <PropertyPath>homePhone</PropertyPath>
+                                <PropertyPath>impactOfLoss</PropertyPath>
+                                <PropertyPath>impactOfLossComments</PropertyPath>
+                                <PropertyPath>issueComments</PropertyPath>
+                                <PropertyPath>jobFamily</PropertyPath>
+                                <PropertyPath>jobLevel</PropertyPath>
+                                <PropertyPath>jobRole</PropertyPath>
+                                <PropertyPath>jobTitle</PropertyPath>
+                                <PropertyPath>keyPosition</PropertyPath>
+                                <PropertyPath>lastReviewDate</PropertyPath>
+                                <PropertyPath>level</PropertyPath>
+                                <PropertyPath>localCurrencyCode</PropertyPath>
+                                <PropertyPath>lumpsum2Target</PropertyPath>
+                                <PropertyPath>lumpsumTarget</PropertyPath>
+                                <PropertyPath>married</PropertyPath>
+                                <PropertyPath>matrix1Label</PropertyPath>
+                                <PropertyPath>matrix2Label</PropertyPath>
+                                <PropertyPath>matrixManaged</PropertyPath>
+                                <PropertyPath>meritEffectiveDate</PropertyPath>
+                                <PropertyPath>meritTarget</PropertyPath>
+                                <PropertyPath>mi</PropertyPath>
+                                <PropertyPath>minority</PropertyPath>
+                                <PropertyPath>nationality</PropertyPath>
+                                <PropertyPath>newToPosition</PropertyPath>
+                                <PropertyPath>nickname</PropertyPath>
+                                <PropertyPath>objective</PropertyPath>
+                                <PropertyPath>onboardingId</PropertyPath>
+                                <PropertyPath>origHireDate</PropertyPath>
+                                <PropertyPath>password</PropertyPath>
+                                <PropertyPath>payGrade</PropertyPath>
+                                <PropertyPath>performance</PropertyPath>
+                                <PropertyPath>potential</PropertyPath>
+                                <PropertyPath>promotionAmount</PropertyPath>
+                                <PropertyPath>raiseProrating</PropertyPath>
+                                <PropertyPath>reasonForLeaving</PropertyPath>
+                                <PropertyPath>reloComments</PropertyPath>
+                                <PropertyPath>reloLocation</PropertyPath>
+                                <PropertyPath>reloWilling</PropertyPath>
+                                <PropertyPath>reviewFreq</PropertyPath>
+                                <PropertyPath>riskOfLoss</PropertyPath>
+                                <PropertyPath>salary</PropertyPath>
+                                <PropertyPath>salaryBudgetExtra2Percentage</PropertyPath>
+                                <PropertyPath>salaryBudgetExtraPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetFinalSalaryPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetLumpsumPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetMeritPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetPromotionPercentage</PropertyPath>
+                                <PropertyPath>salaryBudgetTotalRaisePercentage</PropertyPath>
+                                <PropertyPath>salaryLocal</PropertyPath>
+                                <PropertyPath>salaryProrating</PropertyPath>
+                                <PropertyPath>salutation</PropertyPath>
+                                <PropertyPath>seatingChart</PropertyPath>
+                                <PropertyPath>serviceDate</PropertyPath>
+                                <PropertyPath>ssn</PropertyPath>
+                                <PropertyPath>state</PropertyPath>
+                                <PropertyPath>stockBudgetOptionAmount</PropertyPath>
+                                <PropertyPath>stockBudgetOther1Amount</PropertyPath>
+                                <PropertyPath>stockBudgetOther2Amount</PropertyPath>
+                                <PropertyPath>stockBudgetOther3Amount</PropertyPath>
+                                <PropertyPath>stockBudgetStockAmount</PropertyPath>
+                                <PropertyPath>stockBudgetUnitAmount</PropertyPath>
+                                <PropertyPath>suffix</PropertyPath>
+                                <PropertyPath>sysCostOfSource</PropertyPath>
+                                <PropertyPath>sysSource</PropertyPath>
+                                <PropertyPath>sysStartingSalary</PropertyPath>
+                                <PropertyPath>teamMembersSize</PropertyPath>
+                                <PropertyPath>timeZone</PropertyPath>
+                                <PropertyPath>title</PropertyPath>
+                                <PropertyPath>totalTeamSize</PropertyPath>
+                                <PropertyPath>veteranDisabled</PropertyPath>
+                                <PropertyPath>veteranMedal</PropertyPath>
+                                <PropertyPath>veteranProtected</PropertyPath>
+                                <PropertyPath>veteranSeparated</PropertyPath>
+                                <PropertyPath>zipCode</PropertyPath>
+                                <PropertyPath>customReports</PropertyPath>
+                                <PropertyPath>directReports</PropertyPath>
+                                <PropertyPath>hrReports</PropertyPath>
+                                <PropertyPath>matrixReports</PropertyPath>
+                                <PropertyPath>reloWillingNav</PropertyPath>
+                                <PropertyPath>secondReports</PropertyPath>
+                                <PropertyPath>sysSourceNav</PropertyPath>
+                                <PropertyPath>userPermissionsNav</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/userId">
+                <Annotation Term="Common.Label" String="ID"/>
+                <Annotation Term="Common.Text" Path="defaultFullName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/[object Object]"/>
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/defaultFullName">
+                <Annotation Term="Common.Label" String="Name"/>
+                <Annotation Term="Core.Computed" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/department">
+                <Annotation Term="Common.Label" String="Department"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/division">
+                <Annotation Term="Common.Label" String="Division"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/email">
+                <Annotation Term="Common.Label" String="e-Mail"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/firstName">
+                <Annotation Term="Common.Label" String="First Name"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/lastName">
+                <Annotation Term="Common.Label" String="Last Name"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Employee/title">
+                <Annotation Term="Common.Label" String="Title"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle">
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="className"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="licensePlate"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Vehicle"/>
+                        <PropertyValue Property="TypeNamePlural" String="Vehicles"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="name"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="licensePlate"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="General">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="className"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="name"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="licensePlate"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="General"/>
+                            <PropertyValue Property="Label" String="General"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#General"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>name</PropertyPath>
+                        <PropertyPath>licensePlate</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Vehicles from Company 1710"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.EntityContainer/Vehicle">
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+                <Annotation Term="Capabilities.SearchRestrictions">
+                    <Record Type="Capabilities.SearchRestrictionsType">
+                        <PropertyValue Property="Searchable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle/company">
+                <Annotation Term="Common.Label" String="Company"/>
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.Description" String="The company code is an organizational unit within financial accounting."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle/code">
+                <Annotation Term="Common.Label" String="Code"/>
+                <Annotation Term="Common.Text" Path="name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.Description" String="This is the number which, together with the asset sub-number, identifies a fixed asset in Asset Accounting."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle/asset">
+                <Annotation Term="Common.Label" String="Asset"/>
+                <Annotation Term="UI.Hidden" Bool="true"/>
+                <Annotation Term="Core.Description" String="This is the number which, together with the main asset number, uniquely identifies a fixed asset in Asset Accounting. Using the asset sub-number, you can: Provide for separate management of later acquisitions to assets. Represent complex fixed assets with their component parts. In contrast to the main asset number, the asset sub-number must be numerical."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle/className">
+                <Annotation Term="Common.Label" String="Category"/>
+                <Annotation Term="Core.Description" String="Specifies the asset class."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle/name">
+                <Annotation Term="Common.Label" String="Vehicle"/>
+                <Annotation Term="Core.Description" String="Enter a name for the asset in this field."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.Vehicle/licensePlate">
+                <Annotation Term="Common.Label" String="License Plate"/>
+                <Annotation Term="Core.Description" String="You can enter the license plate number for a vehicle here. Your entry is saved as time-dependent data, so that a history is created when there is a change in the license plate number."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.VehicleDrive">
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="code"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="name"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="licensePlate"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Vehicle"/>
+                        <PropertyValue Property="TypeNamePlural" String="Vehicles"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="name"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="licensePlate"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.Label" String="Vehicles from Company 1710"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.EntityContainer/VehicleDrive">
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+                <Annotation Term="Capabilities.SearchRestrictions">
+                    <Record Type="Capabilities.SearchRestrictionsType">
+                        <PropertyValue Property="Searchable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FDTAppService.VehicleDrive/code">
+                <Annotation Term="Common.Label" String="Code"/>
+                <Annotation Term="Core.Description" String="This is the number which, together with the asset sub-number, identifies a fixed asset in Asset Accounting."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.VehicleDrive/name">
+                <Annotation Term="Common.Label" String="Vehicle"/>
+                <Annotation Term="Core.Description" String="Enter a name for the asset in this field."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.VehicleDrive/licensePlate">
+                <Annotation Term="Common.Label" String="License Plate"/>
+                <Annotation Term="Core.Description" String="You can enter the license plate number for a vehicle here. Your entry is saved as time-dependent data, so that a history is created when there is a change in the license plate number."/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory">
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+                <Annotation Term="UI.Identification">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="driver_userId"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="startDateTime"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="endDateTime"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="vehicle_code"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="vehicle/licensePlate"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="distance"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem" Qualifier="History">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="startDateTime"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="endDateTime"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="vehicle_code"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="vehicle/licensePlate"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="distance"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="fuelConsumption"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="maxRPM"/>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="maxSpeed"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="History"/>
+                        <PropertyValue Property="TypeNamePlural" String="History"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="driver_userId"/>
+                            </Record>
+                        </PropertyValue>
+                        <PropertyValue Property="Description">
+                            <Record Type="UI.DataField">
+                                <PropertyValue Property="Value" Path="vehicle_code"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="General">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="startDateTime"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="endDateTime"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="vehicle/licensePlate"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="endDateTime"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="distance"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="fuelConsumption"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="maxRPM"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="nbHarshBraking"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="nbHarshCornering"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="nbRapidAcceleration"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="nbTailGating"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Value" Path="nbInfoTainmentUsageWhileDriving"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="General"/>
+                            <PropertyValue Property="Label" String="General"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#General"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FDTAppService.EntityContainer/DriveHistory">
+                <Annotation Term="Capabilities.SearchRestrictions">
+                    <Record Type="Capabilities.SearchRestrictionsType">
+                        <PropertyValue Property="Searchable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.UpdateHidden" Bool="true"/>
+                <Annotation Term="UI.DeleteHidden" Bool="true"/>
+                <Annotation Term="UI.CreateHidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/driver">
+                <Annotation Term="Common.Label" String="Driver"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/driver_userId">
+                <Annotation Term="Common.Label" String="Driver"/>
+                <Annotation Term="Common.Text" Path="driver/defaultFullName">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/startDateTime">
+                <Annotation Term="Common.Label" String="Start"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/endDateTime">
+                <Annotation Term="Common.Label" String="End"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/vehicle">
+                <Annotation Term="Common.Label" String="Vehicle"/>
+                <Annotation Term="UI.Hidden" Bool="false"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/vehicle_code">
+                <Annotation Term="Common.Label" String="Vehicle"/>
+                <Annotation Term="Common.Text" Path="vehicle/name">
+                    <Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+                </Annotation>
+                <Annotation Term="UI.Hidden" Bool="false"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/distance">
+                <Annotation Term="Common.Label" String="Distance"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/fuelConsumption">
+                <Annotation Term="Common.Label" String="Fuel Consumption"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/maxRPM">
+                <Annotation Term="Common.Label" String="Max. RPM"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/maxSpeed">
+                <Annotation Term="Common.Label" String="Max. Speed"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/nbHarshBraking">
+                <Annotation Term="Common.Label" String="# Harsh Brakings"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/nbHarshCornering">
+                <Annotation Term="Common.Label" String="# Harsh Cornering"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/nbRapidAcceleration">
+                <Annotation Term="Common.Label" String="# Rapid Accelerations"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/nbTailGating">
+                <Annotation Term="Common.Label" String="# Tail Gatings"/>
+            </Annotations>
+            <Annotations Target="FDTAppService.DriveHistory/nbInfoTainmentUsageWhileDriving">
+                <Annotation Term="Common.Label" String="# InfoTainment While Driving"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

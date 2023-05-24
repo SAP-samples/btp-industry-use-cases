@@ -1,0 +1,4 @@
+Flask_Cors
+Flask
+vaderSentiment
+uwsgi

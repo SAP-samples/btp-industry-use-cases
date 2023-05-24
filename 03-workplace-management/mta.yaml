@@ -1,0 +1,262 @@
+_schema-version: "3.1"
+ID: wpm-app
+description: Workplace Management Application
+version: 1.0.0
+modules:
+- name: wpm-app-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: wpm-app-auth
+  - name: wpm-app-destination-service
+  - name: wpm-app-registry
+  - name: wpm-app-sm
+  - name: wpm-app-portal
+  - name: wpm-app-logging
+  - name: app-api
+    properties:
+      APP_PROTOCOL: ~{app-protocol}
+      APP_URI: ~{app-uri}
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  - name: mtx-api
+    properties:
+      mtx-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    host: ${appname}
+    memory: 512M
+    disk-quota: 1536M    
+  build-parameters:
+    builder: npm-ci
+    ignore:
+      - default-*.json
+      - .env
+      - "*node_modules*"
+      - package-lock.json
+- name: wpm-app-app
+  type: approuter.nodejs
+  path: approuter
+  build-parameters:
+    ignore:
+      - default-*.json
+      - .env
+      - "*node_modules*"
+      - package-lock.json
+  parameters:
+    memory: 256M
+    disk-quota: 1536M
+    keep-existing-routes: true
+  properties:
+    TENANT_HOST_PATTERN: '^(.*)-${default-uri}'
+    SAP_JWT_TRUST_ACL: [{ "clientid": "*", "identityzone": "sap-provisioning" }]
+    SEND_XFRAMEOPTIONS: false
+  requires:
+    - name: wpm-app-destination-service
+    - name: wpm-app-auth
+    - name: wpm-app-html5-repo-runtime
+    - name: wpm-app-portal
+    - name: wpm-app-registry
+    - name: wpm-app-logging
+    - name: srv-api
+      group: destinations
+      properties:
+        name: srv
+        url: ~{srv-url}
+        timeout: 600000
+        forwardAuthToken: true
+    - name: mtx-api
+      group: destinations
+      properties:
+        name: mtx
+        url: ~{mtx-url}
+        timeout: 600000
+  provides:
+    - name: app-api
+      properties:
+        app-protocol: ${protocol}
+        app-uri: ${default-uri}
+    - name: wpm-app-approuter-provisioning
+      properties:
+        url: ${default-url}/provisioning
+- name: wpm-app-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: wpm-app-destination-service
+    parameters:
+      content-target: true
+  - name: wpm-app_html_repo_host
+    parameters:
+      service-key:
+        name: wpm-app_html_repo_host-key
+  - name: wpm-app-auth
+    parameters:
+      service-key:
+        name: wpm-app-auth-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: wpm_app_wpm_app_html_repo_host
+          ServiceInstanceName: wpm-app-html5-app-host-service
+          ServiceKeyName: wpm-app_html_repo_host-key
+          sap.cloud.service: ${appname}
+        - Authentication: OAuth2UserTokenExchange
+          Name: wpm_app_wpm_app_auth
+          ServiceInstanceName: wpm-app-auth
+          ServiceKeyName: wpm-app-auth-key
+          sap.cloud.service: ${appname}
+        existing_destinations_policy: ignore
+  build-parameters:
+    no-source: true
+- name: wpm-app-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: wpm-app_html_repo_host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - wpmapp.zip
+      name: wpmapp
+      target-path: resources/
+    - artifacts:
+      - wpmadm.zip
+      name: wpmadm
+      target-path: resources/
+- name: wpmapp
+  type: html5
+  path: app/wpm-app
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: wpmadm
+  type: html5
+  path: app/wpm-adm
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: wpm-app-portal-deployer
+  type: com.sap.application.content
+  path: portal
+  parameters:
+    config:
+      TENANT_HOST_PATTERN: '^(.*)-${default-uri}'
+  requires:
+    - name: wpm-app-portal
+      parameters:
+        content-target: true
+        service-key:
+          name: content-deploy-key
+          config:
+            content-endpoint: developer
+    - name: wpm-app_html_repo_host
+    - name: wpm-app-auth
+resources:
+- name: wpm-app-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: xsuaa
+    service-plan: application
+    path: ./xs-security.json
+- name: wpm-app-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      init_data:
+        instance:
+          existing_destinations_policy: ignore
+          destinations:
+          - Name: wpm-app-cfapi
+            Description: CF Cloud Controller API
+            URL: ${controller-url}
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2Password
+            tokenServiceURL: ${authorization-url}/oauth/token
+            clientId: cf
+            clientSecret:
+            User: <SetValueInCockpit>
+            Password: <SetValueInCockpit>
+      version: 1.0.0
+    service: destination
+    service-name: wpm-app-destination-service
+    service-plan: lite
+- name: wpm-app-html5-repo-runtime
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: wpm-app-html5-app-runtime-service
+    service-plan: app-runtime
+- name: wpm-app_html_repo_host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: wpm-app-html5-app-host-service
+    service-plan: app-host
+- name: wpm-app-portal
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: portal
+    service-plan: standard
+- name: wpm-app-registry
+  type: org.cloudfoundry.managed-service
+  requires:
+    - name: wpm-app-auth
+    - name: mtx-api
+    - name: wpm-app-approuter-provisioning
+  parameters:
+    service: saas-registry
+    service-plan: application
+    service-name: wpm-app-registry
+    config:
+      xsappname: wpm-app
+      appName: wpm-app
+      displayName: 'Workplace Management'
+      description: 'Manage Workplaces and Bookings'
+      category: 'SaaS Multitenant Solutions'
+      appUrls:
+        getDependencies: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/dependencies
+        onSubscription: ~{mtx-api/mtx-url}/-/cds/saas-provisioning/tenant/{tenantId}
+        onSubscriptionAsync: false
+        onUnSubscriptionAsync: false
+        callbackTimeoutMillis: 300000
+- name: wpm-app-sm
+  type: org.cloudfoundry.managed-service
+  requires:
+    - name: wpm-app-auth
+  parameters:
+      service: service-manager
+      service-plan: container
+      polling_timeout_seconds: 240
+      config:
+        acquireTimeoutMillis: max
+        polling_timeout_seconds: 480
+- name: wpm-app-logging
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: application-logs
+    service-plan: lite
+parameters:
+  enable-parallel-deployments: true
+  keep-existing-routes: true
+  appname: wpm-app-biagi-dev
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm install --production
+    - npx -p @sap/cds-dk cds build --production

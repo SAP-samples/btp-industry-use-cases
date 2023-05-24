@@ -1,0 +1,1 @@
+using FDTAppService as service from '../../srv/service';

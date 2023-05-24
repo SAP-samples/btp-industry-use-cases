@@ -1,0 +1,1 @@
+using wpm.srv.WPMAdmin as service from '../../srv/admin';
