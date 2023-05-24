@@ -143,29 +143,37 @@ entity InboundCustomerMessageType {
 }
 
 /**
- * The main intents about customer message could be Product
- * Information: Customers may reach out to request information
- * about a specific appliance, such as its features,
- * specifications, and pricing. Product Review: Customers may
- * be seeking advice on which appliance would best suit their
- * needs or fit their kitchen space. Technical Support:
+ * The main intents about customer message could be 
+ * Product Information: 
+ * Customers may reach out to request information
+ * about a specific appliance, such as its features,specifications, and pricing. 
+ * Customers may be seeking advice on which appliance would best suit their
+ * needs or fit their kitchen space. 
+ * 
+ * Technical Issue:
  * Customers may need help troubleshooting issues with their
  * appliance, such as a malfunctioning part or error message.
- * Installation and Setup: Customers may need guidance on how
+ * 
+ * Delivery and Installation: Customers may need guidance on how
  * to properly install and set up their appliance, whether it's
- * a refrigerator, dishwasher, or oven. Maintenance and
- * Cleaning: Customers may have questions about how to properly
- * maintain and clean their appliance to ensure it runs
- * efficiently and lasts longer. Replacement Parts: Customers
- * may need assistance in finding and ordering replacement
+ * a refrigerator, dishwasher, or oven. 
+ * 
+ * Maintenance andn Replacement Parts: 
+ * Customers may need assistance in finding and ordering replacement
  * parts for their appliance, such as a new filter or bulb.
- * Warranty Information: Customers may need to inquire about
- * their warranty coverage or make a claim for a repair or
- * replacement. Order Status and Shipping: Customers may have
+ * 
+ * Warranty and Return: 
+ * Customers may need to inquire about their warranty coverage or make a claim for a repair or
+ * replacement. 
+ * 
+ * Order Status and Shipping: Customers may have
  * questions about the status of their order or need assistance
- * with shipping and delivery. Return and Refund Inquiries:
+ * with shipping and delivery.
+ * 
+ * Return and Refund Inquiries:
  * Customers may need to initiate a return or request a refund
  * for an appliance that does not meet their expectations.
+ * 
  * Feedback and Suggestions: Customers may want to provide
  * feedback or suggestions for improving the appliance or the
  * vendor's service.
@@ -209,7 +217,7 @@ entity OutboundServiceMessage : managed {
 }
 
 /**
- * The types of an outbound service message: Auto Reply, Q\&A
+ * The types of an outbound service message: Auto Reply, Q&A
  * Virtual Assistant, Generated Answer by RPA Bot, Answer by
  * Human Agent, Internal Memo etc.
  */
