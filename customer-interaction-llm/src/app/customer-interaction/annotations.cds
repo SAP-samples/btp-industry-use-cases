@@ -34,30 +34,40 @@ annotate service.CustomerInteraction with @(
         },
         {
             $Type : 'UI.DataField',
+            Label : '{i18n>title}',
+            Value : title,
+        },
+        {
+            $Type : 'UI.DataField',
             Label : '{i18n>extRef}',
             Value : extRef,
         },
         {
             $Type : 'UI.DataField',
             Label : '{i18n>category_code}',
-            Value : category_code,
+            Value : category.name,
         },
         {
             $Type : 'UI.DataField',
             Label : '{i18n>originChannel_code}',
-            Value : originChannel_code,
+            Value : originChannel.name,
         },
         {
             $Type : 'UI.DataField',
             Label : '{i18n>status_code}',
-            Value : status_code,
+            Value : status.name,
         },
+        {
+            $Type : 'UI.DataField',
+            Label : '{i18n>createdAt}',
+            Value : createdAt,
+        }
     ]
     }
 ) {
     ID @Common : {
         SemanticObject  : 'CustomerInteraction',
-        Text            : title,
+        Text            : ID,
         TextArrangement : #TextOnly
     };
 };
@@ -70,6 +80,11 @@ annotate service.CustomerInteraction with @(
                 $Type : 'UI.DataField',
                 Label : '{i18n>ID}',
                 Value : ID,
+            },
+            {
+                $Type : 'UI.DataField',
+                Label : '{i18n>title}',
+                Value : title,
             },
             {
                 $Type : 'UI.DataField',
@@ -95,11 +110,6 @@ annotate service.CustomerInteraction with @(
                 $Type : 'UI.DataField',
                 Label : '{i18n>priority}',
                 Value : priority.name,
-            },
-            {
-                $Type : 'UI.DataField',
-                Label : '{i18n>title}',
-                Value : title,
             },
             {
                 $Type : 'UI.DataField',
