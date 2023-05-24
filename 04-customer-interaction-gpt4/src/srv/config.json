@@ -100,5 +100,16 @@
         "target_api": "embeddings"
       }
     ]
+  },
+  "erp": {
+    "vendor": "SAP",
+    "system_type": "S4HC",
+    "api_base_url": "",
+    "xsrf": "fetch",
+    "auth_method": "basic",
+    "api": [{
+      "name": "OutboundDelivery",
+      "api_path": ""
+    }]
   }
 }
