@@ -18,10 +18,8 @@ This is the main repository for the code presented during the [SAP BTP Industry 
 ## Requirements
 Please check individual folders for specific requirements.
 
-## Download and Installation
-
 ## Known Issues
-"No known issues.
+No known issues.
 
 ## How to obtain support
 [Create an issue](https://github.com/SAP-samples/<repository-name>/issues) in this repository if you find a bug or have questions about the content.
