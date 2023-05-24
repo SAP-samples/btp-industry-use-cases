@@ -15,9 +15,6 @@ Please edit this file as it is the primary description file for your project. Yo
 ## Description
 This is the main repository for the code presented during the [SAP BTP Industry Use Cases series](https://blogs.sap.com/2023/02/10/deliver-real-life-use-cases-with-sap-btp/). Each numbered folder you see in the structure is comprised by the code presented on an individual session.
 
-## Requirements
-Please check individual folders for specific requirements.
-
 ## Known Issues
 No known issues.
 
