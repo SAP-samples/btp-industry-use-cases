@@ -81,6 +81,24 @@
         "db": {
           "kind": "hana-cloud"
         }
+      },
+      "CTC": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "CTC"
+        }
+      },
+      "BR": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "BR"
+        }
+      },
+      "FSM": {
+        "kind": "rest",
+        "credentials": {
+          "destination": "FSM"
+        }
       }
     },
     "hana": {

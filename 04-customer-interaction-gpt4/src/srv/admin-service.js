@@ -1,5 +1,6 @@
 const cds = require("@sap/cds/lib");
 const e = require("express");
+const orchestratorService = require("./orchestrator-service");
 
 module.exports = class AdminService extends cds.ApplicationService {
   init() {
@@ -106,6 +107,21 @@ module.exports = class AdminService extends cds.ApplicationService {
       req.data.inboundMsgs[0].intent_code = intentCode;
 
       return req.data;
+    });
+
+    /**
+     * Handler of after creating an customer interaction with an inbound customer message
+     * 1.invoke the ochestrator-service to handle the message
+     * 2.Create an OutboundServiceMessage instance to reply the message
+     */
+    this.after(["CREATE"], InboundCustomerMessage, async (req) => {
+      
+      //Invoke the LLM proxy to process the current inbound customer message.
+      console.log(JSON.stringify(req.data));
+      const result = await orchestratorService.handelMessageV2(req);
+      //Create OutboundServiceMessage instance. with result complaint#....
+      
+      return result.data;
     });
 
     /**
