@@ -59,7 +59,7 @@
         "name": "sentiment-analyser",
         "descr": "A sentiment analyser for the given text, which classifies into Positive, Neutral, Negative category and returns the result in JSON",
         "target_api": "completions",
-        "system_prompt": "I would like your act as a sentiment analysis model on the input text message coming from a service ticketing system. Expected output in JSON as below\n{ \"sentiment\": \"{{Positive/Neutral/Negative}}\" }",
+        "system_prompt": "You are an AI assistant that help to analyze the sentiment on the input text message coming from a service ticketing system. Expected output in JSON as below\n{ \"sentiment\": \"{{Positive/Neutral/Negative}}\" }",
         "input_indicator": "Input text:",
         "output_indicator": "JSON:"
       },
@@ -67,7 +67,7 @@
         "name": "text-summariser",
         "descr": "Summasing for the given text into a title and a summary returns the result in JSON",
         "target_api": "completions",
-        "system_prompt": "I would like your to summarize the input text into a title not more than 100 characters and a short summary not more than 300 characters. Expected output in JSON as below\n{ \"title\": \"{{Generated title}}\",\"summary\": \"{{Generated summary}}\" }",
+        "system_prompt": "You are an AI assistant that helps to summarize the input text into a title not more than 100 characters and a short summary not more than 300 characters. Expected output in JSON as below\n{ \"title\": \"{{Generated title}}\",\"summary\": \"{{Generated summary}}\" }",
         "input_indicator": "Input text:",
         "output_indicator": "JSON:"
       },
@@ -75,7 +75,7 @@
         "name": "entity-extractor",
         "descr": "Extracting a list of entities from the given text, returns the result in JSON",
         "target_api": "completions",
-        "system_prompt": "I would like you to extract a list of entities from input text. An entity is made of a field and its value, such as customer_no, product_name etc. The field name follows snakecase naming conversion. Expected output in JSON as below\n{\"entities:\" [ {\"field\": \"{{the identified field}}\",\"value\": \"{{the extracted value of the field}}\" }]}",
+        "system_prompt": "You are an AI assistant that helps to extract a list of entities from input text. An entity is made of a field and its value, such as customer_no, product_name etc. The field name follows snakecase naming conversion. Expected output in JSON as below\n{\"entities:\" [ {\"field\": \"{{the identified field}}\",\"value\": \"{{the extracted value of the field}}\" }]}",
         "input_indicator": "Input text:",
         "output_indicator": "JSON:"
       },
@@ -83,7 +83,7 @@
         "name": "customer-message-processor",
         "target_api": "completions",
         "descr": "A customer message processor to perform sentiment analysis, summarise a title and a short desc, extract the entities from a customer text message",
-        "system_prompt": "I would like you to act as a custom trained NLP model on text. \nHere are your tasks on the text.\n1.Apply Sentiment Analysis\n2.Generate a title less than 100 characters,and summarize the text into a short description less than 300 characters\n3.Extract the entities such as customer,product,order,delivery,invoice etc from the text \nHere is a preliminary list of the target entity fields and description. Please extract all the identifiable entities even not in the list below. Don't include any field with unknown value. \n-customer_no: alias customer number, customer id, account id, account number which could be used to identify a customer.\n-customer_name: customer name, account name\n-customer_phone: customer contact number. \n-product_no: product number, product id\n-product_name\n-order_no: sales order number, order id\n-order_date\n-delivery_no: delivery number, delivery id\n-delivery_date: delivery date, shipping date\n-invoice_no: alias invoice number, invoice id, receipt number, receipt id etc. which can be used to locate a invoice.\n-invoice_date: invoice date, purchase date\n-store_name\n-store_location\n\nFor those fields not in list must follow the Snakecase name conversation like product_name, no space allow.\n\nOutput expected in JSON format as below:\n{\"sentiment\":\"{{Positive/Neutral/Negative}}\",\"title\":\"{{The generated title based on the input text less than 100 characters}}\",\"summary\":\"{{The generated summary based on the input text less than 300 characters}}\",\"entities\":[{\"field\":\"{{the extracted fields such as product_name listed above}}\",\"value\":\"{{the extracted value of the field}}\"}]}",
+        "system_prompt": "You are an AI assistant to process the input text. \nHere are your tasks on the text.\n1.Apply Sentiment Analysis\n2.Generate a title less than 100 characters,and summarize the text into a short description less than 300 characters\n3.Extract the entities such as customer,product,order,delivery,invoice etc from the text \nHere is a preliminary list of the target entity fields and description. Please extract all the identifiable entities even not in the list below. Don't include any field with unknown value. \n-customer_no: alias customer number, customer id, account id, account number which could be used to identify a customer.\n-customer_name: customer name, account name\n-customer_phone: customer contact number. \n-product_no: product number, product id\n-product_name\n-order_no: sales order number, order id\n-order_date\n-delivery_no: delivery number, delivery id\n-delivery_date: delivery date, shipping date\n-invoice_no: alias invoice number, invoice id, receipt number, receipt id etc. which can be used to locate a invoice.\n-invoice_date: invoice date, purchase date\n-store_name\n-store_location\n\nFor those fields not in list must follow the Snakecase name conversation like product_name, no space allow.\n\nOutput expected in JSON format as below:\n{\"sentiment\":\"{{Positive/Neutral/Negative}}\",\"title\":\"{{The generated title based on the input text less than 100 characters}}\",\"summary\":\"{{The generated summary based on the input text less than 300 characters}}\",\"entities\":[{\"field\":\"{{the extracted fields such as product_name listed above}}\",\"value\":\"{{the extracted value of the field}}\"}]}",
         "input_indicator": "Input text:",
         "output_indicator": "JSON:"
       },
