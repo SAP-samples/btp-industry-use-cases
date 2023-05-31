@@ -213,7 +213,7 @@ Content-Type: application/json
 Accept: application/json
 
 {
-    "interaction_ID": 310,
+    "interaction_ID": 309,
     "contact_ID": 1,
     "inboundTextMsg": "I'm extremely unhappy with the service level I'm getting from your store. Thank you!",
     "channel_code": "WEB"
@@ -236,12 +236,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
-	"sequence": 2,
-	"interaction_ID": 310,
-	"type": "AR",
-	"outboundTextMsg": "Poor Service Experience",
-	"processedBy": "GPT",
-	"remark": "ID"
+    "interaction_ID": 311,
+    "type_code": "AR",
+    "outboundTextMsg": "Thank you for the positive review!",
+    "replyTo_sequence": 1,
+    "replyTo_interaction_ID": 309,
+    "remark": "FSM Service Call Code: 123"
 }
 
 ### Create New Project with CRM into FSM Service Call

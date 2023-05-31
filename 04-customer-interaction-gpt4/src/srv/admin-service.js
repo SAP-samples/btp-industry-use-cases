@@ -110,33 +110,32 @@ module.exports = class AdminService extends cds.ApplicationService {
     });
 
     /**
-     * Handler of after creating an customer interaction with an inbound customer message
-     * 1.invoke the ochestrator-service to handle the message
-     * 2.Create an OutboundServiceMessage instance to reply the message
+     * Handler of AFTER-EVENT of creating an customer interaction with an inbound customer message
+     * [Flow]
+     * 1. Prior to this, CustomerInteraction & InboundCustomerMessage have been created.
+     * 2. Details such as ID, sequence, intent will be parsing into this function.
+     * 3. BR & FSM destination should be prepared prior.
+     * 4. BR: to take in intent (classification) for the required Action.
+     * 5. FSM: required Action from above would create a service call in FSM.
+     * 6. OutboundServiceMessage: should capture the AutoReply.
+     * 
+     * [TO IMPROVE]
+     * 1. Decouple functions into orchestrator service cds for cleaner codebase
      */
     this.after(["CREATE"], InboundCustomerMessage, async (req) => {
-
-      /**
-       * [Completed] 
-       * - Code to Intent > BR API to retrieve Action i.e. CA = CRM-Complaint
-       * - Action to Create Service Call in FSM
-       * 
-       * [To-Do]
-       * - Decouple function to orchestrator service for cleaner codebase
-       * - Figure out POST to OutboundServiceMessage
-       */
+      //  1. Prior to this, CustomerInteraction & InboundCustomerMessage have been created.
+      //  2. Details such as ID, sequence, intent will be parsing into this function.
+      //  3. BR & FSM destination should be prepared prior. 
       const BR = await cds.connect.to('BR');
       const FSM = await cds.connect.to('FSM');
-
-      //Invoke the LLM proxy to process the current inbound customer message.
       console.log(JSON.stringify(req));
+
       // const result = await orchestratorService.handelMessageV2(req);
       // const CTC_resp = await CTC.post("/int-ticket/handelMessageV2", CTC_payload);
       //Create OutboundServiceMessage instance. with result complaint#....
 
+      //  4. BR: to take in intent (classification) for the required Action.
       const classification = req.intent_code;
-
-      // Call Business Rules API passing the classification and retreive the route
       const BR_payload = {
         RuleServiceId: "3a4e53b84c8e4313bc6d7922ade85809",
         RuleServiceRevision: "1",
@@ -151,7 +150,7 @@ module.exports = class AdminService extends cds.ApplicationService {
 
       console.log(action);
 
-      // If action is "CRM" then a service request must be created
+      //  5. FSM: required Action from above would create a service call in FSM.
       let code = "";
       if (action === "CRM-Complaint") {
         const FSM_payload = {
@@ -232,12 +231,23 @@ module.exports = class AdminService extends cds.ApplicationService {
         replyMessage: replyMessage,
         code: code
       };
-
       console.log(res);
 
-      return res;
+      //  6. OutboundServiceMessage: should capture the AutoReply.
+      const outsvcmsg = {
+        interaction_ID: req.interaction_ID,
+        sequence: req.sequence,
+        type_code: "AR",
+        outboundTextMsg: replyMessage,
+        replyTo_sequence: req.sequence,
+        replyTo_interaction_ID: req.interaction_ID,
+        remark: "FSM Service Call Code: " + code
+      };
 
-      // return result.data;
+      cds.tx(async () => {
+        await INSERT.into(OutboundServiceMessage, outsvcmsg);
+      });
+
     });
 
     /**
