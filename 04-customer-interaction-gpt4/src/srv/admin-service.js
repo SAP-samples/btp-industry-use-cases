@@ -71,7 +71,7 @@ module.exports = class AdminService extends cds.ApplicationService {
 
       const inMsgs = req.data.inboundMsgs.map((msg) => msg.inboundTextMsg);
       //if no text message derived from inbound customer message, then skip invoke LLM
-      if(typeof inMsgs[0] === 'undefined' || inMsgs[0].length === 0)
+      if (typeof inMsgs[0] === 'undefined' || inMsgs[0].length === 0)
         return req.data;
 
       const inboundText = { text: inMsgs[0] };
@@ -101,7 +101,7 @@ module.exports = class AdminService extends cds.ApplicationService {
       //will be used for classifying the intents of the text
       // const embedding = await LlmProxyService.embedding(inboundText);
       // req.data.inboundMsgs[0].embedding = embedding;
-      
+
       //Classify the intent for the message intent with embedding and similarity search
       const intentCode = await LlmProxyService.zeroShotClassification(inboundText)
       req.data.inboundMsgs[0].intent_code = intentCode;
@@ -115,13 +115,129 @@ module.exports = class AdminService extends cds.ApplicationService {
      * 2.Create an OutboundServiceMessage instance to reply the message
      */
     this.after(["CREATE"], InboundCustomerMessage, async (req) => {
-      
+
+      /**
+       * [Completed] 
+       * - Code to Intent > BR API to retrieve Action i.e. CA = CRM-Complaint
+       * - Action to Create Service Call in FSM
+       * 
+       * [To-Do]
+       * - Decouple function to orchestrator service for cleaner codebase
+       * - Figure out POST to OutboundServiceMessage
+       */
+      const BR = await cds.connect.to('BR');
+      const FSM = await cds.connect.to('FSM');
+
       //Invoke the LLM proxy to process the current inbound customer message.
-      console.log(JSON.stringify(req.data));
-      const result = await orchestratorService.handelMessageV2(req);
+      console.log(JSON.stringify(req));
+      // const result = await orchestratorService.handelMessageV2(req);
+      // const CTC_resp = await CTC.post("/int-ticket/handelMessageV2", CTC_payload);
       //Create OutboundServiceMessage instance. with result complaint#....
-      
-      return result.data;
+
+      const classification = req.intent_code;
+
+      // Call Business Rules API passing the classification and retreive the route
+      const BR_payload = {
+        RuleServiceId: "3a4e53b84c8e4313bc6d7922ade85809",
+        RuleServiceRevision: "1",
+        Vocabulary: [
+          {
+            Classification: classification
+          }
+        ]
+      };
+      const BR_resp = await BR.post("/rules-service/rest/v2/rule-services", BR_payload);
+      const action = BR_resp.Result[0].Route.Action;
+
+      console.log(action);
+
+      // If action is "CRM" then a service request must be created
+      let code = "";
+      if (action === "CRM-Complaint") {
+        const FSM_payload = {
+          leader: null,
+          subject: req.summary,
+          chargeableEfforts: false,
+          project: null,
+          owners: null,
+          objectGroup: null,
+          resolution: null,
+          syncObjectKPIs: null,
+          inactive: false,
+          partOfRecurrenceSeries: null,
+          contact: "D0725AA6243A4470A49C0052232CA898",
+          problemTypeName: null,
+          originCode: "-1",
+          problemTypeCode: null,
+          changelog: null,
+          endDateTime: "2023-12-31T09:00:00Z",
+          priority: (classification.toLocaleLowerCase() === "complaint") ? "HIGH" : "LOW",
+          branches: null,
+          salesOrder: null,
+          dueDateTime: "2023-12-31T22:59:00Z",
+          salesQuotation: null,
+          udfMetaGroups: null,
+          orderReference: null,
+          responsibles: [
+            "14523B3D57424338858CB56BBF120696"
+          ],
+          syncStatus: "IN_CLOUD",
+          statusCode: "-2",
+          businessPartner: "8FA7D41CD4C448BF9A27962E9055C141",
+          projectPhase: null,
+          technicians: [],
+          typeName: "Unplanned",
+          chargeableMileages: false,
+          orgLevel: null,
+          chargeableMaterials: false,
+          statusName: "Ready to plan",
+          orderDateTime: null,
+          chargeableExpenses: false,
+          lastChanged: 1544172897151,
+          durationInMinutes: null,
+          serviceContract: null,
+          createPerson: "14523B3D57424338858CB56BBF120696",
+          externalId: null,
+          groups: null,
+          team: null,
+          typeCode: "-1",
+          equipments: [
+            "3B981A0D8206421393DB124C2430F95E"
+          ],
+          startDateTime: "2022-12-09T08:00:00Z",
+          location: null,
+          udfValues: null,
+          incident: null,
+          remarks: null,
+          originName: "Intelligent Ticket System"
+        };
+        const headers = {
+          "X-Client-ID": "DemoClient",
+          "X-Client-Version": "1.0",
+          "X-Account-ID": 96388,
+          "X-Company-ID": 108432
+
+        };
+        const FSM_resp = await FSM.send("POST", "/ServiceCall/?dtos=ServiceCall.26", FSM_payload, headers);
+        code = FSM_resp.data[0].serviceCall.code;
+      }
+
+      // Configure reply message accourding to route
+      const replyMessage = (action === "CRM-Complaint") ? 'Thank you for reaching out. A service call for your ' + classification.toLocaleLowerCase() + ' with code "' + code + '" has been created in our system. A representative will contact you soon.' : "Thank you for appreciating our service. We hope to keep always satisfying your expectations!";
+
+      // Respond to the requester
+      const res = {
+        type: classification,
+        route: action,
+        replyMessage: replyMessage,
+        code: code
+      };
+
+      console.log(res);
+
+      return res;
+
+      // return result.data;
     });
 
     /**
@@ -151,7 +267,7 @@ module.exports = class AdminService extends cds.ApplicationService {
       const summaryResult = await LlmProxyService.summarise(allInboundText);
 
       //Invoke the LLM proxy to process the current inbound customer message.
-      const message = { text: req.data.inboundTextMsg}
+      const message = { text: req.data.inboundTextMsg }
       const result = await LlmProxyService.processCustomerMessage(
         //req.data.inboundTextMsg
         message
@@ -171,6 +287,7 @@ module.exports = class AdminService extends cds.ApplicationService {
           req.data.type_code = "IN";
         }
       }
+      req.data.intname = result.data.sentiment;
 
       //embedding the text of incoming customer message to vector.
       //and to be stored into IncomingCustomerMessage.vector field

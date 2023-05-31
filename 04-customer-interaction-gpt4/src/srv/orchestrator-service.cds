@@ -14,4 +14,5 @@ type Result : {
 service OrchestratorService @( path: '/int-ticket' ) {
     action handleMessage( message : Message ) returns Result;
     action handleMessageV2( message : Message ) returns Result;
+    action handleMessageV3( message : Message ) returns Result;
 }

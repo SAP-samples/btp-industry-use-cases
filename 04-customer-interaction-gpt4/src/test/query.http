@@ -1,4 +1,5 @@
 @server = http://localhost:4004
+# @server = https://sadevmain-dev-customer-interaction-llm-srv.cfapps.eu10.hana.ondemand.com
 #@me = Authorization: Basic {{$processEnv USER}}:
 
 ### Service Document
@@ -170,4 +171,99 @@ Accept: application/json
         "channel_code": "WEB"
     }
   ]
+}
+
+###
+# Flow for FSM Integration
+# Trigger from Post InboundCustomerMessage creation
+# - prereq: a customer interaction record should have already been created with the ID
+# - get interaction ID and sequenceID
+# - get intent
+# - intname will be used in BR to get the associated action
+# - associated action > FSM
+# - trigger creation of service call in FSM
+# - retrieve ID
+# - create outboundservice call with the FSM ID
+# - update inboundcustomermessage with nested outbound service msg
+
+### ------------------------------------------------------------------------
+# Create a new CustomerInteraction with an IncomingCustomerMessage
+# - doesn't trigger function for after POST IncomingCustomerMessage
+POST {{server}}/admin/CustomerInteraction
+Content-Type: application/json
+Accept: application/json
+
+{ 
+"category_code" :"PRD",
+"customer_ID": "1006",
+"inboundMsgs": [
+    {
+        "contact_ID": 1,
+        "inboundTextMsg": "I have purchased a Breville coffee machine the Barista Express™ Impress recently, which make me fine espresso. Love it",
+        "channel_code": "WEB"
+        }
+    ]
+}
+
+### ------------------------------------------------------------------------
+# Create a subsequence InboundCustomerMessage to a given CustomerInteraction
+# - does trigger inside InboundCustomerMessage function
+POST {{server}}/admin/InboundCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+    "interaction_ID": 310,
+    "contact_ID": 1,
+    "inboundTextMsg": "I'm extremely unhappy with the service level I'm getting from your store. Thank you!",
+    "channel_code": "WEB"
+}
+
+### ------------------------------------------------------------------------
+# Create a subsequent OutboundServiceMessage from dets interaction and inbound
+# - interaction_ID
+# - sequence_ID
+# - type_code
+# - outboundTextMsg
+# - processedBy
+# - remark = ID from FSM
+# - replyTo_sequence
+# - replyTo_interaction_ID
+# - action from BR
+# - 
+POST {{server}}/admin/OutboundServiceMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+	"sequence": 2,
+	"interaction_ID": 310,
+	"type": "AR",
+	"outboundTextMsg": "Poor Service Experience",
+	"processedBy": "GPT",
+	"remark": "ID"
+}
+
+### Create New Project with CRM into FSM Service Call
+POST {{server}}/int-ticket/handleMessageV3
+Content-Type: application/json
+
+{ 
+    "message" : {
+        "text" : "I'm extremely unhappy with the service level I'm getting from your store. Thank you!"
+    }
+}
+
+### ------------------------------------------------------------------------
+# Create a subsequence InboundCustomerMessage to a given CustomerInteraction
+# (send that three times to get out-of-stock message)
+POST {{server}}/admin/InboundCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+    "interaction_ID": 3,
+    "contact_ID": 1,
+    "inboundTextMsg": "If no TV frame in oak color available, then a black one is fine.",
+    "channel_code": "WEB"
 }
