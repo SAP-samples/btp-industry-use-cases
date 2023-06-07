@@ -215,7 +215,7 @@ Accept: application/json
 {
     "interaction_ID": 309,
     "contact_ID": 1,
-    "inboundTextMsg": "I'm extremely unhappy with the service level I'm getting from your store. Thank you!",
+    "inboundTextMsg": "I'm extremely happy with the service level I'm getting from your store. Thank you!",
     "channel_code": "WEB"
 }
 
@@ -244,14 +244,76 @@ Accept: application/json
     "remark": "FSM Service Call Code: 123"
 }
 
-### Create New Project with CRM into FSM Service Call
-POST {{server}}/int-ticket/handleMessageV3
+### ------------------------------------------------------------------------
+# Trigger InboundCustomerMessage Creation
+# - Positive Message
+# - Positive: Complement > Only Outbound
+POST {{server}}/admin/InboundCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+    "interaction_ID": 309,
+    "contact_ID": 1,
+    "inboundTextMsg": "I'm extremely happy with the service level I'm getting from your store. Thank you!",
+    "channel_code": "WEB"
+}
+
+### ------------------------------------------------------------------------
+# Trigger InboundCustomerMessage Creation
+# - Negative Message
+# - Negative: CRM-Complaint > FSM
+POST {{server}}/admin/InboundCustomerMessage
+Content-Type: application/json
+Accept: application/json
+
+{
+    "interaction_ID": 309,
+    "contact_ID": 1,
+    "inboundTextMsg": "I'm extremely unhappy with the service level I'm getting from your store. Thank you!",
+    "channel_code": "WEB"
+}
+
+### Testing Direct Function call to Orchestrator Service
+### - handleMessageV2
+### Scenario: Happy customer
+POST {{server}}/int-ticket/handleMessageV2
 Content-Type: application/json
 
 { 
     "message" : {
-        "text" : "I'm extremely unhappy with the service level I'm getting from your store. Thank you!"
+        "interaction_ID": 309,
+        "contact_ID": 1,
+        "inboundTextMsg": "I'm extremely happy with the service level I'm getting from your store. Thank you!",
+        "channel_code": "WEB",
+        "sequence": 2,
+        "summary": "Great Service!",
+        "sentiment": "Positive",
+        "type_code": "CL",
+        "intname": "Positive",
+        "intent_code": "CI"
     }
+}
+
+### Testing Direct Function call to Orchestrator Service
+### - handleMessageV2
+### Scenario: Unhappy customer > Complaint > FSM
+POST {{server}}/int-ticket/handleMessageV2
+Content-Type: application/json
+
+{ 
+    "message" : {
+    "interaction_ID": 309,
+    "contact_ID": 1,
+    "inboundTextMsg": "I'm extremely unhappy with the service level I'm getting from your store. Thank you!",
+    "channel_code": "WEB",
+    "sequence": 2,
+    "summary": "Unhappy Customer",
+    "sentiment": "Negative",
+    "type_code": "CM",
+    "intname": "Negative",
+    "intent_code": "CA"
+  }
 }
 
 ### ------------------------------------------------------------------------

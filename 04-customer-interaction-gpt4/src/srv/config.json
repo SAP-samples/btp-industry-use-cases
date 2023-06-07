@@ -37,7 +37,7 @@
   ],
   "llm": {
     "vendor": "azure-openai",
-    "api_base_url": "https://<YOUR_AZURE_OPENAI_INSTANCE>.openai.azure.com",
+    "api_base_url": "https://openai-btp-sa.openai.azure.com",
     "auth_method": "api-key",
     "api": [
       {
