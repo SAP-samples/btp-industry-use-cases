@@ -22,7 +22,7 @@ module.exports = cds.service.impl(async function () {
      * 6. OutboundServiceMessage: should capture the AutoReply.
      * 
      */
-    this.on('handleMessageV2', async req => {
+    this.on('handleMessageV2', async (req) => {
         try {
             //  1. Prior to this, CustomerInteraction & InboundCustomerMessage have been created.
             //  2. Details such as ID, sequence, intent will be parsing into this function.
@@ -33,12 +33,22 @@ module.exports = cds.service.impl(async function () {
             console.log("In process 1-3...");
 
 
-            const query = SELECT`title, summary, extRef`.from`CustomerInteraction`.where({ ID: req.data.message.interaction_ID });
-            const interaction = await cds.db.run(query);
+            /** [CDS BUG] v1 - retrieving CustomerInteraction title & summary that is currently being update
+             * Locally it works.
+             * Deployed, it returns null.
+            */
+            // const query = SELECT`title, summary, extRef`.from`CustomerInteraction`.where({ ID: req.data.message.interaction_ID });
+            // const interaction = await cds.db.run(query);
+
+            /** [CDS BUG] v2 - retrieving CustomerInteraction title & summary that is currently being update
+             * Locally it works.
+             * Deployed, it returns null.
+            */
+            // const interaction = await cds.tx(req).run(SELECT.from(`CustomerInteraction`).where({ ID: req.data.message.interaction_ID }));
 
             console.log(req.data.message);
-            console.log(interaction[0].title);
-            console.log(interaction[0].summary);
+            // console.log(interaction[0].title);
+            // console.log(interaction[0].summary);
 
             //  4. BR: to take in intent (classification) for the required Action.
             const classification = req.data.message.intent_code;
@@ -64,7 +74,7 @@ module.exports = cds.service.impl(async function () {
                 var messageintent = "Technical Issue";
                 const FSM_payload = {
                     leader: null,
-                    subject: interaction[0].title,
+                    subject: req.data.message.title,
                     chargeableEfforts: false,
                     project: null,
                     owners: null,
@@ -116,7 +126,7 @@ module.exports = cds.service.impl(async function () {
                     location: null,
                     udfValues: null,
                     incident: null,
-                    remarks: "Interaction #" + req.data.message.interaction_ID + ". ExtRefNo: " + interaction[0].extRef + ". Sentiment: " + req.data.message.sentiment + ". Intent: " + messageintent + ". Summary: " + interaction[0].summary + ".",
+                    remarks: "Interaction #" + req.data.message.interaction_ID + ". ExtRefNo: " + req.data.message.extRef + ". Sentiment: " + req.data.message.sentiment + ". Intent: " + messageintent + ". Summary: " + req.data.message.summary + ".",
                     originName: "Intelligent Ticket System"
                 };
                 const headers = {

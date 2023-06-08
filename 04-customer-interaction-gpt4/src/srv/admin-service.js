@@ -122,69 +122,7 @@ module.exports = class AdminService extends cds.ApplicationService {
      */
     this.after(["CREATE"], InboundCustomerMessage, async (req) => {
 
-      const msg = { message: req }
-      const orchsvc = await cds.connect.to("cust.int.srv.OrchestratorService");
-      const retmsg = await orchsvc.handleMessageV2(msg);
 
-      // console.log(retmsg);
-
-      const classification = retmsg.type;
-      const action = retmsg.route;
-      const fsmcode = retmsg.fsmcode;
-      var replyMessage, outboundMsgRemark, outboundTypeCode, processor = "GPT";
-
-      //  Simple switch case based on type of OutboundServiceMessage
-      switch (action) {
-        case "CRM-Complaint":
-          outboundTypeCode = "AR";
-          outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
-          break;
-        case "TI-Chatbot":
-          outboundTypeCode = "AR";
-          outboundMsgRemark = "FSM Service Call Code: " + fsmcode;
-          replyMessage = 'Thank you for reaching out. A service call for your case with code "' + fsmcode + '" has been created in our system. A representative will contact you soon.';
-          break;
-        case "RPA-Bot":
-          outboundTypeCode = "AR";
-          outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
-          break;
-        case "PI-Chatbot":
-          outboundTypeCode = "AR";
-          outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
-          break;
-        case "WR-Chatbot":
-          outboundTypeCode = "AR";
-          outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
-          break;
-        case "AutoReply":
-          outboundTypeCode = "AR";
-          outboundMsgRemark = "";
-          replyMessage = "Thank you for complementing our service.";
-          break;
-
-        default:
-          break;
-      }
-
-      //  6. OutboundServiceMessage: should capture the AutoReply.
-      const outsvcmsg = {
-        interaction_ID: req.interaction_ID,
-        sequence: req.sequence,
-        type_code: outboundTypeCode,
-        processedBy: processor,
-        outboundTextMsg: replyMessage,
-        replyTo_sequence: req.sequence,
-        replyTo_interaction_ID: req.interaction_ID,
-        remark: outboundMsgRemark
-      };
-
-      cds.tx(async () => {
-        await INSERT.into(OutboundServiceMessage, outsvcmsg);
-      });
 
     });
 
@@ -256,6 +194,77 @@ module.exports = class AdminService extends cds.ApplicationService {
           summary: summaryResult.data.summary,
         });
         await INSERT.into(InboundCustomerMessage, req.data);
+      });
+
+      //  [WORKAROUND] Due to CDS Bug on Update not reflecting in object in after create event.
+      const query = SELECT`extRef`.from`CustomerInteraction`.where({ ID: req.data.interaction_ID });
+      const extRefObj = await cds.db.run(query);
+      var extendedObj = req.data;
+      extendedObj.extRef = extRefObj[0].extRef;
+      extendedObj.title = summaryResult.data.title;
+      extendedObj.summary = summaryResult.data.summary;
+      const msg = { message: extendedObj }
+      const orchsvc = await cds.connect.to("cust.int.srv.OrchestratorService");
+      const retmsg = await orchsvc.handleMessageV2(msg);
+
+      // console.log(retmsg);
+
+      const classification = retmsg.type;
+      const action = retmsg.route;
+      const fsmcode = retmsg.fsmcode;
+      var replyMessage, outboundMsgRemark, outboundTypeCode, processor = "GPT";
+
+      //  Simple switch case based on type of OutboundServiceMessage
+      switch (action) {
+        case "CRM-Complaint":
+          outboundTypeCode = "AR";
+          outboundMsgRemark = "";
+          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          break;
+        case "TI-Chatbot":
+          outboundTypeCode = "AR";
+          outboundMsgRemark = "FSM Service Call Code: " + fsmcode;
+          replyMessage = 'Thank you for reaching out. A service call for your case with code "' + fsmcode + '" has been created in our system. A representative will contact you soon.';
+          break;
+        case "RPA-Bot":
+          outboundTypeCode = "AR";
+          outboundMsgRemark = "";
+          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          break;
+        case "PI-Chatbot":
+          outboundTypeCode = "AR";
+          outboundMsgRemark = "";
+          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          break;
+        case "WR-Chatbot":
+          outboundTypeCode = "AR";
+          outboundMsgRemark = "";
+          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          break;
+        case "AutoReply":
+          outboundTypeCode = "AR";
+          outboundMsgRemark = "";
+          replyMessage = "Thank you for complementing our service.";
+          break;
+
+        default:
+          break;
+      }
+
+      //  6. OutboundServiceMessage: should capture the AutoReply.
+      const outsvcmsg = {
+        interaction_ID: req.data.interaction_ID,
+        sequence: req.data.sequence,
+        type_code: outboundTypeCode,
+        processedBy: processor,
+        outboundTextMsg: replyMessage,
+        replyTo_sequence: req.sequence,
+        replyTo_interaction_ID: req.data.interaction_ID,
+        remark: outboundMsgRemark
+      };
+
+      cds.tx(async () => {
+        await INSERT.into(OutboundServiceMessage, outsvcmsg);
       });
 
       return req.data;

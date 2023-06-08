@@ -72,7 +72,7 @@
     },
     "requires": {
       "db": {
-        "kind": "sql"
+        "kind": "hana-cloud"
       },
       "[production]": {
         "db": {
