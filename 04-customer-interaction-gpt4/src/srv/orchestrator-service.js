@@ -7,6 +7,10 @@ module.exports = cds.service.impl(async function () {
     const BR = await cds.connect.to('BR');
     const FSM = await cds.connect.to('FSM');
 
+    const {
+        CustomerInteraction
+    } = this.entities;
+
     /**
      * Handler of AFTER-EVENT of creating an customer interaction with an inbound customer message
      * [Flow is implemented in Orchestrator Service]
@@ -26,7 +30,15 @@ module.exports = cds.service.impl(async function () {
             const BR = await cds.connect.to('BR');
             const FSM = await cds.connect.to('FSM');
             // console.log("Payload in handleMessageV3 as follows: " + JSON.stringify(req.data));
-            // console.log("In process 1-3...");
+            console.log("In process 1-3...");
+
+
+            const query = SELECT`title, summary, extRef`.from`CustomerInteraction`.where({ ID: req.data.message.interaction_ID });
+            const interaction = await cds.db.run(query);
+
+            console.log(req.data.message);
+            console.log(interaction[0].title);
+            console.log(interaction[0].summary);
 
             //  4. BR: to take in intent (classification) for the required Action.
             const classification = req.data.message.intent_code;
@@ -47,10 +59,12 @@ module.exports = cds.service.impl(async function () {
 
             //  5. FSM: required Action from above would create a service call in FSM.
             let code = "";
-            if (action === "CRM-Complaint") {
+            if (action === "TI-Chatbot") {
+                //  this variable is for the classification intent code TI > 
+                var messageintent = "Technical Issue";
                 const FSM_payload = {
                     leader: null,
-                    subject: req.data.message.summary,
+                    subject: interaction[0].title,
                     chargeableEfforts: false,
                     project: null,
                     owners: null,
@@ -77,7 +91,7 @@ module.exports = cds.service.impl(async function () {
                     ],
                     syncStatus: "IN_CLOUD",
                     statusCode: "-2",
-                    businessPartner: "8FA7D41CD4C448BF9A27962E9055C141",
+                    businessPartner: "2827EC2EE37540918B0A556A818A3978",
                     projectPhase: null,
                     technicians: [],
                     typeName: "Unplanned",
@@ -95,14 +109,14 @@ module.exports = cds.service.impl(async function () {
                     groups: null,
                     team: null,
                     typeCode: "-1",
-                    equipments: [
-                        "3B981A0D8206421393DB124C2430F95E"
-                    ],
+                    // equipments: [
+                    //     "3B981A0D8206421393DB124C2430F95E"
+                    // ],
                     startDateTime: "2022-12-09T08:00:00Z",
                     location: null,
                     udfValues: null,
                     incident: null,
-                    remarks: null,
+                    remarks: "Interaction #" + req.data.message.interaction_ID + ". ExtRefNo: " + interaction[0].extRef + ". Sentiment: " + req.data.message.sentiment + ". Intent: " + messageintent + ". Summary: " + interaction[0].summary + ".",
                     originName: "Intelligent Ticket System"
                 };
                 const headers = {

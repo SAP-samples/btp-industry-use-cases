@@ -43,7 +43,7 @@
 							id="idTemplateItem"
 							dateTime="{createdAt}"
 							title="{summary}"
-							text="{message}"
+							text="Sentiment: {sentiment} | Intent: {intent} | {message}"
 							userName="{name}"
 							filterValue="{interactionID}"
 							icon="{path: 'direction', formatter: 'handler.directionIcon'}"

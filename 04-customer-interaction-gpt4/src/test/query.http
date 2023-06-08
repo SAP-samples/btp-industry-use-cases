@@ -261,8 +261,10 @@ Accept: application/json
 
 ### ------------------------------------------------------------------------
 # Trigger InboundCustomerMessage Creation
-# - Negative Message
-# - Negative: CRM-Complaint > FSM
+# - TI Message > FSM
+# - CRM-Complaint prompt: I'm extremely unhappy with the service level I'm getting from your store. Thank you!
+# - Neutral-TI prompt: Dear SAKitchen customer service, I recently purchased a Cuisinart ToastPro XRT61FGH toaster from your shop and I am in need of a replacement part. It appears that the bottom heating element is not working properly and I would like to request a replacement part to get it functioning properly again. Thank you for your help.
+# - Negative-DI prompt: I’m so disappointed with my experience at SAKitchen. I recently bought a Soda Makers from the website and the website was so poorly designed, it was hard to navigate and had all kinds of technical issues. I would not recommend this shop to anyone
 POST {{server}}/admin/InboundCustomerMessage
 Content-Type: application/json
 Accept: application/json
@@ -270,7 +272,7 @@ Accept: application/json
 {
     "interaction_ID": 309,
     "contact_ID": 1,
-    "inboundTextMsg": "I'm extremely unhappy with the service level I'm getting from your store. Thank you!",
+    "inboundTextMsg": "Dear SAKitchen customer service, I recently purchased a Cuisinart ToastPro XRT61FGH toaster from your shop and I am in need of a replacement part. It appears that the bottom heating element is not working properly and I would like to request a replacement part to get it functioning properly again. Thank you for your help.",
     "channel_code": "WEB"
 }
 

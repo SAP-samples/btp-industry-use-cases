@@ -137,13 +137,13 @@ module.exports = class AdminService extends cds.ApplicationService {
       switch (action) {
         case "CRM-Complaint":
           outboundTypeCode = "AR";
-          outboundMsgRemark = "FSM Service Call Code: " + fsmcode
-          replyMessage = 'Thank you for reaching out. A service call for your case with code "' + fsmcode + '" has been created in our system. A representative will contact you soon.';
+          outboundMsgRemark = "";
+          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
           break;
         case "TI-Chatbot":
           outboundTypeCode = "AR";
-          outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          outboundMsgRemark = "FSM Service Call Code: " + fsmcode;
+          replyMessage = 'Thank you for reaching out. A service call for your case with code "' + fsmcode + '" has been created in our system. A representative will contact you soon.';
           break;
         case "RPA-Bot":
           outboundTypeCode = "AR";
