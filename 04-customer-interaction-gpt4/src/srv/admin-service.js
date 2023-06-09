@@ -30,7 +30,7 @@ module.exports = class AdminService extends cds.ApplicationService {
     this.before(["CREATE"], CustomerInteraction, async (req) => {
       //prepare the default value for CustomerInteraction
       //generate the next ID if missing
-      //if (typeof req.data.ID === "undefined") 
+      //if (typeof req.data.ID === "undefined")
       await genid(req);
 
       //Generate external reference no.
@@ -50,6 +50,20 @@ module.exports = class AdminService extends cds.ApplicationService {
       )
         req.data.priority_code = "M";
 
+      //set default category_code as Support if missing
+      if (
+        typeof req.data.category_code === "undefined" ||
+        req.data.category_code.length === 0
+      )
+        req.data.category_code = "SUP";
+
+      //set default originChannel_code as Web if missing
+      if (
+        typeof req.data.originChannel_code === "undefined" ||
+        req.data.originChannel_code.length === 0
+      )
+        req.data.originChannel_code = "WEB";
+
       if (
         !req.data.inboundMsgs ||
         !Array.isArray(req.data.inboundMsgs) ||
@@ -59,7 +73,7 @@ module.exports = class AdminService extends cds.ApplicationService {
         return req.data;
       }
 
-      //set default channel as WEB if missing
+      //set default channel as WEB of inbound customer message if missing
       if (
         typeof req.data.inboundMsgs[0].channel_code === "undefined" ||
         req.data.inboundMsgs[0].channel_code.length === 0
@@ -71,7 +85,7 @@ module.exports = class AdminService extends cds.ApplicationService {
 
       const inMsgs = req.data.inboundMsgs.map((msg) => msg.inboundTextMsg);
       //if no text message derived from inbound customer message, then skip invoke LLM
-      if (typeof inMsgs[0] === 'undefined' || inMsgs[0].length === 0)
+      if (typeof inMsgs[0] === "undefined" || inMsgs[0].length === 0)
         return req.data;
 
       const inboundText = { text: inMsgs[0] };
@@ -103,7 +117,9 @@ module.exports = class AdminService extends cds.ApplicationService {
       // req.data.inboundMsgs[0].embedding = embedding;
 
       //Classify the intent for the message intent with embedding and similarity search
-      const intentCode = await LlmProxyService.zeroShotClassification(inboundText)
+      const intentCode = await LlmProxyService.zeroShotClassification(
+        inboundText
+      );
       req.data.inboundMsgs[0].intent_code = intentCode;
 
       return req.data;
@@ -118,13 +134,9 @@ module.exports = class AdminService extends cds.ApplicationService {
      * 4. BR: to take in intent (classification) for the required Action.
      * 5. FSM: required Action from above would create a service call in FSM.
      * 6. OutboundServiceMessage: should capture the AutoReply.
-     * 
+     *
      */
-    this.after(["CREATE"], InboundCustomerMessage, async (req) => {
-
-
-
-    });
+    this.after(["CREATE"], InboundCustomerMessage, async (req) => {});
 
     /**
      * Handler of on creating an inbound customer message
@@ -153,7 +165,7 @@ module.exports = class AdminService extends cds.ApplicationService {
       const summaryResult = await LlmProxyService.summarise(allInboundText);
 
       //Invoke the LLM proxy to process the current inbound customer message.
-      const message = { text: req.data.inboundTextMsg }
+      const message = { text: req.data.inboundTextMsg };
       const result = await LlmProxyService.processCustomerMessage(
         //req.data.inboundTextMsg
         message
@@ -184,7 +196,7 @@ module.exports = class AdminService extends cds.ApplicationService {
       // req.data.embedding = embedding;
 
       //Classify the intent for the message intent with embedding and similarity search
-      const intentCode = await LlmProxyService.zeroShotClassification(message)
+      const intentCode = await LlmProxyService.zeroShotClassification(message);
       req.data.intent_code = intentCode;
 
       //manual transaction
@@ -197,13 +209,15 @@ module.exports = class AdminService extends cds.ApplicationService {
       });
 
       //  [WORKAROUND] Due to CDS Bug on Update not reflecting in object in after create event.
-      const query = SELECT`extRef`.from`CustomerInteraction`.where({ ID: req.data.interaction_ID });
+      const query = SELECT`extRef`.from`CustomerInteraction`.where({
+        ID: req.data.interaction_ID,
+      });
       const extRefObj = await cds.db.run(query);
       var extendedObj = req.data;
       extendedObj.extRef = extRefObj[0].extRef;
       extendedObj.title = summaryResult.data.title;
       extendedObj.summary = summaryResult.data.summary;
-      const msg = { message: extendedObj }
+      const msg = { message: extendedObj };
       const orchsvc = await cds.connect.to("cust.int.srv.OrchestratorService");
       const retmsg = await orchsvc.handleMessageV2(msg);
 
@@ -212,34 +226,44 @@ module.exports = class AdminService extends cds.ApplicationService {
       const classification = retmsg.type;
       const action = retmsg.route;
       const fsmcode = retmsg.fsmcode;
-      var replyMessage, outboundMsgRemark, outboundTypeCode, processor = "GPT";
+      var replyMessage,
+        outboundMsgRemark,
+        outboundTypeCode,
+        processor = "GPT";
 
       //  Simple switch case based on type of OutboundServiceMessage
       switch (action) {
         case "CRM-Complaint":
           outboundTypeCode = "AR";
           outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          replyMessage =
+            "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
           break;
         case "TI-Chatbot":
           outboundTypeCode = "AR";
           outboundMsgRemark = "FSM Service Call Code: " + fsmcode;
-          replyMessage = 'Thank you for reaching out. A service call for your case with code "' + fsmcode + '" has been created in our system. A representative will contact you soon.';
+          replyMessage =
+            'Thank you for reaching out. A service call for your case with code "' +
+            fsmcode +
+            '" has been created in our system. A representative will contact you soon.';
           break;
         case "RPA-Bot":
           outboundTypeCode = "AR";
           outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          replyMessage =
+            "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
           break;
         case "PI-Chatbot":
           outboundTypeCode = "AR";
           outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          replyMessage =
+            "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
           break;
         case "WR-Chatbot":
           outboundTypeCode = "AR";
           outboundMsgRemark = "";
-          replyMessage = "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
+          replyMessage =
+            "Thank you for your feedback. We will inform the relevant department and respond back shortly.";
           break;
         case "AutoReply":
           outboundTypeCode = "AR";
@@ -260,7 +284,7 @@ module.exports = class AdminService extends cds.ApplicationService {
         outboundTextMsg: replyMessage,
         replyTo_sequence: req.sequence,
         replyTo_interaction_ID: req.data.interaction_ID,
-        remark: outboundMsgRemark
+        remark: outboundMsgRemark,
       };
 
       cds.tx(async () => {
