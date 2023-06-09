@@ -1,5 +1,4 @@
 const cds = require("@sap/cds/lib");
-const e = require("express");
 const orchestratorService = require("./orchestrator-service");
 
 module.exports = class AdminService extends cds.ApplicationService {
@@ -110,11 +109,6 @@ module.exports = class AdminService extends cds.ApplicationService {
           req.data.inboundMsgs[0].type_code = "IN";
         }
       }
-      //embedding the text of incoming customer message to vector.
-      //and to be stored into IncomingCustomerMessage.vector field
-      //will be used for classifying the intents of the text
-      // const embedding = await LlmProxyService.embedding(inboundText);
-      // req.data.inboundMsgs[0].embedding = embedding;
 
       //Classify the intent for the message intent with embedding and similarity search
       const intentCode = await LlmProxyService.zeroShotClassification(
@@ -185,15 +179,6 @@ module.exports = class AdminService extends cds.ApplicationService {
           req.data.type_code = "IN";
         }
       }
-      req.data.intname = result.data.sentiment;
-
-      //embedding the text of incoming customer message to vector.
-      //and to be stored into IncomingCustomerMessage.vector field
-      //will be used for classifying the intents of the text
-      // const embedding = await LlmProxyService.embedding(
-      //   req.data.inboundTextMsg
-      // );
-      // req.data.embedding = embedding;
 
       //Classify the intent for the message intent with embedding and similarity search
       const intentCode = await LlmProxyService.zeroShotClassification(message);
