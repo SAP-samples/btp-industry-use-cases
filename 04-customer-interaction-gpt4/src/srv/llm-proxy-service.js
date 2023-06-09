@@ -9,7 +9,7 @@ const axiosInstance = axios.create({ baseURL: llm_api_base_url });
 
 //Authentication
 //api_key or user_name/password etc credential must be configured in and loaded from 
-//process env variables:
+//process env variables, such as
 //process.env.api_key
 if (config.llm.auth_method === "bearer-api-key") {
   //for example, openai
@@ -26,7 +26,8 @@ if (config.llm.auth_method === "bearer-api-key") {
 //here is the service implementation
 module.exports = cds.service.impl(async function () {
   /**
-   * A generic API to invoke LLM API and turn it into your custom REST API
+   * A generic API to invoke LLM API and turn the use case into a custom REST API,
+   * which is configured in srv/config.json. use_case > system_role > api and prompt
    * Output as JSON
    */
   this.on("invokeLLM", async (req) => {
@@ -209,8 +210,6 @@ const invokeLLM = function (use_case, text) {
       });
     }
   }
-
-  //const api = config.llm.api[command]
 };
 
 // Scalar product between two vectors
@@ -222,20 +221,19 @@ const dot= function (vec1, vec2){
   }
   return dotprod;
 }
+
 // Norm of a vector
 const norm= function (vec){
   var N = Math.sqrt(dot(vec, vec));
   return N;
 }
+
 // Cosine similarity between two embeddings vectors
 const cosineSimilarity = function(vec1, vec2)  {
   var cosim = dot(vec1, vec2) / (norm(vec1) * norm(vec2));
   return cosim;
 };
-const convertEmbedding= function(intent){
 
-
-};
 // Function to associate the embedding of an input message to the closest message Intent category
 const similaritySearch = function(inputVector, intents) {
   
@@ -247,8 +245,6 @@ const similaritySearch = function(inputVector, intents) {
   const similarities = new Map(intents.map( element =>  { return [element.code,
     embedding=cosineSimilarity(inputVector, JSON.parse(element.embedding.replace(/'/g, '"'))) ]; }),    
   );
-
-  //console.log(similarities);
 
   //Take max similarity
   var max_key=null;
