@@ -44,6 +44,11 @@ annotate service.CustomerInteraction with @(
         },
         {
             $Type : 'UI.DataField',
+            Label : '{i18n>customer}',
+            Value : customer_ID,
+        },
+        {
+            $Type : 'UI.DataField',
             Label : '{i18n>category_code}',
             Value : category.name,
         },
