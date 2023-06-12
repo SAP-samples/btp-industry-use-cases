@@ -1,6 +1,6 @@
 # SAP BTP Industry Use Cases
 [![License: Apache2](https://img.shields.io/badge/License-Apache2-green.svg)](https://opensource.org/licenses/Apache-2.0)
-[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/btp'industry'use'cases)](https://api.reuse.software/info/github.com/SAP-samples/btp-industry-use-cases)
+[![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/btp-industry-use-cases)](https://api.reuse.software/info/github.com/SAP-samples/btp-industry-use-cases)
 
 <!--- Register repository https://api.reuse.software/register, then add REUSE badge:
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP-samples/REPO-NAME)](https://api.reuse.software/info/github.com/SAP-samples/REPO-NAME)
