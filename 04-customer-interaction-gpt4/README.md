@@ -1,11 +1,17 @@
 # Customer Interaction powered by Large Language Models
-Large Language Models(LLMs), ChatGPT and GPT-4 etc are is a hit. This sample shows case how SAP partners can leverage this powerful AI technology in combination with SAP technologies to accelerate their solution development processes, and create more intelligent solutions on SAP Business Technology Platform(SAP BTP)<br/>
+Large Language Models (LLMs) like ChatGPT and GPT-4 have gained significant popularity with emergent capabilities. In this sample, we have demonstrated how SAP partners can leverage this powerful AI technology in combination with SAP technologies to accelerate their solution development processes, and create more intelligent solutions on SAP Business Technology Platform(SAP BTP).<br/>
 
 Specifically, SAP partners can 
-- Use GPT to assist with SAP Application development
+- Use GPT to assist in SAP Application development
     - SAP Cloud Application Programming Model(SAP CAP) 
-    - SAP RESTful ABAP Programming Model(SAP RAP) 
-- Integrate your solutions on SAP BTP with GPT through its APIs.
+    - SAP ABAP RESTful Application Programming Model(SAP RAP) 
+- Integrate GPT into your solutions on SAP BTP with through APIs.
+
+File or Folder | Purpose
+---------|----------
+`gpt-api-samples/` | nodejs samples for GPT's chat api amd embedding apis for reference
+`resources/` | images etc
+`src/` | source code of the sample solution customer-interaction-gpt4
 
 ## Description
 This sample solution aims to capture all kinds of customer communications via various channels in customer service in the form of customer interaction
