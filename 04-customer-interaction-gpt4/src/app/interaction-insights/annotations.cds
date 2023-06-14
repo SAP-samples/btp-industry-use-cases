@@ -1,4 +1,4 @@
-using AdminService as service from '../../srv/admin-service';
+using TicketingService as service from '../../srv/ticketing-service';
 
 annotate service.InteractionInsight with {
     ID            @ID   : 'ID';
@@ -51,9 +51,9 @@ annotate service.InboundCustomerMessage with @(UI: {
     PresentationVariant #chart03: {Visualizations: ['@UI.Chart#chart03', ], },
     Chart #chart03              : {
         ChartType          : #Column,
-        Dimensions         : [intname],
+        Dimensions         : [intent.name],
         DimensionAttributes: [{
-            Dimension: intname,
+            Dimension: intent.name,
             Role     : #Category
         }],
         Measures           : [numberOfInboundCustomerMsgs],

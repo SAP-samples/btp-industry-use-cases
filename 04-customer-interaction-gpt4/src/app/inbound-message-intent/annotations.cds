@@ -1,4 +1,4 @@
-using AdminService as service from '../../srv/admin-service';
+using TicketingService as service from '../../srv/ticketing-service';
 
 annotate service.InboundCustomerMessageIntent with @(
     UI.LineItem : [
@@ -71,4 +71,4 @@ annotate service.InboundCustomerMessageIntent with @(
 //
 
 annotate xxx.cust.int.llm.InboundCustomerMessageIntent with @fiori.draft.enabled;
-annotate AdminService.InboundCustomerMessageIntent with @odata.draft.enabled;
+annotate TicketingService.InboundCustomerMessageIntent with @odata.draft.enabled;

@@ -1,7 +1,7 @@
 const cds = require("@sap/cds/lib");
 const orchestratorService = require("./orchestrator-service");
 
-module.exports = class AdminService extends cds.ApplicationService {
+module.exports = class TicketingService extends cds.ApplicationService {
   init() {
     const {
       CustomerInteraction,

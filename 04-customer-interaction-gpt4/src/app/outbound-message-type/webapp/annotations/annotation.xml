@@ -9,7 +9,7 @@
         <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
     </edmx:Reference>
     <edmx:Reference Uri="/admin/$metadata">
-        <edmx:Include Namespace="AdminService"/>
+        <edmx:Include Namespace="TicketingService"/>
     </edmx:Reference>
     <edmx:DataServices>
         <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="local">

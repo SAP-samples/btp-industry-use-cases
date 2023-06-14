@@ -1,4 +1,4 @@
-using AdminService as service from '../../srv/admin-service';
+using TicketingService as service from '../../srv/ticketing-service';
 
 annotate service.OutboundServiceMessageType with @(
     UI.LineItem : [

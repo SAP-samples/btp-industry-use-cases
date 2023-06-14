@@ -1,7 +1,7 @@
 using {xxx.cust.int.llm as db} from '../db/customer-interaction-db';
-using {AdminService} from './admin-service';
+using {TicketingService} from './ticketing-service';
 
-extend service AdminService {
+extend service TicketingService {
   @readonly
   entity InteractionInsight          as projection on db.CustomerInteraction {
     *,
@@ -20,5 +20,5 @@ extend service AdminService {
 
 }
 
-extend AdminService.InteractionInsight with @cds.redirection.target;
-extend AdminService.InboundCustomerMessage with @cds.redirection.target;
+extend TicketingService.InteractionInsight with @cds.redirection.target;
+extend TicketingService.InboundCustomerMessage with @cds.redirection.target;

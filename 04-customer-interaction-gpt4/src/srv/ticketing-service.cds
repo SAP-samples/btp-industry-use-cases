@@ -1,7 +1,7 @@
 using {xxx.cust.int.llm as db} from '../db/customer-interaction-db';
 
 //@requires_ : 'authenticated-user'
-service AdminService {
+service TicketingService @(path: '/admin') {
 
   entity CustomerInteraction          as projection on db.CustomerInteraction {
     *,
