@@ -1,0 +1,194 @@
+{
+  "_version": "1.49.0",
+  "sap.app": {
+    "id": "interactioninsights.interactioninsights",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:ovp",
+      "version": "1.9.5",
+      "toolsId": "e79e728a-e53f-44e3-84c6-f910a24a1da0"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "/admin/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "4.0"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.108.13",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {},
+        "sap.ushell": {},
+        "sap.fe.templates": {},
+        "sap.ovp": {},
+        "sap.ui.rta": {},
+        "sap.ui.layout": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "interactioninsights.interactioninsights.i18n.i18n"
+        }
+      },
+      "mainModel": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": {
+          "synchronizationMode": "None",
+          "operationMode": "Server",
+          "autoExpandSelect": true,
+          "earlyRequests": true
+        }
+      },
+      "@i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "uri": "i18n/i18n.properties"
+      }
+    },
+    "resources": {
+      "css": []
+    },
+    "routing": {
+      "config": {},
+      "routes": [],
+      "targets": {}
+    }
+  },
+  "sap.ovp": {
+    "globalFilterModel": "mainModel",
+    "globalFilterEntityType": "InteractionInsight",
+    "containerLayout": "resizable",
+    "enableLiveFilter": false,
+    "considerAnalyticalParameters": false,
+    "cards": {
+      "list01": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.list",
+        "settings": {
+          "title": "List of Message Threads",
+          "subTitle": "List of Message Threads",
+          "entitySet": "InteractionInsight",
+          "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification",
+          "annotationPath": "com.sap.vocabularies.UI.v1.LineItem#list01"
+        }
+      },
+      "chart01": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Interactions Insights",
+          "subTitle": "Interactions Insights",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart01"
+        }
+      },
+      "chart02": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Interactions by Priority",
+          "subTitle": "Interactions by Priority",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart02",
+          "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification"
+        }
+      },
+      "chart03": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Inbound Messages by Intent",
+          "subTitle": "Inbound Messages by Intent",
+          "entitySet": "InboundCustomerMessage",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart03"
+        }
+      },
+      "chart04": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Interactions by Category",
+          "subTitle": "Interactions by Category",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart04",
+          "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification"
+        }
+      },
+      "chart05": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Top Customers",
+          "subTitle": "Top Customers",
+          "entitySet": "InteractionInsight",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart05"
+        }
+      },
+      "chart06": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "KPI",
+          "subTitle": "KPI",
+          "entitySet": "InteractionInsight",
+          "kpiAnnotationPath": "com.sap.vocabularies.UI.v1.KPI#chart06",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart06",
+          "identificationAnnotationPath": "com.sap.vocabularies.UI.v1.Identification"
+        }
+      },
+      "chart07": {
+        "model": "mainModel",
+        "template": "sap.ovp.cards.v4.charts.analytical",
+        "settings": {
+          "title": "Top Customers",
+          "subTitle": "Top Customers",
+          "entitySet": "InteractionInsight",
+          "addODataSelect": "fasle",
+          "chartAnnotationPath": "com.sap.vocabularies.UI.v1.Chart#chart07"
+        }
+      }
+    }
+  },
+  "sap.fiori": {
+    "registrationIds": [],
+    "archeType": "analytical"
+  }
+}

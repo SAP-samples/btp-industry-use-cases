@@ -1,0 +1,150 @@
+{
+    "_version": "1.40.0",
+    "sap.app": {
+        "id": "outbound-message-type",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap-ux/fiori-elements-writer:lrop",
+            "version": "0.3.6",
+            "toolsId": "82467b7b-ef02-4d01-816c-ad3e88f46ab8"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "/admin/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [
+                        "annotation"
+                    ],
+                    "localUri": "localService/metadata.xml",
+                    "odataVersion": "4.0"
+                }
+            },
+            "annotation": {
+                "type": "ODataAnnotation",
+                "uri": "annotations/annotation.xml",
+                "settings": {
+                    "localUri": "annotations/annotation.xml"
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.112.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ushell": {},
+                "sap.fe.templates": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "outbound-message-type.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "synchronizationMode": "None",
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            },
+            "@i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "uri": "i18n/i18n.properties"
+            }
+        },
+        "resources": {
+            "css": []
+        },
+        "routing": {
+            "routes": [
+                {
+                    "pattern": ":?query:",
+                    "name": "OutboundServiceMessageTypeList",
+                    "target": "OutboundServiceMessageTypeList"
+                },
+                {
+                    "pattern": "OutboundServiceMessageType({key}):?query:",
+                    "name": "OutboundServiceMessageTypeObjectPage",
+                    "target": "OutboundServiceMessageTypeObjectPage"
+                }
+            ],
+            "targets": {
+                "OutboundServiceMessageTypeList": {
+                    "type": "Component",
+                    "id": "OutboundServiceMessageTypeList",
+                    "name": "sap.fe.templates.ListReport",
+                    "options": {
+                        "settings": {
+                            "entitySet": "OutboundServiceMessageType",
+                            "variantManagement": "Page",
+                            "navigation": {
+                                "OutboundServiceMessageType": {
+                                    "detail": {
+                                        "route": "OutboundServiceMessageTypeObjectPage"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "OutboundServiceMessageTypeObjectPage": {
+                    "type": "Component",
+                    "id": "OutboundServiceMessageTypeObjectPage",
+                    "name": "sap.fe.templates.ObjectPage",
+                    "options": {
+                        "settings": {
+                            "editableHeaderContent": false,
+                            "entitySet": "OutboundServiceMessageType"
+                        }
+                    }
+                }
+            }
+        },
+        "extends": {
+            "extensions": {
+                "sap.ui.controllerExtensions": {}
+            }
+        }
+    },
+    "sap.fiori": {
+        "registrationIds": [],
+        "archeType": "transactional"
+    }
+}
