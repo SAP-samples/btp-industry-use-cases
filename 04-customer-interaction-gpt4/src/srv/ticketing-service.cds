@@ -6,17 +6,6 @@ service TicketingService @(path: '/admin') {
   entity CustomerInteraction          as projection on db.CustomerInteraction {
     *,
     messages : Composition of many MessageThread on messages.interactionID = ID
-
-  //inoke the llm model, output as json
-  //classify the category of the interaction,
-  //summarise the text message into a title less 100 characters to and summary less than 300 characters
-  //extract the structed entities from the text message
-  // @sap.applicable.path : 'processByllm'
-  // action processByllm();
-  // @sap.applicable.path : 'summarise'
-  // action summarise();
-  // @sap.applicable.path : 'sentimentAnalyse'
-  // action sentimentAnalyse();
   };
 
   //Normalise the InboundCustomerMessage and OutboundServiceMessage as MessageThread
