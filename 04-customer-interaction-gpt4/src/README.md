@@ -12,19 +12,19 @@ File or Folder | Purpose
 `package.json` | project metadata and configuration
 `readme.md` | this getting started guide
 
-## Prerequistives
-### GPT-3.5/GPT-4 Access
+## Prerequisites
+### 1.GPT-3.5/GPT-4 Access
 You must have access to GPT-3.5-Turbo or GPT-4 APIs either through Azure OpenAI Service or OpenAI, and obtain the api key and endpoint to access GTP APIs.
 - Azure OpenAI Service: <br/>
 Please follow [the quitstart of GPT-3.5-Turbo & GPT-4.0](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/chatgpt-quickstart?tabs=command-line&pivots=programming-language-javascript#prerequisites) to have access to Azure OpenAI Service, and retrieve api key and endpoint of Azure OpenAI Service
 - OpenAI: <br/>
 You may [sign up](https://platform.openai.com/signup) an OpenAI account, then Create an [API Key](https://platform.openai.com/account/api-keys) for API access
-<br/>
-### Prerequistive for Run locally
-If you choose to [run locally](#option-1-run-locally), then please follow the instruction about [Setup for Local Development of CAP](https://cap.cloud.sap/docs/get-started/jumpstart#setup)
 
-### Prerequistive for Clound Foundry Deployment and SAP HANA Cloud
-Alternatively, deploy the solution on [SAP BTP, Cloud Foundry env and SAP HANA Cloud](#option-2-deploy-and-run-in-sap-btp-cloud-foundry-env). 
+### 2.Prerequisites for Run locally
+Only if you choose to [run locally](#option-1-run-locally), then please follow the instruction about [Setup for Local Development of CAP](https://cap.cloud.sap/docs/get-started/jumpstart#setup)
+
+### 3.Prerequisites for Clound Foundry Deployment and SAP HANA Cloud
+Only if you opt-in to deploy the solution on [SAP BTP, Cloud Foundry env and SAP HANA Cloud](#option-2-deploy-and-run-in-sap-btp-cloud-foundry-env), then here list its prerequisites
 - Required Softwares:
     - SAP Business Studio Studio or Visual Studio Code 
     - If you don’t have a Cloud Foundry Trial subaccount and dev space on [SAP BTP](https://cockpit.hanatrial.ondemand.com/cockpit/) yet, create your [Cloud Foundry Trial Account](https://developers.sap.com/tutorials/hcp-create-trial-account.html) with US East (VA) as region and, if necessary [Manage Entitlements](https://developers.sap.com/tutorials/cp-trial-entitlements.html).
@@ -35,12 +35,11 @@ Alternatively, deploy the solution on [SAP BTP, Cloud Foundry env and SAP HANA C
     - SAP HANA Cloud: You’ve to [Use an existing SAP HANA Cloud service instance](https://developers.sap.com/tutorials/btp-app-hana-cloud-setup.html#42a0e8d7-8593-48f1-9a0e-67ef7ee4df18) or [set up a new SAP HANA Cloud service instance](https://developers.sap.com/tutorials/btp-app-hana-cloud-setup.html#3b20e31c-e9eb-44f7-98ed-ceabfd9e586e) to deploy your CAP application.
     - CF Run-time with memory quota at least 256 MB
 
-### Optional Services and Components 
-Only required if you would like to have the end-to-end integration with SAP Field Service Management etc, which is used by [orchestrator-service](srv/orchestrator-service.js)
+### 4.Optional Services and Components 
+Only if you would like to have the end-to-end integration with SAP Field Service Management etc, which is used by [orchestrator-service](srv/orchestrator-service.js)
 - Destinations: 
     - FSM: Destination to [SAP Field Service Management OData API](https://help.sap.com/docs/SAP_FIELD_SERVICE_MANAGEMENT/fsm_api_quick_start_guide/api-guide-overview.html)
     - BR: Destination to [Business Rule Service in SAP Build Process Automation](https://api.sap.com/api/SPA_Decision/overview)
-- UAA
 - SAP Field Service Management: Service Call to be created if the inbound customer message in the customer interaction is classified as Technical Issue. 
 - Business Rule Service in SAP Build Process Automation: Rules about Message Classifications and Actions
 
@@ -67,6 +66,7 @@ Setup the configuration to access the large language models(LLMs) in [srv/config
     #For Azure OpenAI Service
     "auth_method": "api-key"
     ``` 
+
 ## Deployment Options
 ### Option 1-Run locally
 - Configure the database type as "sql" in [package.json](package.json) 
