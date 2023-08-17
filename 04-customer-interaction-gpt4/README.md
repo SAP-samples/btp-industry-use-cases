@@ -1,5 +1,5 @@
 # Customer Interaction powered by Large Language Models
-Large Language Models (LLMs) like ChatGPT and GPT-4 have gained significant popularity with emergent capabilities. In this sample, we have demonstrated how SAP partners can leverage this powerful AI technology in combination with SAP technologies to accelerate their solution development processes, and create more intelligent solutions on SAP Business Technology Platform(SAP BTP).<br/>
+Large Language Models (LLMs) like ChatGPT and GPT-4 have gained significant popularity with emergent capabilities. In this sample, we have demonstrated how SAP partners can leverage this powerful AI technology in combination with SAP technologies to accelerate their solution development processes, and create more intelligent solutions on SAP Business Technology Platform(SAP BTP). In addition, please find more detail about exploring the potential of GPT in SAP ecosystem in [this blog post series](https://blogs.sap.com/2023/06/20/exploring-the-potential-of-gpt-in-sap-ecosystem/)<br/>
 
 Specifically, SAP partners can 
 - Use GPT to assist in SAP Application development
@@ -15,10 +15,10 @@ File or Folder | Purpose
 
 ## Description
 This sample solution aims to capture all kinds of customer communications via various channels in customer service in the form of customer interaction
-* customer leave a product review on the website
-* customer express feedback and concern about the product or service on social media(twitter,fb,ins,linkedin etc)
-* customer has a question about the product update or their online order status, then create an inquiry through Q&A chatbot on instant messaging(whatsapp,messenger,wechat etc.)
-* customer request support about troubleshooting etc.<br/>
+* customers leave a product review on the website
+* customers express feedback and concern about the product or service on social media(twitter,fb,ins,linkedin etc)
+* customers has a question about the product update or their online order status, then create an inquiry through Q&A chatbot on instant messaging(whatsapp,messenger,wechat etc.)
+* customers request support about troubleshooting etc.<br/>
 
 The inbound customer messages in the customer interaction are analyzed and processed upon submission by GPT through its APIs for appropriate action. 
 - generate a title and a short summary of the message.
