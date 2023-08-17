@@ -14,12 +14,12 @@ Please edit this file as it is the primary description file for your project. Yo
 
 ## Description
 This repository includes a list of sample code about industry use cases with SAP BTP, which are presented during the [SAP BTP Industry Use Cases series](https://blogs.sap.com/2023/02/10/deliver-real-life-use-cases-with-sap-btp/). Each numbered folder you see in the structure is comprised by the code presented on an individual session. And each folder represents a completed runnable project about a industry use case with SAP BTP. To run a specific project, please kindly follow the READMe.md within its folder. <br/>
-Use Case | Industry | SAP BTP Services
----------|----------|----------
-[`01-Intelligent Ticketing System`](01-intelligent-ticket-system) | Service | SAP CAP, CF, Business Rule 
-[`02-Fleet Driver Tracking`](02-fleet-driver-tracking) | Transportation | SSO with IAS between SAC and CAP, SAP Graph, SAP Build Process Automation
-[`03-Workplace Management`](03-workplace-management) | Real Estate | Multitenancy, Security, SAP CAP
-[`04-Customer Interaction Powered by GPT`](04-customer-interaction-gpt4) | Service | Generative AI, Large Language Model, GPT, SAP CAP, SAP RAP
+Use Case | Industry | SAP BTP Services | Blog Post
+---------|----------|----------|----------
+[`01-Intelligent Ticketing System`](01-intelligent-ticket-system) | Service | SAP CAP, CF, Business Rule | [link](https://blogs.sap.com/2023/02/28/deliver-real-life-use-cases-with-sap-btp-intelligent-ticket-system/)
+[`02-Fleet Driver Tracking`](02-fleet-driver-tracking) | Transportation | SSO with IAS between SAC and CAP, SAP Graph, SAP Build Process Automation | [link](https://blogs.sap.com/2023/03/30/deliver-real-life-use-cases-with-sap-btp-fleet-driver-tracking-solution/)
+[`03-Workplace Management`](03-workplace-management) | Real Estate | Multitenancy, Security, SAP CAP | [link](https://blogs.sap.com/?p=1763035)
+[`04-Customer Interaction Powered by GPT`](04-customer-interaction-gpt4) | Service | Generative AI, Large Language Model, GPT, SAP CAP, SAP RAP | [link](https://blogs.sap.com/2023/06/20/exploring-the-potential-of-gpt-in-sap-ecosystem/)
 
 ## Known Issues
 No known issues.
