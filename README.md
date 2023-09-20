@@ -20,6 +20,7 @@ Use Case | Industry | SAP BTP Services | Blog Post
 [`02-Fleet Driver Tracking`](02-fleet-driver-tracking) | Transportation | SSO with IAS between SAC and CAP, SAP Graph, SAP Build Process Automation | [link](https://blogs.sap.com/2023/03/30/deliver-real-life-use-cases-with-sap-btp-fleet-driver-tracking-solution/)
 [`03-Workplace Management`](03-workplace-management) | Real Estate | Multitenancy, Security, SAP CAP | [link](https://blogs.sap.com/?p=1763035)
 [`04-Customer Interaction Powered by GPT`](04-customer-interaction-gpt4) | Service | Generative AI, Large Language Model, GPT, SAP CAP, SAP RAP | [link](https://blogs.sap.com/2023/06/20/exploring-the-potential-of-gpt-in-sap-ecosystem/)
+[`06-AI-powered-Returnable-Packaging`](06-ai-powered-returnable-packaging) | Sustainability | AI-Core, SAP Computer Vision, Kyma, SAP Build Apps | comming soon
 
 ## Known Issues
 No known issues.
