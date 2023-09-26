@@ -12,11 +12,12 @@ The prototyped solution is composed by 3 main blocks:
 <img width="468" alt="returnpack_architecture" src="https://github.com/SAP-samples/btp-industry-use-cases/assets/18447094/bf0c953e-2cd0-4313-a32b-91cede9b2cf6">
 
 We have organized the source code shared here in 3 main folders corresponding to the 3 main components implemented in our prototype:
-File or Folder | Purpose
----------|----------
-`/` | 
-`/` | 
-`returnpacksrv/` | Kyma serverless function source code
+File or Folder | Component | Purpose
+---------|----------|----------
+`/` | AI Core | 
+`returnpacksrv/` | SAP Kyma | Kyma serverless function source code
+`/` | SAP Build Apps | 
+
 
 ## Deploy and Run
 Please refer to the instructions on each one of the prototype components.
