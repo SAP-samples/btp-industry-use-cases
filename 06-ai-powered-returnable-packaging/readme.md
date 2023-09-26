@@ -14,9 +14,9 @@ The prototyped solution is composed by 3 main blocks:
 We have organized the source code shared here in 3 main folders corresponding to the 3 main components implemented in our prototype:
 File or Folder | Component | Purpose
 ---------|----------|----------
-`/` | AI Core | 
-`returnpacksrv/` | SAP Kyma | Kyma serverless function source code
-`/` | SAP Build Apps | 
+[/]() | AI Core | 
+[returnpacksrv/](./returnpacksrv/) | SAP Kyma | Kyma serverless function source code
+[/]() | SAP Build Apps | 
 
 
 ## Deploy and Run
