@@ -16,14 +16,17 @@ Whatch the following [SAP Business Technology Platform - Serverless Functions SA
 
 ## Configuration
 - enter your SAP Kyma cluster id in the file [./helm/returnpacksrv-srv/values.yaml]()./helm/returnpacksrv-srv/values.yaml).
-- enter your destination's details to your SAP Returnable Packaging industry cloud solution as well as to your AI-Core deployed model APIs in the [./helm/returnpacksrv-srv/templates/service-dest.yaml]()./helm/returnpacksrv-srv/templates/service-dest.yaml) file.
+- configure your destination's details to your SAP Returnable Packaging industry cloud solution as well as to your AI-Core deployed model APIs in the [./helm/returnpacksrv-srv/templates/service-dest.yaml]()./helm/returnpacksrv-srv/templates/service-dest.yaml) file or configure them after deployment of the serverless function in the Kyma cockpit.
 
 ## Deploy and Run
 The Kyma serverless function has been build as a [Helm Chart](https://helm.sh/), check the [Helm Chart](https://helm.sh/) link for more details on how to get it installed.
 
 To deploy the function on your SAP BTP Kyma environment run the command:
+```sh
 make helm-deploy
+```
 
 to undeploy the function run the command:
+```sh
 make helm-undeploy
-
+```
