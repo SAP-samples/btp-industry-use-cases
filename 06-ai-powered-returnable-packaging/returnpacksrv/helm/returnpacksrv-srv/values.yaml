@@ -1,4 +1,4 @@
-clusterDomain: c-2384a19.kyma.ondemand.com
+clusterDomain: <your-cluster-domain>.kyma.ondemand.com
 gateway: kyma-gateway.kyma-system.svc.cluster.local
 services:
   app:
