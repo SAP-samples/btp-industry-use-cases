@@ -1,0 +1,2 @@
+id,machineId,userId,packagingType,date,points,co2saving
+1,MACHINE01,init@rp.com,MAT_RET_PKG_001,2023-06-26,3,1

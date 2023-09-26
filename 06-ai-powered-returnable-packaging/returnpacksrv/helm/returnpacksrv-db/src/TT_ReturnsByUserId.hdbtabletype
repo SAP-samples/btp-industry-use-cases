@@ -1,0 +1,5 @@
+TYPE "returnpacksrv.db::TT_ReturnsByUserId" AS TABLE (
+  "userId" VARCHAR(100),
+  "totalpoints" INTEGER,
+  "totalco2saving" DOUBLE
+)

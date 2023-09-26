@@ -1,0 +1,427 @@
+apiVersion: serverless.kyma-project.io/v1alpha2
+kind: Function
+metadata:
+  name: {{ .Values.services.srv.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.services.srv.name }}
+spec:
+  runtime: {{ .Values.services.srv.runtime }}
+  runtimeImageOverride: {{ .Values.services.srv.runtimeImageOverride }}
+  scaleConfig:
+    maxReplicas: 5
+    minReplicas: 1
+  resourceConfiguration:
+    function:
+      resources:
+        limits:
+          cpu: 1
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 500Mi
+    build:
+      resources:
+        limits:
+          cpu: 2
+          memory: 2Gi
+        requests:
+          cpu: 1
+          memory: 1Gi
+  env:
+    - name: DEBUG
+      value: 'returnpacksrv-srv:*'
+    - name: SERVICE_BINDING_ROOT
+      value: /bindings
+  secretMounts:
+    - secretName: {{ .Values.services.uaa.bindingSecretName }}
+      mountPath: "/bindings/returnpacksrv-uaa"
+    - secretName: {{ .Values.services.dest.bindingSecretName }}
+      mountPath: "/bindings/returnpacksrv-dest"
+    - secretName: {{ .Values.services.hdi.bindingSecretName }}
+      mountPath: "/bindings/returnpacksrv-hdi"
+  source:
+    inline:
+      dependencies: |
+        {
+          "name": "returnpacksrv-srv",
+          "version": "0.0.1",
+          "dependencies": {
+            "debug": "latest"
+            ,
+            "@sap/xsenv": "latest"
+            ,
+            "@sap/xssec": "latest"
+            ,
+            "@sap/hana-client": "latest"
+            ,
+            "@sap-cloud-sdk/http-client": "latest"
+            ,
+            "@sap-cloud-sdk/connectivity": "latest"
+            ,
+            "@sap-cloud-sdk/util": "latest"
+          }
+        }
+      source: |
+        const debug = require('debug')('returnpacksrv-srv:function');
+        const xsenv = require('@sap/xsenv');
+        const services = xsenv.getServices({
+          uaa: { label: 'xsuaa' }
+          ,
+          hana: { label: 'hana' }
+        });
+        
+        const { setGlobalLogLevel, createLogger } = require('@sap-cloud-sdk/util');
+        setGlobalLogLevel('debug');
+        const logger = createLogger('http-logs');
+
+        const util = require('util');
+        const xssec = require('@sap/xssec');
+        const createSecurityContext = util.promisify(xssec.createSecurityContext);
+        
+        //HANA
+        const hana = require('@sap/hana-client');
+        services.hana.sslValidateCertificate = true;
+        services.hana.ssltruststore = services.hana.certificate;
+        const hanaConn = hana.createConnection();
+        
+        // Execute a command in SAP HANA Cloud
+        // TODO for prod: if any step fails all others should be rolled back to avoid inconsistencies!!!!
+        async function execDB(sql, isPrepared=false, params) {
+          try {
+            await hanaConn.connect(services.hana);
+          } catch (err) {
+            debug('ERROR execDB connect: ', err.message, err.stack);
+            throw err;
+          }
+          try {
+            await hanaConn.exec('SET SCHEMA ' + services.hana.schema);
+            if (isPrepared) {
+              let hanaStmt = await hanaConn.prepare(sql);
+              results = hanaStmt.exec(params);
+            } else {
+              results = await hanaConn.exec(sql);
+            }
+          } catch (err) {
+            debug('ERROR execDB exec: ', err.message, err.stack);
+            throw err;
+          }
+          try {
+            await hanaConn.disconnect();
+          } catch (err) {
+            debug('ERROR execDB disconnect: ', err.message, err.stack);
+            throw err;
+          }
+          return results;
+        }
+        
+        // Get package classification from AI based on an image64
+        async function getPackageClass(req) {
+          try {
+            const imageData = {
+              "images": req.body.image64
+            };
+            let res1 = await httpClient.executeHttpRequest(
+              {
+                destinationName: 'returnpacksrv-ai',
+                jwt: retrieveJwt(req)
+              },
+              {
+                method: 'POST',
+                headers: {
+                  custom: { "AI-Resource-Group": 'packaging' },
+                  requestConfig: { "AI-Resource-Group": 'packaging' }
+                },
+                url: req.query.path || '',
+                data: imageData
+              }
+            );
+            results = res1.data;            
+          } catch (err) {
+            debug('ERROR getPackageClass: ', err.message, err.stack);
+            throw err;            
+          }
+          return results[0].predicted_class_name;
+        }
+
+        // Create a Posting Document in RPM
+        async function createRPMPostingDoc(req, packagingType) {
+          try {
+            // TODO: increment materialDocumentNumber!!!!!!!!!!!!!!!!!!!!!!
+            const rpmdoc = {
+              "returnableMaterialQuantity":  1,
+              "materialDocumentNumber": req.body.documentNumber,
+              "materialDocumentItemNumber": "1",
+              "materialDocumentYear": new Date().getFullYear().toString(),
+              "postingDate": new Date().toJSON().slice(0, 10),
+              "materialCode": packagingType,
+              "vendorCode": "",
+              "customerCode": "CC02",
+              "plant": "PC01",
+              "movementType": "101"
+            };
+            let res1 = await httpClient.executeHttpRequest(
+              {
+                destinationName: 'returnpacksrv-rpm',
+                jwt: retrieveJwt(req)
+              },
+              {
+                method: 'POST',
+                url: req.query.path || '',
+                data: rpmdoc
+              }
+            );
+            results = res1.data;
+          } catch (err) {
+            debug('ERROR createRPMPostingDoc: ', err.message, err.stack);
+            throw err;            
+          }
+          return results;
+        }
+
+        // Test destination
+        const cloudSdkConnectivity = require('@sap-cloud-sdk/connectivity');
+        async function myfetchDestination(destinationName, jwtToken = undefined)
+        {           
+            const destinationFetchOptions = 
+                {
+                    destinationName: destinationName,
+                    useCache: true,
+                };
+            if (typeof (jwtToken) !== undefined) {
+              destinationFetchOptions.jwt = jwtToken;
+            } 
+            else {
+              destinationFetchOptions.iss = 'https://quovadis.authentication.eu10.hana.ondemand.com/oauth/token';
+            }                    
+            try {
+              //const destination = await cloudSdkConnectivity.getDestinationFromDestinationService(destinationFetchOptions);
+              const destination = await cloudSdkConnectivity.getDestination(destinationFetchOptions);
+              debug('myfetchDestination: ', JSON.stringify(destination, 0, 2));
+              return destination;
+            } catch (err) {
+              debug('ERROR myfetchDestination: ', err.message);
+              throw err;
+            }
+        }
+
+        const httpClient = require('@sap-cloud-sdk/http-client');
+        const { retrieveJwt } = require('@sap-cloud-sdk/connectivity');
+        module.exports = {
+          main: async function (event, context) {
+            let req = event.extensions.request;
+        
+            let securityContext;
+            if (typeof req.headers.authorization === 'string' && req.headers.authorization.split(' ').length > 1 && req.headers.authorization.split(' ')[0].toLowerCase() === 'bearer') {
+              try {
+                securityContext = await createSecurityContext(req.headers.authorization.split(' ')[1], services.uaa);
+              } catch (err) {
+                debug('ERROR Create Security Context: ', err.message);
+                event.extensions.response.sendStatus(401);
+                return;
+              }
+            } else {
+              debug('Create Security Context: ', 'Invalid Headers - Missing Access Token');
+              event.extensions.response.sendStatus(401);
+              return;
+            }
+        
+            switch(req.path) {
+              // Test command
+              case '/srv/':
+                if (securityContext.checkScope('$XSAPPNAME.User')) {
+                  results = 'returnpacksrv';
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;     
+        
+              // Get all returns
+              case '/srv/returns':
+                if (securityContext.checkScope('$XSAPPNAME.User')) {
+                  results = await execDB(`SELECT * FROM "returnpacksrv.db::returns"`);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+     
+              // Get my returns - userId provided in the query 
+              case '/srv/myReturns':
+                if (securityContext.checkScope('$XSAPPNAME.User')) {
+                  results = await execDB(`SELECT * FROM "returnpacksrv.db::returns" where "userId" = ` + req.query.userId);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              // Get total returns grouped by userId 
+              case '/srv/returnsByUserId':
+                if (securityContext.checkScope('$XSAPPNAME.User')) {
+                  results = await execDB(`CALL "returnpacksrv.db::SP_ReturnsByUserId"(?)`);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              // Create a return - called by the return packaging machine
+              case '/srv/postReturns':                
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  try {
+                    // get packaging type from AI
+                    let packagingType = await getPackageClass(req);                     
+
+                    // GET POINTS BASED ON THE PACKAGING TYPE
+                    var sqlStr = `SELECT "points","co2saving" FROM "returnpacksrv.db::pointsconfig" WHERE "packagingType" ='` + packagingType + `'`; 
+                    results = await execDB(sqlStr)
+
+                    // SAVE ENTRY INTO HANA DB
+                    sqlStr = `INSERT INTO "returnpacksrv.db::returns" values((SELECT COUNT(*) FROM "returnpacksrv.db::returns")+1,'` + req.body.machineId + `','` + req.body.userId + `','` + packagingType + `',CURRENT_UTCDATE,'` + results[0].points + `','` + results[0].co2saving + `')`;
+                    results = await execDB(sqlStr);
+
+                    // CREATE RPM POSTING DOCUMENT 
+                    results = await createRPMPostingDoc(req, packagingType);
+                  }
+                  catch (err) {
+                    debug("ERROR /srv/postReturns: ", err.Message)
+                    event.extensions.response.sendStatus(500);
+                    return;
+                  }
+
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+        
+              case '/srv/pointsconfig':
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  results = await execDB(`SELECT * FROM "returnpacksrv.db::pointsconfig"`);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              // INTERNAL TESTING - TO REMOVE BEFORE DELIVERY!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+              case '/srv/user':
+                if (securityContext.checkScope('$XSAPPNAME.User')) {
+                  try {
+                    let user = {};
+                    user.logonName = securityContext.getLogonName();
+                    user.givenName = securityContext.getGivenName();
+                    user.familyName = securityContext.getFamilyName();
+                    user.email = securityContext.getEmail();
+                    user.scopes = {};
+                    user.scopes.User = securityContext.checkScope('$XSAPPNAME.User');
+                    user.scopes.Admin = securityContext.checkScope('$XSAPPNAME.Admin');
+                    results = user;
+                  } catch (err) {
+                    debug('/srv/user', err.message, err.stack);
+                    results = err.message;
+                  }
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              case '/srv/createrpmdoc':
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  results = await createRPMPostingDoc(req);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              case '/srv/getrpmdoc':
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  //await myfetchDestination('returnpacksrv-rpm', retrieveJwt(req));
+                  // OAuth2ClientCredentials                
+                  try {
+                    let res1 = await httpClient.executeHttpRequest(
+                      {
+                        destinationName: 'returnpacksrv-rpm',
+                        jwt: retrieveJwt(req)
+                      },
+                      {
+                        method: 'GET',
+                        url: req.query.path || ''
+                      }
+                    );
+                    results = res1.data;
+                  } catch (err) {
+                    debug('/srv/getrpmdoc ERROR: ', err.message, err.stack);
+                    results = err.message;
+                  }
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              case '/srv/dest':
+                if (securityContext.checkScope('$XSAPPNAME.User')) {
+                  try {
+                    let res1 = await httpClient.executeHttpRequest(
+                      {
+                        destinationName: req.query.destination || 'returnpacksrv-nw'
+                        ,
+                        jwt: retrieveJwt(req)
+                      },
+                      {
+                        method: 'GET',
+                        url: req.query.path || ''
+                      }
+                    );
+                    results = res1.data;
+                  } catch (err) {
+                    debug('/srv/dest ERROR: ', err.message, err.stack);
+                    results = err.message;
+                  }
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              case '/srv/session':
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  results = await execDB(`SELECT * FROM M_SESSION_CONTEXT`);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+        
+              case '/srv/db':
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  results = await execDB(`SELECT SYSTEM_ID, DATABASE_NAME, HOST, VERSION, USAGE FROM M_DATABASE`);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+        
+              case '/srv/connections':
+                if (securityContext.checkScope('$XSAPPNAME.Admin')) {
+                  results = await execDB(`SELECT TOP 10 USER_NAME, CLIENT_IP, CLIENT_HOST, START_TIME FROM M_CONNECTIONS WHERE OWN='TRUE' ORDER BY START_TIME DESC`);
+                } else {
+                  event.extensions.response.sendStatus(403);
+                  return;
+                }
+                break;
+
+              ///////////////////////////////////////
+              default:
+                event.extensions.response.sendStatus(400);
+                return;
+            }
+        
+            return results;
+          }
+        }

@@ -1,0 +1,8 @@
+COLUMN TABLE "returnpacksrv.db::pointsconfig" 
+  (
+    "packagingType" VARCHAR(100),
+    "description" VARCHAR(100),
+    "points" INTEGER,
+    "co2saving" DOUBLE,
+    PRIMARY KEY ("packagingType") 
+  )

@@ -1,0 +1,11 @@
+COLUMN TABLE "returnpacksrv.db::returns" 
+  (
+    "id" DOUBLE, 
+    "machineId" VARCHAR(100),
+    "userId" VARCHAR(100),
+    "packagingType" VARCHAR(100),
+    "date" DATE,
+    "points" INTEGER,
+    "co2saving" DOUBLE,
+    PRIMARY KEY ("id") 
+  )

@@ -1,0 +1,13 @@
+jobs:
+  db:
+    name: returnpacksrv-db
+    src: returnpacksrv-db-src
+    image:
+      dockerID: hanaacademy
+      repository: hdi-deploy
+      tag: "latest"
+      pullPolicy: Always
+  hdi:
+    name: returnpacksrv-hdi
+    bindingName: returnpacksrv-hdi-binding
+    bindingSecretName: returnpacksrv-hdi-binding-secret

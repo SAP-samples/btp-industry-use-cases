@@ -1,0 +1,23 @@
+clusterDomain: c-2384a19.kyma.ondemand.com
+gateway: kyma-gateway.kyma-system.svc.cluster.local
+services:
+  app:
+    name: returnpacksrv-app
+  srv:
+    name: returnpacksrv-srv
+    port: '80'
+    runtime: nodejs18
+    runtimeImageOverride: hanaacademy/kyma-faas:nodejs16
+  uaa:
+    name: returnpacksrv-uaa
+    xsappname: returnpacksrv
+    bindingName: returnpacksrv-uaa-binding
+    bindingSecretName: returnpacksrv-uaa-binding-secret
+  dest:
+    name: returnpacksrv-dest
+    bindingName: returnpacksrv-dest-binding
+    bindingSecretName: returnpacksrv-dest-binding-secret
+  hdi:
+    name: returnpacksrv-hdi
+    bindingName: returnpacksrv-hdi-binding
+    bindingSecretName: returnpacksrv-hdi-binding-secret

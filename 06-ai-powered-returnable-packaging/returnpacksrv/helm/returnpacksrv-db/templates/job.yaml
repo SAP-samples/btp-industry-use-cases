@@ -1,0 +1,76 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.jobs.db.name }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+    app: {{ .Values.jobs.db.name }}
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.jobs.db.name }}
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - image: "{{ .Values.jobs.db.image.dockerID }}/{{ .Values.jobs.db.image.repository }}:{{ .Values.jobs.db.image.tag }}"
+          name: {{ .Values.jobs.db.name }}
+          imagePullPolicy: {{ .Values.jobs.db.image.pullPolicy }}
+          env:
+            - name: SERVICE_BINDING_ROOT
+              value: /bindings
+            - name: EXIT
+              value: 'true'
+          volumeMounts:
+            - name: hdi
+              mountPath: "/bindings/{{ .Values.jobs.hdi.name }}"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/.hdinamespace"
+              subPath: ".hdinamespace"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/.hdiconfig"
+              subPath: ".hdiconfig"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/returns.hdbtable"
+              subPath: "returns.hdbtable"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/TT_ReturnsByUserId.hdbtabletype"
+              subPath: "TT_ReturnsByUserId.hdbtabletype"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/SP_ReturnsByUserId.hdbprocedure"
+              subPath: "SP_ReturnsByUserId.hdbprocedure"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/returns.hdbtabledata"
+              subPath: "returns.hdbtabledata"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/returns.csv"
+              subPath: "returns.csv"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/pointsconfig.hdbtable"
+              subPath: "pointsconfig.hdbtable"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/pointsconfig.hdbtabledata"
+              subPath: "pointsconfig.hdbtabledata"
+              readOnly: true
+            - name: src
+              mountPath: "/workspace/src/pointsconfig.csv"
+              subPath: "pointsconfig.csv"
+              readOnly: true                                
+      volumes:
+        - name: hdi
+          secret:
+            secretName: {{ .Values.jobs.hdi.bindingSecretName }}
+        - name: src
+          configMap:
+            name: {{ .Values.jobs.db.src }}

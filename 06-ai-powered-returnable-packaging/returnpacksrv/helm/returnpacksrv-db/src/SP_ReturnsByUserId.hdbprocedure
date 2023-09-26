@@ -1,0 +1,11 @@
+PROCEDURE "returnpacksrv.db::SP_ReturnsByUserId" (OUT result "returnpacksrv.db::TT_ReturnsByUserId")
+  LANGUAGE SQLSCRIPT
+  SQL SECURITY INVOKER
+  READS SQL DATA
+  AS
+BEGIN
+  result = select "userId", SUM("points") as "totalpoints", SUM("co2saving") as "totalco2saving"
+             from "returnpacksrv.db::returns"
+             group by "userId"
+             order by SUM("points") desc;
+END
