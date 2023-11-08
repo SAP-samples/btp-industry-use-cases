@@ -1,0 +1,17 @@
+node_modules/
+default-*.json
+.env
+.yo-rc.json
+.vscode/
+coverage/
+gen/
+dist/
+secret-*.yaml
+connection.properties
+*.db
+*.mtar
+*.log
+_out
+.che/
+.gen/
+.DS_Store

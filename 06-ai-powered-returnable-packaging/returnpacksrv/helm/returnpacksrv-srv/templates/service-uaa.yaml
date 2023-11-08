@@ -1,0 +1,39 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: '{{ .Values.services.uaa.name }}'
+  labels:
+    app.kubernetes.io/name: '{{ .Values.services.uaa.name }}'
+spec:
+  externalName: '{{ .Values.services.uaa.name }}'
+  serviceOfferingName: xsuaa
+  servicePlanName: application
+  parameters:
+    xsappname: '{{ .Values.services.uaa.xsappname }}'
+    tenant-mode: dedicated
+    scopes:
+      - name: $XSAPPNAME.User
+        description: User
+      - name: $XSAPPNAME.Admin
+        description: Admin
+    role-templates:
+      - name: User
+        description: User
+        scope-references:
+          - $XSAPPNAME.User
+      - name: Admin
+        description: Admin
+        scope-references:
+          - $XSAPPNAME.Admin
+    role-collections:
+      - name: '{{ .Values.services.uaa.xsappname }}_User'
+        description: '{{ .Values.services.uaa.xsappname }} User'
+        role-template-references:
+          - $XSAPPNAME.User
+      - name: '{{ .Values.services.uaa.xsappname }}_Admin'
+        description: '{{ .Values.services.uaa.xsappname }} Admin'
+        role-template-references:
+          - $XSAPPNAME.Admin
+    oauth2-configuration:
+      redirect-uris:
+        - 'https://{{ .Values.services.app.name }}.{{ .Values.clusterDomain }}/login/callback'

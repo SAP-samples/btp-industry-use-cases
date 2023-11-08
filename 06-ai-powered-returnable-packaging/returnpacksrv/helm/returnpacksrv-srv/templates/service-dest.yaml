@@ -1,0 +1,43 @@
+apiVersion: services.cloud.sap.com/v1
+kind: ServiceInstance
+metadata:
+  name: {{ .Values.services.dest.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.services.dest.name }}
+spec:
+  externalName: {{ .Values.services.dest.name }}
+  serviceOfferingName: destination
+  servicePlanName: lite
+  parameters:
+    init_data:
+      instance:
+        existing_destinations_policy: ignore
+        destinations:
+          - Name: returnpacksrv-nw
+            Description: Northwind
+            URL: https://services.odata.org/v2/Northwind/Northwind.svc
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: NoAuthentication        
+          - Name: returnpacksrv-rpm
+            Description: RPM
+            URL: >-
+              https://<SAP-returnable-packaging-industry-cloud-solution-URL>/odata/v4/PostingDocumentService/Documents
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2ClientCredentials
+            clientId: ABCD
+            clientSecret: 1234
+            tokenServiceURL: https://<SAP-returnable-packaging-industry-cloud-authentication-URL>/oauth/token
+            tokenServiceURLType: Dedicated
+          - Name: returnpacksrv-ai
+            Description: AI Core
+            URL: >-
+              https://<api-aicore-URL>/v2/inference/deployments/da8f4faf2e9a8190/v1/models/model:predict
+            Type: HTTP
+            ProxyType: Internet
+            Authentication: OAuth2ClientCredentials
+            clientId: ABCD
+            clientSecret: 1234
+            tokenServiceURL: https://<api-aicore-authentication-URL>/oauth/token
+            tokenServiceURLType: Dedicated            
