@@ -16,7 +16,7 @@ File or Folder | Component | Purpose
 ---------|----------|----------
 [/]() | AI Core | 
 [returnpacksrv/](./returnpacksrv/) | SAP Kyma | Kyma serverless function source code
-[/]() | SAP Build Apps | 
+[/myPacksUI](./myPacksUI/) | SAP Build Apps | 
 
 
 ## Deploy and Run
