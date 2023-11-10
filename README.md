@@ -20,7 +20,7 @@ Use Case | Industry | SAP BTP Services | Blog Post
 [`02-Fleet Driver Tracking`](02-fleet-driver-tracking) | Transportation | SSO with IAS between SAC and CAP, SAP Graph, SAP Build Process Automation | [link](https://blogs.sap.com/2023/03/30/deliver-real-life-use-cases-with-sap-btp-fleet-driver-tracking-solution/)
 [`03-Workplace Management`](03-workplace-management) | Real Estate | Multitenancy, Security, SAP CAP | [link](https://blogs.sap.com/?p=1763035)
 [`04-Customer Interaction Powered by GPT`](04-customer-interaction-gpt4) | Service | Generative AI, Large Language Model, GPT, SAP CAP, SAP RAP | [link](https://blogs.sap.com/2023/06/20/exploring-the-potential-of-gpt-in-sap-ecosystem/)
-[`05-AI-driven Public Urban Transport Optimization`](05-urban-public-transport) | Service | Data Intelligence, Datasphere, AI Core, SAC | [link1](hhttps://blogs.sap.com/2023/07/31/ai-driven-public-urban-transport-optimization-introduction-architecture/) [link2](https://blogs.sap.com/2023/07/19/ai-driven-public-urban-transport-optimization-implementation-deep-dive/)
+[`05-AI-driven Public Urban Transport Optimization`](05-urban-public-transport) | Service | Data Intelligence, Datasphere, AI Core, SAC | [link1](hhttps://blogs.sap.com/2023/07/31/ai-driven-public-urban-transport-optimization-introduction-architecture/), [link2](https://blogs.sap.com/2023/07/19/ai-driven-public-urban-transport-optimization-implementation-deep-dive/)
 [`06-AI-powered Returnable Packaging`](06-ai-powered-returnable-packaging) | Sustainability | AI-Core, SAP Computer Vision, Kyma, SAP Build Apps | comming soon
 
 ## Known Issues
