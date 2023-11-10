@@ -1,0 +1,104 @@
+{
+	"properties": {},
+	"description": "Urban Public Transport Scenario - Urban Public Transport Ingestion Pipeline",
+	"processes": {
+		"pythonoperatorwithconnectiontohana1": {
+			"component": "Python_with_HanaML",
+			"metadata": {
+				"label": "Get GTFS-RT data",
+				"x": 216.99999904632568,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"filesRequired": [
+					"script.py"
+				],
+				"generation": 1,
+				"config": {
+					"hanaConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
+					},
+					"script": "import requests\nimport pandas as pd\nimport hana_ml\nfrom hana_ml import dataframe\nimport numpy as np\n\nfrom bods_client.client import BODSClient\nfrom bods_client.models import BoundingBox, GTFSRTParams\nfrom bods_client.models import Siri, SIRIVMParams\n\nimport haversine as hs\nimport pytz\n\ndef calc_distance(lon_x, lat_x, lon_y, lat_y):\n    loc1=(lon_x,lat_x)\n    loc2=(lon_y,lat_y)\n    return hs.haversine(loc1,loc2)\n\ndef on_input(data):\n    \n    conn = hana_ml.dataframe.ConnectionContext(\n        api.config.hanaConnection['connectionProperties']['host'],\n        api.config.hanaConnection['connectionProperties']['port'],\n        api.config.hanaConnection['connectionProperties']['user'],\n        api.config.hanaConnection['connectionProperties']['password'],\n        encrypt='true',\n        sslValidateCertificate='false'\n    )\n    \n    #Load vehicle locations of the previous round\n    df_prev_load = (conn.table('GTFS_RT_LAST_LOAD', schema='URBANPUBLICTRANSPORT#DI'))\n    df_prev_load = df_prev_load.collect()\n    \n    #New request\n    API_KEY = \"971a1adef42c46be54c3f898dec561eb24aad3a1\"\n    bods = BODSClient(api_key=API_KEY)\n    \n    operator_refs = [\"TFLO\"] #this maybe can become a parameter?\n    params = SIRIVMParams(operator_refs=operator_refs)\n    siri_response = bods.get_siri_vm_data_feed(params=params)\n    siri = Siri.from_bytes(siri_response)\n    vehicle_activities = siri.service_delivery.vehicle_monitoring_delivery.vehicle_activities\n    \n    df = pd.DataFrame([t.__dict__ for t in vehicle_activities ])\n    df = df.drop('monitored_vehicle_journey', axis=1)\n    \n    df2 = pd.DataFrame([t.monitored_vehicle_journey.__dict__ for t in vehicle_activities ])\n    df2 = df2.drop('vehicle_location', axis=1)\n\n    df3 = pd.DataFrame([t.monitored_vehicle_journey.vehicle_location.__dict__ for t in vehicle_activities ])\n    result = pd.concat([df, df2, df3], axis=1)\n    result['load_date'] = pd.Timestamp('now')\n    \n    #We save this iteration for the next round\n    df_remote1 = dataframe.create_dataframe_from_pandas(\n        connection_context = conn, \n        pandas_df = result, \n        table_name = 'GTFS_RT_LAST_LOAD', #this maybe can become a parameter?\n        force = True,\n        replace = False,\n        drop_exist_tab = False #To be changed to False once the table structure is definitive\n    )\n    \n    output = result.merge(df_prev_load,\\\n        on=['vehicle_ref','direction_ref','vehicle_journey_ref','published_line_name','destination_ref', 'destination_name',\\\n        'direction_ref','line_ref','operator_ref'],\\\n        how='left')\n        \n    final_time   = pd.DatetimeIndex(pd.to_datetime(output['recorded_at_time_x'], utc=True)).tz_convert('Europe/Berlin')\n    initial_time = pd.DatetimeIndex(pd.to_datetime(output['recorded_at_time_y'], utc=True)).tz_convert('Europe/Berlin')\n    \n    output['delta_time_sec'] = (final_time -initial_time).total_seconds()\n    output['delta_time_sec'] = output['delta_time_sec'].fillna(0)\n                    \n    output['distance_km'] = \\\n        output.apply(lambda x: calc_distance(x.longitude_x,x.latitude_x,x.longitude_y,x.latitude_y), axis=1)\n    output['distance_km'] = output['distance_km'].fillna(0)\n    \n    output['avg_speed'] = output[\"distance_km\"].divide((output[\"delta_time_sec\"]/(60*60)))\n    output['avg_speed'] = output['avg_speed'].fillna(-1)\n    output.replace([np.inf, -np.inf], -1, inplace=True)\n    \n    #For testing, to be deleted once the development is completed\n    df_remote3 = dataframe.create_dataframe_from_pandas(\n        connection_context = conn, \n        pandas_df = output, \n        table_name = 'GTFS_RT_SPEEDS', #this maybe can become a parameter?\n        force = True,\n        replace = False,\n        drop_exist_tab = False\n    )\n\n    result = result.merge(output[['vehicle_ref','delta_time_sec','distance_km','avg_speed']], on=['vehicle_ref'], how='left')\n    \n    df_remote2 = dataframe.create_dataframe_from_pandas(\n        connection_context = conn, \n        pandas_df = result, \n        table_name = 'GTFS_RT', #this maybe can become a parameter?\n        force = False,\n        replace = False,\n        append = True\n        #force = True,\n        #replace = False,\n        #drop_exist_tab = False\n    )\n\n    api.send('result', api.Message( 'dummy' ))\n    \napi.set_port_callback('trigger', on_input)\n"
+				},
+				"additionaloutports": [
+					{
+						"name": "result",
+						"type": "message"
+					}
+				]
+			}
+		},
+		"workflowterminator1": {
+			"component": "com.sap.dh.terminator",
+			"metadata": {
+				"label": "Workflow Terminator",
+				"x": 421.99999809265137,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"workflowtrigger1": {
+			"component": "com.sap.dh.trigger",
+			"metadata": {
+				"label": "Workflow Trigger",
+				"x": 12,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [
+		{
+			"name": "group2",
+			"nodes": [
+				"pythonoperatorwithconnectiontohana1"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"python-bods-client": "1.0.0"
+			}
+		}
+	],
+	"connections": [
+		{
+			"metadata": {
+				"points": "136,72 163.99999952316284,72 163.99999952316284,80 211.99999904632568,80"
+			},
+			"src": {
+				"port": "output",
+				"process": "workflowtrigger1"
+			},
+			"tgt": {
+				"port": "trigger",
+				"process": "pythonoperatorwithconnectiontohana1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "340.9999990463257,80 388.9999985694885,80 388.9999985694885,72 416.99999809265137,72"
+			},
+			"src": {
+				"port": "result",
+				"process": "pythonoperatorwithconnectiontohana1"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "workflowterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}

@@ -1,0 +1,67 @@
+{
+	"properties": {},
+	"description": "Urban Public Transport - Urban Public Transport - Clean HDL",
+	"processes": {
+		"graphterminator1": {
+			"component": "com.sap.util.graphTerminator.v2",
+			"metadata": {
+				"label": "Graph Terminator",
+				"x": 201.99999904632568,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"allowedStarPort": true,
+				"generation": 2,
+				"config": {},
+				"inports": [
+					{
+						"name": "in",
+						"type": "scalar",
+						"isPropagated": true,
+						"vtype-ID": "com.sap.core.string"
+					}
+				]
+			}
+		},
+		"flowagentsqlexecutor1": {
+			"component": "com.sap.dh.ds.sql.executor.v2",
+			"metadata": {
+				"label": "Flowagent SQL Executor",
+				"x": 17,
+				"y": 12,
+				"height": 80,
+				"width": 120,
+				"extensible": false,
+				"generation": 2,
+				"config": {
+					"serviceConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "HDL_URBAN_TRANSPORT_CONN"
+					},
+					"sqlStatements": "DELETE FROM krisztian.VEHICLE_ACTIVITY WHERE \"load_date\" < TODAY(*)"
+				}
+			}
+		}
+	},
+	"groups": [],
+	"connections": [
+		{
+			"metadata": {
+				"points": "141,43 168.99999952316284,43 168.99999952316284,52 196.99999904632568,52"
+			},
+			"src": {
+				"port": "result",
+				"process": "flowagentsqlexecutor1"
+			},
+			"tgt": {
+				"port": "in",
+				"process": "graphterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {
+		"generation": 2
+	}
+}

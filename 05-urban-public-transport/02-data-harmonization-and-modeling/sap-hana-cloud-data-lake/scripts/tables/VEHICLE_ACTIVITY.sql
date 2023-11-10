@@ -1,0 +1,26 @@
+
+CREATE TABLE "krisztian"."VEHICLE_ACTIVITY"(
+	recorded_at_time TIMESTAMP NOT NULL,
+	item_identifier VARCHAR(5000),
+	valid_until_time TIMESTAMP,
+	bearing DOUBLE,
+	block_ref VARCHAR(5000),
+	framed_vehicle_journey_ref VARCHAR(5000),
+	vehicle_journey_ref VARCHAR(5000),
+	destination_name VARCHAR(5000),
+	destination_ref VARCHAR(5000),
+	origin_name VARCHAR(5000),
+	origin_ref VARCHAR(5000),
+	origin_aimed_departure_time TIMESTAMP,
+	direction_ref VARCHAR(5000),
+	published_line_name VARCHAR(5000),
+	line_ref VARCHAR(5000),
+	operator_ref VARCHAR(5000),
+	vehicle_ref VARCHAR(5000) NOT NULL,
+	longitude DOUBLE,
+	latitude DOUBLE,
+	delta_time_sec DOUBLE,
+	distance_km DOUBLE,
+	avg_speed DOUBLE,
+	load_date TIMESTAMP
+);

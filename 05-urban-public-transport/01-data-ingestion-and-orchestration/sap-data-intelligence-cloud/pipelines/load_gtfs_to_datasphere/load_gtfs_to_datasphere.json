@@ -1,0 +1,166 @@
+{
+	"properties": {},
+	"groupResources": {},
+	"description": "Urban Public Transport - Urban Public Transport GTFS",
+	"processes": {
+		"pythonoperatorwithconnectiontohana1": {
+			"component": "Python_with_HanaML",
+			"metadata": {
+				"label": "Get GTFS static tables",
+				"x": 216.99999904632568,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"filesRequired": [
+					"script.py"
+				],
+				"generation": 1,
+				"config": {
+					"script": "import hana_ml\nfrom hana_ml import dataframe\nimport numpy as np\nimport pandas as pd\n\nimport zipfile\nimport urllib.request\nimport os\n\ndef on_input(data):\n    \n    conn = hana_ml.dataframe.ConnectionContext(\n        api.config.hanaConnection['connectionProperties']['host'],\n        api.config.hanaConnection['connectionProperties']['port'],\n        api.config.hanaConnection['connectionProperties']['user'],\n        api.config.hanaConnection['connectionProperties']['password'],\n        encrypt='true',\n        sslValidateCertificate='false'\n    )\n    \n    urllib.request.urlretrieve(\"https://data.bus-data.dft.gov.uk/timetable/download/gtfs-file/london/\", \"gtfs.zip\")\n    with zipfile.ZipFile('./gtfs.zip', 'r') as zip_ref:\n        zip_ref.extractall('./gtfs')\n\n    list = os.listdir('./gtfs/')\n    for file in list:\n        if file.endswith('.txt'):\n            name = \"./gtfs/\"+file\n            df_tmp = pd.read_csv(name)\n            df_tmp['load_date'] = pd.Timestamp('now')\n            \n            df_remote = dataframe.create_dataframe_from_pandas(\n                connection_context = conn, \n                pandas_df = df_tmp, \n                table_name = file.replace(\".txt\",\"\"),\n                force = True,\n                replace = False,\n                drop_exist_tab = False\n            )\n            \n            del df_tmp\n            del df_remote\n    \n    api.send('output', 'dummy')\n\napi.set_port_callback(\"trigger\", on_input)\n",
+					"hanaConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
+					}
+				},
+				"additionaloutports": [
+					{
+						"name": "output",
+						"type": "string"
+					}
+				]
+			}
+		},
+		"pythonoperatorwithconnectiontohana2": {
+			"component": "Python_with_HanaML",
+			"metadata": {
+				"label": "Get road disruptions",
+				"x": 425.9999990463257,
+				"y": 40,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"filesRequired": [
+					"script.py"
+				],
+				"generation": 1,
+				"config": {
+					"hanaConnection": {
+						"configurationType": "Configuration Manager",
+						"connectionID": "DS_URBAN_PUBLIC_TRANSPORT_CONN"
+					},
+					"script": "import hana_ml\nfrom hana_ml import dataframe\nimport numpy as np\nfrom datetime import date\nimport urllib.request, json\nimport pandas as pd\n\ndef on_input(data):\n    \n    conn = hana_ml.dataframe.ConnectionContext(\n        api.config.hanaConnection['connectionProperties']['host'],\n        api.config.hanaConnection['connectionProperties']['port'],\n        api.config.hanaConnection['connectionProperties']['user'],\n        api.config.hanaConnection['connectionProperties']['password'],\n        encrypt='true',\n        sslValidateCertificate='false'\n    )\n    \n    today = date.today()\n    url = \"https://api.tfl.gov.uk/Road/all/Street/Disruption?startDate=\"+str(today)+\"&endDate=\"+str(today)\n    \n    hdr ={\n        # Request headers\n        'Cache-Control': 'no-cache',\n    }\n    \n    req = urllib.request.Request(url, headers=hdr)\n    req.get_method = lambda: 'GET'\n    response = urllib.request.urlopen(req)\n    resp = json.loads(response.read())\n        \n    df_disruptions = pd.json_normalize(resp)\n    df_disruptions = df_disruptions.drop(columns=['$type','recurringSchedules'])\n    df_disruptions[\"load_date\"] = today\n\n    df_remote = dataframe.create_dataframe_from_pandas(\n        connection_context = conn, \n        pandas_df = df_disruptions, \n        table_name = 'road_disruptions',\n        force = True,\n        replace = False,\n        drop_exist_tab = True\n    )\n        \n    api.send('output', api.Message(\"dummy\"))\n\napi.set_port_callback(\"trigger\", on_input)\n"
+				},
+				"additionaloutports": [
+					{
+						"name": "output",
+						"type": "message"
+					}
+				]
+			}
+		},
+		"workflowtrigger1": {
+			"component": "com.sap.dh.trigger",
+			"metadata": {
+				"label": "Workflow Trigger",
+				"x": 12,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"extensible": true,
+				"generation": 1,
+				"config": {}
+			}
+		},
+		"workflowterminator1": {
+			"component": "com.sap.dh.terminator",
+			"metadata": {
+				"label": "Workflow Terminator",
+				"x": 630.9999980926514,
+				"y": 32,
+				"height": 80,
+				"width": 120,
+				"generation": 1,
+				"config": {}
+			}
+		}
+	},
+	"groups": [
+		{
+			"name": "group1",
+			"nodes": [
+				"pythonoperatorwithconnectiontohana1"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"python-bods-client": "1.0.0"
+			},
+			"resources": {
+				"limits": {
+					"memory": "6G"
+				},
+				"requests": {
+					"memory": "6G"
+				}
+			}
+		},
+		{
+			"name": "group2",
+			"nodes": [
+				"pythonoperatorwithconnectiontohana2"
+			],
+			"metadata": {
+				"description": "Group"
+			},
+			"tags": {
+				"python-bods-client": "1.0.0"
+			}
+		}
+	],
+	"connections": [
+		{
+			"metadata": {
+				"points": "136,72 163.99999952316284,72 163.99999952316284,80 211.99999904632568,80"
+			},
+			"src": {
+				"port": "output",
+				"process": "workflowtrigger1"
+			},
+			"tgt": {
+				"port": "trigger",
+				"process": "pythonoperatorwithconnectiontohana1"
+			}
+		},
+		{
+			"metadata": {
+				"points": "340.9999990463257,80 420.9999990463257,80"
+			},
+			"src": {
+				"port": "output",
+				"process": "pythonoperatorwithconnectiontohana1"
+			},
+			"tgt": {
+				"port": "trigger",
+				"process": "pythonoperatorwithconnectiontohana2"
+			}
+		},
+		{
+			"metadata": {
+				"points": "549.9999990463257,80 588,80 588,72 625.9999980926514,72"
+			},
+			"src": {
+				"port": "output",
+				"process": "pythonoperatorwithconnectiontohana2"
+			},
+			"tgt": {
+				"port": "stop",
+				"process": "workflowterminator1"
+			}
+		}
+	],
+	"inports": {},
+	"outports": {},
+	"metadata": {}
+}
