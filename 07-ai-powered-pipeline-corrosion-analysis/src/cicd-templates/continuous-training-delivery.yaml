@@ -39,6 +39,10 @@ spec:
         artifacts:
           - name: pipeline-corr-data
             path: /app/data/training/
+            description: 'Test dataset in the S3 bucket'
+          - name: pipeline-corr-credentials
+            path: /app/credentials/
+            description: 'Credentials for the AI API clienta and GitHub'
       container:
         image: "docker.io/yoshidj/pipeline-corr-ctcd:01"
         imagePullPolicy: Always

@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 import json
+from git import Repo
 from datetime import datetime
 import logging
 import joblib
@@ -27,8 +28,12 @@ from sklearn import datasets, ensemble
 from sklearn.metrics import mean_squared_error, mean_absolute_percentage_error
 from sklearn.model_selection import train_test_split
 
-from ai_core_sdk.ai_core_v2_client import AICoreV2Client
-from ai_core_sdk.models import Artifact, Status, TargetStatus, ParameterBinding, InputArtifactBinding
+from ai_api_client_sdk.ai_api_v2_client import AIAPIV2Client, Authenticator
+from ai_api_client_sdk.models.artifact import Artifact
+from ai_api_client_sdk.models.status import Status
+from ai_api_client_sdk.models.target_status import TargetStatus
+from ai_api_client_sdk.models.parameter_binding import ParameterBinding
+from ai_api_client_sdk.models.input_artifact_binding import InputArtifactBinding
 
 FORMAT = "%(asctime)s:%(name)s:%(levelname)s - %(message)s"
 # Use filename="file.log" as a param to logging to log to a file
@@ -48,10 +53,18 @@ class ct_cd_pipeline:
         self.resource_group_dev = "dev"
         self.resource_group_test = "test"
         self.resource_group_prod = "prod"
+        self.resource_group_mlops = "mlops"
+
+        self.git_repo_name = None
+        self.git_repo_url = None
+        self.git_repo_username = None
+        self.git_repo_password = None
         
-        self.ai_core_v2_client = AICoreV2Client(base_url=environ['AICORE_TRACKING_ENDPOINT'])
-        #self.ai_core_v2_client = None
-        #self.aic_service_key = "/app/src/aic_service_key.json"
+        self.ai_core_v2_client = None
+        self.token = None
+        self.headers = None
+        self.aic_service_key = environ["CREDENTIALS_PATH"] + "/aic_service_key.json"
+
         self.dataset_name = "pipeline-corr-data"
         self.model_name = "pipelinecorrmodel" #Taken from the GitHub template
         self.scenario_id = "pipeline-corrosion-analytics" #Taken from the GitHub template
@@ -59,11 +72,12 @@ class ct_cd_pipeline:
         
         self.data_source_train = environ["DATA_SOURCE_TRAIN"]
         self.data_source_test = environ["DATA_SOURCE_TEST"]
+        self.credentials_path = environ["CREDENTIALS_PATH"] + "/git_setup.json"
         self.dataset_path_train = sys.argv[4] #This must become a parameter
 
         self.current_deployment_id = sys.argv[1]
-        self.serving_executable_name = "server-pipeline"  #Taken from the GitHub template
-        self.metric_threshold = sys.argv[2]
+        self.serving_executable_name = "server-pipeline" #Taken from the GitHub template
+        self.metric_threshold = float(sys.argv[2])
         
         self.artifact_resp = None
         self.artifact_id = sys.argv[3]
@@ -77,13 +91,31 @@ class ct_cd_pipeline:
         
         self.dataset_all = None
         
-        
+    
+    def get_github_credentials(self) -> None:
+
+        print("Getting GitHub credentials.")
+        # Loads your git_setup.json
+        with open(self.credentials_path) as gs:
+            setup_json = json.load(gs)
+
+        repo_json = setup_json["repo"]
+        self.git_repo_name = repo_json["name"]
+        self.git_repo_url = repo_json["url"]
+        self.git_repo_username = repo_json["username"]
+        self.git_repo_password = repo_json["password"]
+
+        #print(self.git_repo_name, self.git_repo_url, self.git_repo_username, self.git_repo_password)
+
+    
     def get_temp_conf(self) -> None:
 
         print("1. Retrieving configuration from the GitHub repository.")
-        username = "abc"
-        token = "abc" #To be securely stored in some way
-        repo_name = "pipeline-corrosion-repo"
+
+        username = self.git_repo_username
+        token = self.git_repo_password
+        repo_name = self.git_repo_name
+
         folder = "solution-prod-templates" #This must become a parameter
         train_temp_path = folder+"/training_template.yaml?ref=main" #This must become a parameter
         serve_temp_path = folder+"/serving_template.yaml?ref=main" #This must become a parameter
@@ -140,13 +172,23 @@ class ct_cd_pipeline:
             aic_service_key = json.load(ask)
 
         # Creating an AI API client instance
-        self.ai_core_v2_client = AICoreV2Client(
+        self.ai_core_v2_client = AIAPIV2Client(
             base_url=aic_service_key["serviceurls"]["AI_API_URL"] + "/v2",
             auth_url=aic_service_key["url"] + "/oauth/token",
             client_id=aic_service_key['clientid'],
             client_secret=aic_service_key['clientsecret'],
             resource_group=resource_group
         )
+
+        #print("TOKEN")
+        self.token = self.ai_core_v2_client.rest_client.get_token()
+        #print(self.token)
+
+        self.headers = {
+                "Authorization": self.token,
+                'ai-resource-group': resource_group,
+                "Content-Type": "application/json"}
+
         print("2. AI API client instance created.")
 
 
@@ -231,14 +273,18 @@ class ct_cd_pipeline:
                 "kind": artifact_type, #For example Artifact.Kind.DATASET
                 "url": "ai://default"+artifact_s3_path,  
                 "description":  description,
-                "scenario_id": self.scenario_id
-            }
+                "scenarioId": self.scenario_id
+        }
+
         # Store the artifact response to retrieve the id for the training configuration
-        self.artifact_resp = self.ai_core_v2_client.artifact.create(**artifact)
-        print(vars(self.artifact_resp))
+
+        artifact_url = f'{self.ai_core_v2_client.base_url}/lm/artifacts'
+        resp = requests.post(url=artifact_url, json=artifact, headers=self.headers)
+        self.artifact_resp = resp.json()
+        print(self.artifact_resp)
         
-        if self.artifact_resp.id is not None:
-            self.artifact_id = self.artifact_resp.id
+        if self.artifact_resp['id'] is not None:
+            self.artifact_id = self.artifact_resp['id']
             print(self.artifact_id)
             print("4. Artifact registered.")
         else:
@@ -249,26 +295,30 @@ class ct_cd_pipeline:
     def create_training_conf(self) -> None:
         
         print("5. Creating training configuration.")
-        scenarios = self.ai_core_v2_client.scenario.query()
-        
-        artifact_binding = {
-            "key": self.dataset_name,
-            "artifact_id": vars(self.artifact_resp)['id']
-        }
+        #scenarios = self.ai_core_v2_client.scenario.query()
 
         train_configuration = {
             "name": "pipeline-corr-train-conf",
-            "scenario_id": self.scenario_id,
-            "executable_id": self.executable_name,
-            "parameter_bindings": [],
-            "input_artifact_bindings": [ InputArtifactBinding(**artifact_binding) ]
+            "scenarioId": self.scenario_id,
+            "executableId": self.executable_name,
+            "parameterBindings": [],
+            "inputArtifactBindings": [       
+                {
+                  "key": self.dataset_name,
+                  "artifactId": self.artifact_id
+                }
+            ]
         }
 
         # Store the configuration response to access the id to create an execution
-        self.train_config_resp = self.ai_core_v2_client.configuration.create(**train_configuration)
-        print(vars(self.train_config_resp))
+
+        conf_url = f'{self.ai_core_v2_client.base_url}/lm/configurations'
+        resp = requests.post(url=conf_url, json=train_configuration, headers=self.headers)
+        self.train_config_resp = resp.json()
+
+        print(self.train_config_resp)
         
-        if self.train_config_resp.id is not None:
+        if self.train_config_resp['id'] is not None:
             print("5. Creating training configuration.")
         else:
             print("5. Creating training configuration failed!")
@@ -278,11 +328,14 @@ class ct_cd_pipeline:
     def start_execution(self) -> None:
         
         print("6. Starting training execution.")
-        self.execution_resp = self.ai_core_v2_client.execution.create(self.train_config_resp.id)
-        print(vars(self.execution_resp))
-        #Add a test to be sure it was registered properly based on the content of execution_resp
         
-        if self.train_config_resp.id is not None:
+        execution_url = f'{self.ai_core_v2_client.base_url}/lm/configurations/'\
+            +self.train_config_resp['id']+"/executions"
+        resp = requests.post(url=execution_url, headers=self.headers)
+        self.execution_resp = resp.json()
+        print(self.execution_resp)
+        
+        if self.execution_resp['id'] is not None:
             print("6. Training execution started.")
         else:
             print("6. Training execution failed!")
@@ -293,66 +346,85 @@ class ct_cd_pipeline:
         
         print("7. Checking execution status.")
         status = None
-        while status != Status.COMPLETED and status != Status.DEAD:
+        execution_id = self.execution_resp["id"]
+        while status != "COMPLETED" and status != "DEAD":
             # Sleep for 5 secs to avoid overwhelming the API with requests
             time.sleep(5)
             # Clear outputs to reduce clutter
-            clear_output(wait=True)
+            #clear_output(wait=True)
+            status_url = f'{self.ai_core_v2_client.base_url}/lm/executions/{execution_id}'
 
-            execution = self.ai_core_v2_client.execution.get(self.execution_resp.id)
-            status = execution.status
-            print('...... Execution status ......', flush=True)
-            print(f"Training status: {execution.status}")
-            print(f"Training status details: {execution.status_details}")
+            resp = requests.get(url=status_url, headers=self.headers)
+            execution = resp.json()
+            #print(execution['status'])
 
-        if execution.status == Status.COMPLETED:
-            print(f"Training complete for execution [{self.execution_resp.id}]!")
-            output_artifact = execution.output_artifacts[0]
+            status = execution['status']
+            print('...... Execution status ......', flush=False)
+            print(f"Training status: {status}")
+
+        if status == "COMPLETED":
+            print(f"Training complete for execution [{execution_id}]!")
+            output_artifact = execution["outputArtifacts"][0]
             self.training_output = {
-                "id": output_artifact.id,
-                "name": output_artifact.name,
-                "url": output_artifact.url
+                "id": output_artifact["id"],
+                "name": output_artifact["name"],
+                "url": output_artifact["url"]
             }
+            print(self.training_output)
         else:
-            print(f"Training failed for execution [{self.execution_resp.id}]!")
+            print(f"Training failed for execution [{execution_id}]!")
             exit(1)
     
     
     def get_execution_metrics(self) -> None:
         
         print("8. Retrieving execution metrics.")
-        #execution_resp_id = "e0b2c7a1233a0936" # For testing only
-        filter_string = "executionId eq '" + self.execution_resp.id + "'"
-        #filter_string = "executionId eq '" + execution_resp_id + "'"
-        self.metric_resp = self.ai_core_v2_client.metrics.query(execution_ids=self.execution_resp.id)
-        #self.metric_resp = self.ai_core_v2_client.metrics.query(execution_ids=execution_resp_id)
+        execution_id = self.execution_resp["id"]
+        
+        metric_url = f'{self.ai_core_v2_client.base_url}/lm/metrics?executionIds={execution_id}'
+        resp = requests.get(url=metric_url, headers=self.headers)
+        #print(resp)
+        self.metric_resp = resp.json()
+        #print(self.metric_resp)
 
-        for m in self.metric_resp.resources:
-            for metric in m.metrics:
-                print(metric.name)
-                print(metric.value)
+        for m in self.metric_resp["resources"]:
+            for metric in m["metrics"]:
+                print(metric["name"])
+                print(metric["value"])
         print("8. Execution metrics retrieved.")
                 
         
     def create_serving_conf(self, resource_group) -> None:
         
         print("9. Creating deployment configuration to test the new model.")
-        print(self.model_name, self.training_output["id"])
-        self.serve_config_resp = self.ai_core_v2_client.configuration.create(
-            name = "pipeline-corr-serving-conf",
-            scenario_id = self.scenario_id,
-            executable_id = self.serving_executable_name,
-            input_artifact_bindings = [
-                InputArtifactBinding(key = self.model_name, artifact_id = self.training_output["id"])
+        self.headers["ai-resource-group"] = resource_group
+        #print(self.model_name, self.training_output["id"])
+
+        serve_configuration = {
+            "name": "pipeline-corr-serving-conf",
+            "scenarioId": self.scenario_id,
+            "executableId": self.serving_executable_name,
+            "parameterBindings": [
+                {
+                "key": "greetmessage", 
+                "value": "Hi AI Core server"
+                }
             ],
-            parameter_bindings = [
-                ParameterBinding(key = "greetmessage", value = "Hi AI Core server")
-            ],
-            resource_group = resource_group
-        )
+            "inputArtifactBindings": [       
+                {
+                    "key": self.model_name,
+                    "artifactId": self.training_output["id"]
+                }
+            ]
+        }
         
-        if self.serve_config_resp.id is not None:
-            print(self.serve_config_resp.__dict__)
+        serve_conf_url = f'{self.ai_core_v2_client.base_url}/lm/configurations'
+        resp = requests.post(url=serve_conf_url, json=serve_configuration, headers=self.headers)
+        self.serve_config_resp = resp.json()
+        #print(self.serve_config_resp)
+        
+        if self.serve_config_resp["id"] is not None:
+            print(self.serve_config_resp)
             print("9. Deployment configuration created.")
         else:
             print("9. Deployment configuration creation failed!")
@@ -362,18 +434,24 @@ class ct_cd_pipeline:
     def deploy_model(self, resource_group) -> None: #To be used to test the model deployment
         
         print("10. Deploying new model.")
-        metrics = self.metric_resp.resources[0].metrics
-        metric_value = metrics[0].value
+        self.headers["ai-resource-group"] = resource_group
+        metrics = self.metric_resp["resources"][0]["metrics"]
+        metric_value = metrics[0]["value"]
         print("MSE: "+str(metric_value))
         
-        if(metric_value < self.metric_threshold): 
+        if(metric_value < float(self.metric_threshold)): 
         
-            self.create_serving_conf(resource_group)
-            self.deployment_resp = self.ai_core_v2_client.deployment.create(self.serve_config_resp.id)
-            print(vars(self.deployment_resp))
-            status = self.check_deployment(self.deployment_resp.id)
-            if status == Status.DEAD:
-                print("10. Deployment failed!")
+            self.create_serving_conf(resource_group) ## Create serving configuration
+            
+            deployment_url = f'{self.ai_core_v2_client.base_url}/lm/configurations/{self.serve_config_resp["id"]}/deployments'
+            #print(deployment_url)
+            resp = requests.post(url=deployment_url, headers=self.headers)
+            self.deployment_resp = resp.json()
+            print(self.deployment_resp)
+            
+            status = self.check_deployment(self.deployment_resp["id"])
+            if status == "DEAD":
+                print("10. Deployment failed! Check the logs for more details.")
                 exit(1)
         
         else:
@@ -386,15 +464,20 @@ class ct_cd_pipeline:
         # Poll deployment status
         status = None
         elapsed_time = 0
-        while status != Status.RUNNING and status != Status.DEAD:
+        while status != "RUNNING" and status != "DEAD" and status != "STOPPED":
             start = time.time()
             time.sleep(5)
-            clear_output(wait=True)
-            deployment = self.ai_core_v2_client.deployment.get(deployment_id)
-            status = deployment.status
-            print('...... Deployment status ......', flush=True)
-            print(deployment.status)
-            print(deployment.status_details)
+            #clear_output(wait=True)
+            
+            status_url = f'{self.ai_core_v2_client.base_url}/lm/deployments/{deployment_id}'
+            #print(status_url)
+            resp = requests.get(url=status_url, headers=self.headers)
+            deployment = resp.json()
+            
+            status = deployment["status"]
+            print('...... Deployment status ......', flush=False)
+            print(deployment["status"])
+            #print(deployment.status_details)
             end = time.time()
             elapsed_time += (end-start)
             
@@ -402,7 +485,7 @@ class ct_cd_pipeline:
                 print("Deployment pending for too long. Stopping...")
                 break
 
-            if deployment.status == Status.RUNNING:
+            if deployment["status"] == "RUNNING":
                 print(f"Deployment with {deployment_id} complete!")
 
         # Allow some time for deployment URL to get ready
@@ -413,23 +496,21 @@ class ct_cd_pipeline:
     def test_deployment(self, resource_group, deployment_id) -> None:
         
         print("11. Testing the deployment.")
+        self.headers["ai-resource-group"] = resource_group
         X, y = self.dataset_all.drop(['corr_depth','date'], axis=1),\
             self.dataset_all[['corr_depth']].values.ravel()
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.001, random_state=13)
         print("Number of test records: "+str(X_test.size))
         
-        deployment = self.ai_core_v2_client.deployment.get(deployment_id)
-        endpoint = f"{deployment.deployment_url}/v2/predict"
+        get_deployment_url = f'{self.ai_core_v2_client.base_url}/lm/deployments/{deployment_id}'
+        deploymet_resp = requests.get(url=get_deployment_url, headers=self.headers)
+        deployment_url = deploymet_resp.json()['deploymentUrl']
+        endpoint = f"{deployment_url}/v2/predict"
         print(endpoint)
-
-        headers = {
-                "Authorization": self.ai_core_v2_client.rest_client.get_token(),
-                'ai-resource-group': resource_group,
-                "Content-Type": "application/json"}
 
         def apply_request(row):
             #print(row)
-            response = requests.post(endpoint, headers=headers, json=row.to_dict())
+            response = requests.post(endpoint, headers=self.headers, json=row.to_dict())
             #print(response.json())
             return response.json()[0]
         
@@ -439,7 +520,7 @@ class ct_cd_pipeline:
         mse = mean_squared_error(y_test, X_test['pred'])
         print('Inference result:', mse)
         
-        if mse < self.metric_threshold:
+        if mse < float(self.metric_threshold):
             print("11. Deployment validation passed!")
         else:
             print("11. Deployment validation failed!") #Stop execution and pipeline
@@ -450,39 +531,50 @@ class ct_cd_pipeline:
     def stop_deployment(self, resource_group) -> None:
         
         print("12. Stopping the deployment.")
-        delete_resp = self.ai_core_v2_client.deployment.modify(self.deployment_resp.id,\
-                                                               target_status=TargetStatus.STOPPED)
-        status = self.check_deployment(delete_resp.id)
+        self.headers["ai-resource-group"] = resource_group
         
-        if status == Status.STOPPED:
+        delete_config = {
+            "targetStatus": "STOPPED"
+        }
+        
+        stop_url = f'{self.ai_core_v2_client.base_url}/lm/deployments/{self.deployment_resp["id"]}'
+        resp = requests.patch(url=stop_url, json=delete_config, headers=self.headers)
+        delete_resp = resp.json()
+        
+        status = self.check_deployment(delete_resp["id"])
+        
+        if status == "STOPPED":
             print("12. Deployment stopped gracefully.")
         else:
-            print("12. Something went wrong stopping deployment!")
-            exit(1)
+            print("12. Something went wrong stopping the deployment!")
+            #exit(1)
 
     
     def switch_model(self, resource_group) -> None:
         
         print("13. Switching the model under the current deployment.")
-        metrics = self.metric_resp.resources[0].metrics
-        metric_value = metrics[0].value
+        self.headers["ai-resource-group"] = resource_group
+        metrics = self.metric_resp["resources"][0]["metrics"]
+        metric_value = metrics[0]["value"]
         print("MSE: "+str(metric_value))
         
-        if(metric_value < self.metric_threshold): 
-        
+        if(metric_value < float(self.metric_threshold)):
+                    
             self.create_serving_conf(resource_group)
+            
+            patch_config = {
+                "configurationId": self.serve_config_resp["id"]                
+            }
+            
+            patch_url = f'{self.ai_core_v2_client.base_url}/lm/deployments/{self.current_deployment_id}'
+            resp = requests.patch(url=patch_url, json=patch_config, headers=self.headers)
+            patch_resp = resp.json()
 
-            patch_resp = self.ai_core_v2_client.deployment.modify(
-                deployment_id = self.current_deployment_id, # existing deployment
-                configuration_id = self.serve_config_resp.id, # new configuration ID
-                resource_group = resource_group
-            )
-
-            print(patch_resp.__dict__)
-            status = self.check_deployment(patch_resp.id)
-            if status == Status.RUNNING:
+            print(patch_resp)
+            status = self.check_deployment(patch_resp["id"])
+            if status == "RUNNING":
                 print("13. Deployment update completed successfully!")
-            if status == Status.DEAD:
+            if status == "DEAD":
                 print("13. Deployment update failed!")
                 exit(1)
             
@@ -497,34 +589,49 @@ class ct_cd_pipeline:
         """
         cond1 = self.artifact_id == "None" and self.dataset_path_train == "None"
         cond2 = self.artifact_id != "None" and self.dataset_path_train != "None"
-        if (not(cond1 or cond2)): 
+        if (not(cond1 or cond2)):
+
             ## Initialize parameters with prod templates content
+            self.get_github_credentials()
+            
             self.get_temp_conf()
+
             ## Create API client
-            #self.create_api_client(self.resource_group_dev) # Not needed when it will run within AI Core
+            self.create_api_client(self.resource_group_dev)
+
             ## Register a new dataset if needed
             if (self.artifact_id == "None" and len(self.dataset_path_train) != "None"):
                 self.register_artifact(self.dataset_path_train, \
-                                       Artifact.Kind.DATASET, "Pipeline corrosion dataset")
+                                       "dataset", "Pipeline corrosion dataset")
+
             ## Create a new training configuration
-            #self.create_training_conf()
+            self.create_training_conf()
+
             ## Start a new execution/training
-            #self.start_execution()
+            self.start_execution()
+
             ## Get execution status
-            #self.get_execution_status()
+            self.get_execution_status()
+
             ## Get the metrics of the last execution
-            #self.get_execution_metrics()
+            self.get_execution_metrics()
+
             ## It deploys the new trained model for testing purpose
-            #self.deploy_model(self.resource_group_dev)
+            self.deploy_model(self.resource_group_dev)
+
             ## Read and validate the test dataset
-            #self.read_and_validate_dataset(self.data_source_test)
+            self.read_and_validate_dataset(self.data_source_test)
+
             ## Test the previous deployment in a test resource group
-            #self.test_deployment(self.resource_group_dev, self.deployment_resp.id)
+            self.test_deployment(self.resource_group_dev, self.deployment_resp["id"])
+
             ## Once the test is completed the deployment is stopped
-            #self.stop_deployment(self.resource_group_dev)
+            self.stop_deployment(self.resource_group_dev)
+
             ## Update the current deployment in the prod resource group
-            #self.switch_model(self.resource_group_dev) #If the previous test is ok,
+            self.switch_model(self.resource_group_dev) #If the previous test is ok,
                                                         #then it updates the current deployment
+
         elif cond1:
             print("Missing parameters! Input Artifact ID and path cannot be empty!")
         elif cond2:
