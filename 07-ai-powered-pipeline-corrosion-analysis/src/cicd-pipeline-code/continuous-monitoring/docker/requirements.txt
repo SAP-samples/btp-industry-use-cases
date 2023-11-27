@@ -1,0 +1,8 @@
+ai-core-sdk==1.22.3
+boto3==1.28.51
+numpy==1.23.3
+pandas==1.5.0
+requests==2.31.0
+scikit-learn==1.3.0
+hdbcli==2.18.22
+secure-smtplib==0.1.1

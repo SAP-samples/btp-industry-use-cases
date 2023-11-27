@@ -1,0 +1,58 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: continuous-monitoring
+  annotations:
+    scenarios.ai.sap.com/description: "Continuous Monitoring for Pipeline Corrosion Analytics"
+    scenarios.ai.sap.com/name: "cicd-pipeline-corrosion-analytics"
+    executables.ai.sap.com/description: "Continuous Monitoring Pipeline"
+    executables.ai.sap.com/name: "continuous-monitoring"
+  labels:
+    scenarios.ai.sap.com/id: "cicd-pipeline-corrosion-analytics"
+    executables.ai.sap.com/id: "continuous-monitoring"
+    ai.sap.com/version: "1.0.0"
+spec:
+  arguments:
+    parameters:
+      - name: date
+        value: '2023-10-15'
+        description: 'Optional date in format yyyy-mm-dd. If blank, it will be today,'
+      - name: resource_group
+        value: 'dev'
+        description: 'The target resource group to be monitored.'
+      - name: current_deployment_id
+        value: 'd70167c5c9b5d723'
+        description: 'ID of the running deployment to be monitored. Must be within the target resource group'
+      - name: incoming_dataset_s3_path
+        value: '/data/incoming'
+        description: 'S3 path of the dataset to be registered and used for the retraining. Use None to skip it.'
+      - name: mse_threshold
+        value: 0.2
+        description: 'MSE threshold to trigger the retraining.'
+      - name: recipients
+        value: 'your_email@xxx.com'
+        description: 'Email recipients of continuous monitoring report(multiple entries separated by comma).'
+  imagePullSecrets:
+    - name: docker-registry-secret
+  entrypoint: continuous-monitoring-pipeline
+  templates:
+    - name: continuous-monitoring-pipeline
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: starter
+      inputs:
+        artifacts:
+      container:
+        image: "docker.io/yoshidj/pipeline-corr-continuous-monitoring:01"
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -e && echo "---Start Continuous-Monitoring---" && python /app/src/continuous_monitoring.py 
+            {{workflow.parameters.date}}
+            {{workflow.parameters.resource_group}} 
+            {{workflow.parameters.current_deployment_id}} 
+            {{workflow.parameters.mse_threshold}} 
+            {{workflow.parameters.incoming_dataset_s3_path}} 
+            {{workflow.parameters.recipients}} 
+            && echo "---End Continuous-Monitoring---"

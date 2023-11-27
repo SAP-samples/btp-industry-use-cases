@@ -1,0 +1,53 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: ctcd-pipeline
+  annotations:
+    scenarios.ai.sap.com/description: "CI-CD Pipelines for Pipeline Corrosion Analytics"
+    scenarios.ai.sap.com/name: "cicd-pipeline-corrosion-analytics"
+    executables.ai.sap.com/description: "Continuous training and delivery pipeline"
+    executables.ai.sap.com/name: "ctcd-exec"
+    artifacts.ai.sap.com/pipeline-corr-data.kind: "dataset"
+  labels:
+    scenarios.ai.sap.com/id: "cicd-pipeline-corrosion-analytics"
+    executables.ai.sap.com/id: "ctcd-exec"
+    ai.sap.com/version: "1.0.0"
+spec:
+  arguments:
+    parameters:
+      - name: current_deployment_id
+        value: 'd70167c5c9b5d723'
+        description: 'ID of the running deployment to update.'
+      - name: train_dataset_id
+        value: '127d9a3c-68a7-498f-9a44-0c7c64497713'
+        description: 'ID of the dataset to be used for the retraining. Use None to skip it.'
+      - name: train_dataset_s3_path
+        value: '/data/training'
+        description: 'S3 path of the dataset to be registered and used for the retraining. Use None to skip it.'
+      - name: metric_threshold
+        value: 0.2
+        description: 'MSE threshold to accept the output model of the retraining.'
+  imagePullSecrets:
+    - name: docker-registry-secret
+  entrypoint: ctcd-pipeline
+  templates:
+    - name: ctcd-pipeline
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: starter
+      inputs:
+        artifacts:
+          - name: pipeline-corr-data
+            path: /app/data/training/
+      container:
+        image: "docker.io/yoshidj/pipeline-corr-ctcd:01"
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -e && echo "---Start CT-CD---" && python /app/src/ct_cd_pipeline.py 
+            {{workflow.parameters.current_deployment_id}} 
+            {{workflow.parameters.metric_threshold}} 
+            {{workflow.parameters.train_dataset_id}} 
+            {{workflow.parameters.train_dataset_s3_path}} 
+            && echo "---End CT-CD---"

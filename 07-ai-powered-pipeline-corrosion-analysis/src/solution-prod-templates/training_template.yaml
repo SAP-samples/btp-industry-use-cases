@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: training-pipeline
+  annotations:
+    scenarios.ai.sap.com/description: "Pipeline Corrosion Prediction"
+    scenarios.ai.sap.com/name: "pipeline-corrosion-analytics"
+    executables.ai.sap.com/description: "Train model for pipeline prediction"
+    executables.ai.sap.com/name: "train-exec"
+    artifacts.ai.sap.com/pipeline-corr-data.kind: "dataset"
+    artifacts.ai.sap.com/pipelinecorrmodel.kind: "model"
+  labels:
+    scenarios.ai.sap.com/id: "pipeline-corrosion-analytics"
+    executables.ai.sap.com/id: "train-exec"
+    ai.sap.com/version: "1.0.0"
+spec:
+  imagePullSecrets:
+    - name: docker-registry-secret
+  entrypoint: training-pipeline
+  templates:
+    - name: training-pipeline
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: starter
+      inputs:
+        artifacts:
+          - name: pipeline-corr-data
+            path: /app/data/
+      outputs:
+        artifacts:
+          - name: pipelinecorrmodel
+            path: /app/model
+            globalName: pipelinecorrmodel
+            archive:
+              none: {}
+      container:
+        image: "docker.io/yoshidj/pipeline-corr-training:01"
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -e && echo "---Start Training---" && python /app/src/train.py && ls -lR /app/model && echo "---End Training---"
