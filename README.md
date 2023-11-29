@@ -22,7 +22,7 @@ Use Case | Industry | SAP BTP Services | Blog Post
 [`04-Customer Interaction Powered by GPT`](04-customer-interaction-gpt4) | Service | Generative AI, Large Language Model, GPT, SAP CAP, SAP RAP | [link](https://blogs.sap.com/2023/06/20/exploring-the-potential-of-gpt-in-sap-ecosystem/)
 [`05-AI-driven Public Urban Transport Optimization`](05-urban-public-transport) | Service | Data Intelligence, Datasphere, AI Core, SAC | [link1](https://blogs.sap.com/2023/07/31/ai-driven-public-urban-transport-optimization-introduction-architecture/), [link2](https://blogs.sap.com/2023/07/19/ai-driven-public-urban-transport-optimization-implementation-deep-dive/)
 [`06-AI-powered Returnable Packaging`](06-ai-powered-returnable-packaging) | Sustainability | AI-Core, SAP Computer Vision, Kyma, SAP Build Apps | coming soon
-[`07-AI-powered Pipeline Corrosion Analysis`](07-ai-powered-pipeline-corrosion-analysis) | Oil&Gas | SAP AI Core, MLOps, CM, CT, CD, CI/CD | coming soon
+[`07-AI-powered Pipeline Corrosion Analysis`](07-ai-powered-pipeline-corrosion-analysis) | Oil&Gas | SAP AI Core, MLOps, CM, CT, CD, CI/CD | [link1](https://blogs.sap.com/2023/11/28/ai-powered-pipeline-corrosion-analysis-introduction-architecture/), [link2](https://blogs.sap.com/2023/11/27/ai-powered-pipeline-corrosion-analysis-implementation-deep-dive/)
 
 ## Known Issues
 No known issues.
