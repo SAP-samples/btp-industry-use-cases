@@ -1,11 +1,7 @@
-Here you can find the Python code to execute the training of a simple Gradient Boosting Regressor for the prediction of the pipeline corrosion.
-We generated an historical dataset to train it. For this use case we have imagined to measure several points along a pipeline in Germany and we imagined also that these points are affected by different corrosion rates. We have assumed also that our pipeline was installed in 2013 and that in the beginning it didn’t show any corrosion. Moreover, we assumed that the corrosion rates were constant in time. You can check the details in [this blog post](https://blogs.sap.com/2023/11/27/ai-powered-pipeline-corrosion-analysis-implementation-deep-dive/). The simulated dataset can be found here.
+Here you can find workflow template and the serving template needed to instruct AI Core about how to run the training Docker container and the serving Docker container that will serve the model.
 
-In order to execute this code in AI Core you need to tranform it into a Docker image and load it into the Docker registry connected to the AI Core instance.
-In this folder you can find the needed Dockerfile and the list of dependencies. Below you can find the commands to generate and load the Docker image.
+These template have to be placed in a folder of the GitHub repository connected to the AI Core instance. Then you need to create an application, that is you need to tell AI Core the folder to scan to find the templates.
 
-* docker login docker.io -u <YOUR_DOCKER_USERNAME>
+Once you have set everything you will have a situation like the one shown below with one scenario and two executables, one for the training and one for the serving application.
 
-* docker buildx build -o type=docker --platform=linux/amd64 -t <YOUR_DOCKER_USERNAME>/pipeline-corr-training:01 .
-
-* docker push docker.io/<YOUR_DOCKER_USERNAME>/pipeline-corr-training:01
+![MLOps Pipeline Flows](../../resources/pipeline-corr-scenario.png)
