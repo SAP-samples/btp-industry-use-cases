@@ -9,4 +9,4 @@ In order to start this server and deploy the model in AI Core, first you need to
 
 * docker push docker.io/<YOUR_DOCKER_USERNAME>/pipeline-corr-serving:01
 
-Another important point for running this piece of code is to instruct AI Core about how this Docker container has to be run. For this you need to use a workflow template. For some instructions refer to this [README](../../solution-prod-templates/README.md)..
+Another important point for running this piece of code is to instruct AI Core about how this Docker container has to be run. For this you need to use a workflow template. For some instructions refer to this [README](../../solution-prod-templates/README.md).
