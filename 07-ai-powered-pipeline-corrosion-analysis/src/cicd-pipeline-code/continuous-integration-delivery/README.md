@@ -4,7 +4,7 @@ Here you can find a simple Python code to start the development of a Continuous 
 
 The CI/CD pipeline shares much of the code with the CT/CD pipeline, except that the Continuous Integration part needs to be implemented so that it is able to constantly listen for notifications of changes applied to components of the ML solution in the GitHub repository. This means that you have to write code not only for the pipeline, but also for a microservice that will serve it and that will manage notifications coming from GitHub through an exposed endpoint. You can check the details in [this blog post](https://blogs.sap.com/2023/11/27/ai-powered-pipeline-corrosion-analysis-implementation-deep-dive/).
 
-In this folder you can find the code for the server and also an initial code for the pipeline that is able to manage an incoming notification from the GitHub repository (an example can be found here).
+In this folder you can find the code for the server and also an initial code for the pipeline that is able to manage an incoming notification from the GitHub repository (an example can be found [here](test_github_notification.json)).
 
 In order to execute this code in AI Core, first you need to tranform it into a Docker image and load it into the Docker registry connected to the AI Core instance.
 In this folder you can find the needed Dockerfile and the list of dependencies. Below you can find the commands to generate and load the Docker image.
