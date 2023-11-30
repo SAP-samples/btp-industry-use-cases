@@ -1,6 +1,6 @@
 Here you can find a simple Python code to start the development of a Continuous Integration and Continuous Deployment pipeline. The workflow for this pipeline is shown in the animation below.
 
-![Continuous Pipeline Flow](../../../resources/mlops_pipeline_illustration_cicd.gif)
+![Continuous Pipeline Flow](../../../resources/cicd_pipeline_flow.png)
 
 The CI/CD pipeline shares much of the code with the CT/CD pipeline, except that the Continuous Integration part needs to be implemented so that it is able to constantly listen for notifications of changes applied to components of the ML solution in the GitHub repository. This means that you have to write code not only for the pipeline, but also for a microservice that will serve it and that will manage notifications coming from GitHub through an exposed endpoint. You can check the details in [this blog post](https://blogs.sap.com/2023/11/27/ai-powered-pipeline-corrosion-analysis-implementation-deep-dive/).
 
