@@ -43,7 +43,7 @@ set HANA_HOST="YOUR_HANA_HOST" \
        SMTP_SENDER="YOUR_SENDER_EMAIL" \
        SMTP_PASSWORD="YOUR_SENDER_PASSWORD"
 ```
-* Configure [aic_service_key.json](local/aic_service_key.json)
+* Include in aic_service_key.json the AI Core service key you can generate in the BTP subaccount
 * Run the continuous monitoring pipeline locally
 ```sh
 #Change the current directory to cicd-pipeline-code/continuous-monitoring/local
