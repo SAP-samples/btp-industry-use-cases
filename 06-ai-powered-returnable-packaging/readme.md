@@ -14,7 +14,7 @@ The prototyped solution is composed by 3 main blocks:
 We have organized the source code shared here in 3 main folders corresponding to the 3 main components implemented in our prototype:
 File or Folder | Component | Purpose
 ---------|----------|----------
-[/]() | AI Core | 
+[packaging_classification/](./packaging_classification/) | AI Core | 
 [returnpacksrv/](./returnpacksrv/) | SAP Kyma | Kyma serverless function source code
 [myPacksUI/](./myPacksUI/) | SAP Build Apps | Custom Web App
 
