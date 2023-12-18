@@ -27,25 +27,25 @@
 # ====================================================================================================
 # PLEASE READ BEFORE PROCEEDING
 # dev iothub
-# CONNECTION_STRING = "HostName=edgetree-iothub.azure-devices.net;DeviceId=249a01f4-9ce8-4e42-bee8-ab4422502530;SharedAccessKey=lvG2iMuOSEV3cYZk0TuUYoK/VYaznz80GAIoTMat1vA="
+# CONNECTION_STRING = "abc"
 
 # [energy grid iothub]
 
 # device connection string for 249a01f4
 # transporter:0.0.1
-# CONNECTION_STRING = "HostName=energy-grid-iothub.azure-devices.net;DeviceId=berlin-ami123-249a01f4-meter;SharedAccessKey=TF5w2NM/A36sVA1azgW74YOJWnmyiR/moAIoTG06/7g="
+# CONNECTION_STRING = "abc"
 
 # device connection string for 479899d1
 # transporter:0.0.2
-# CONNECTION_STRING = "HostName=energy-grid-iothub.azure-devices.net;DeviceId=berlin-ami123-479899d1-meter;SharedAccessKey=vWyunDBz43C+LIaJDnb9SsLoFX6hej9ocAIoTE8hPQo="
+# CONNECTION_STRING = "abc"
 
 # device connection string for 17ba4537
 # transporter:0.0.3
-# CONNECTION_STRING = "HostName=energy-grid-iothub.azure-devices.net;DeviceId=berlin-ami123-17ba4537-meter;SharedAccessKey=RNvQ+V33PjxxGX+O5gQRKqucJROfRZv+CAIoTCLqETU="
+# CONNECTION_STRING = "abc"
 
 # device connection string for 7eb9a903
 # transporter:0.0.4
-# CONNECTION_STRING = "HostName=energy-grid-iothub.azure-devices.net;DeviceId=berlin-ami123-7eb9a903-meter;SharedAccessKey=Iho1pce5flt2NVJ4FDX8ebpPYJTMnmWGwAIoTN6nHTk="
+# CONNECTION_STRING = "abc"
 # ====================================================================================================
 # CONNECTION_STRING <== make sure you enter the IoT Edge Device connection string.
 # ====================================================================================================
