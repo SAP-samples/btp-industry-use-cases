@@ -1,0 +1,9 @@
+pandas
+numpy
+ai-core-sdk
+requests
+hana_ml
+glob2
+azure-storage-blob
+azure-identity
+shapely

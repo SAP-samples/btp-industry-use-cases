@@ -1,0 +1,8 @@
+pandas
+numpy
+ai-core-sdk
+requests
+hana_ml
+azure-iot-device
+azure-iot-hub
+shapely

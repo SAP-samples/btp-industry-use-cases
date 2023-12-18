@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: energy-demand-train
+  annotations:
+    scenarios.ai.sap.com/description: "Simple neural network for energy demand forecast"
+    scenarios.ai.sap.com/name: "energy-demand-forecast"
+    executables.ai.sap.com/description: "Trains a simple neural network for energy demand forecast"
+    executables.ai.sap.com/name: "energy-demand-forecast-train"
+    artifacts.ai.sap.com/dataset.kind: "energy-dataset"
+    artifacts.ai.sap.com/energy-demand-forecast.kind: "model"
+  labels:
+    scenarios.ai.sap.com/id: "energy-demand-forecast"
+    executables.ai.sap.com/id: "energy-demand-forecast-train"
+    ai.sap.com/version: "1.0"
+spec:
+  imagePullSecrets:
+    - name: amagnani
+  entrypoint: energy-demand-train
+  templates:
+    - name: energy-demand-train
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: basic
+      inputs:
+        artifacts:
+          - name: energy-dataset
+            path: /app/data/
+      outputs:
+        artifacts:
+          - name: energy-demand-forecast
+            path: /app/model
+            globalName: energy-demand-forecast
+            archive:
+              none: {}
+      container:
+        image: "docker.io/amagnani/energy-grid-forecast:v2"
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -e && echo "---Start Training---" && python /app/src/train.py && ls -lR /app/model && echo "---End Training---"

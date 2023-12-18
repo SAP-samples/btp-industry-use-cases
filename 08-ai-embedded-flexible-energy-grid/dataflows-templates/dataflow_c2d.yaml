@@ -1,0 +1,60 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: c2d-pipeline
+  annotations:
+    scenarios.ai.sap.com/description: "Data flow pipelines for Flexible Energy Grid"
+    scenarios.ai.sap.com/name: "energy-grid-dataflow-pipelines"
+    executables.ai.sap.com/description: "Prepare and send data to the IoT devices"
+    executables.ai.sap.com/name: "c2d-exec"
+  labels:
+    scenarios.ai.sap.com/id: "energy-grid-dataflow-pipelines"
+    executables.ai.sap.com/id: "c2d-exec"
+    ai.sap.com/version: "1.0.0"
+spec:
+  imagePullSecrets:
+    - name: cesare-docker-registry
+  entrypoint: c2d-pipeline
+  templates:
+    - name: c2d-pipeline
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: starter
+      container:
+        image: "docker.io/yoshidj/energy-grid-c2d:01"
+        env:
+          - name: dbHost
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbHost
+          - name: dbPort
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbPort
+          - name: dbUser
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbUser
+          - name: dbPwd
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbPwd
+          - name: dbIngestionSchema
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbIngestionSchema
+          - name: dbConsumptionSchema
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbConsumptionSchema
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -e && echo "---Start Cloud2Device---" && python /app/src/c2d_pipeline.py && echo "---End Cloud2Device---"

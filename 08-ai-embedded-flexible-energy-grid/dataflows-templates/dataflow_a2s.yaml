@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: a2s-pipeline
+  annotations:
+    scenarios.ai.sap.com/description: "Data flow pipelines for Flexible Energy Grid"
+    scenarios.ai.sap.com/name: "energy-grid-dataflow-pipelines"
+    executables.ai.sap.com/description: "Retrieve and process demand forecasts"
+    executables.ai.sap.com/name: "a2s-exec"
+  labels:
+    scenarios.ai.sap.com/id: "energy-grid-dataflow-pipelines"
+    executables.ai.sap.com/id: "a2s-exec"
+    ai.sap.com/version: "1.0.0"
+spec:
+  imagePullSecrets:
+    - name: cesare-docker-registry
+  entrypoint: a2s-pipeline
+  templates:
+    - name: a2s-pipeline
+      metadata:
+        labels:
+          ai.sap.com/resourcePlan: starter
+      container:
+        image: "docker.io/yoshidj/energy-grid-a2s:01"
+        env:
+          - name: dbHost
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbHost
+          - name: dbPort
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbPort
+          - name: dbUser
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbUser
+          - name: dbPwd
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbPwd
+          - name: dbIngestionSchema
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbIngestionSchema
+          - name: dbConsumptionSchema
+            valueFrom:
+              secretKeyRef:
+                name: hanahcsecret
+                key: dbConsumptionSchema
+          - name: blobStorageConnectStr
+            valueFrom:
+              secretKeyRef:
+                name: azureblobsecret
+                key: blobStorageConnectStr
+        imagePullPolicy: Always
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            set -e && echo "---Start Azure2SapBTP---" && python /app/src/a2s_pipeline.py && echo "---End Azure2SapBTP---"
