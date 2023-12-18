@@ -11,7 +11,7 @@
             "registryCredentials": {
               "edgetreeacr": {
                 "username": "edgetreeacr",
-                "password": "VjznSj94mz8vCYy5EptWZ0qM5BwyXvYTz3m4pdCaZl+ACRBdHuKE",
+                "password": "abc",
                 "address": "edgetreeacr.azurecr.io"
               }
             }
