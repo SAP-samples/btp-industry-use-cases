@@ -1,1 +1,1 @@
-Here you can find a simple Jupyer notebook to process the weather data in order to obtain the appropriate format for our purposes.
+Here you can find a simple Jupyer notebook to process the weather data (taken from our original public dataset called [AMPds2: The Almanac of Minutely Power dataset](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/FIE0S4).) in order to obtain the appropriate format for our purposes.
