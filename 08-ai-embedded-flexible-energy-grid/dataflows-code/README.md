@@ -1,4 +1,4 @@
-Here you can find the Python code and all the other ingredients to execute the cloud-to-edge and edge-to-cloud pipelines in AI Core. These two pipelines are used to create a bidirectional data flow from BTP to the edge devices as shown in the animations below.
+Here you can find the Python code and all the other ingredients to execute the Cloud-to-Edge and Edge-to-Cloud pipelines in AI Core. These two pipelines are used to establish a bidirectional data flow from BTP to the edge devices as shown in the animations below.
 
 <h2>Cloud-to-Edge</h2>
   
