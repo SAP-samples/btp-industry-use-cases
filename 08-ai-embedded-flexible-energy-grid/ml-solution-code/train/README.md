@@ -3,7 +3,7 @@ You can check the details in [this blog post](https://blogs.sap.com/2023/12/19/a
 
 There are two input data sources that we considered in this scenario and we processed to build a training dataset. The first one is the data coming from the smart meters, that is tabular data where each column represents the energy consumption of a particular appliance. The second data source that we use to improve our prediction is weather data, for example in our case, we have used hourly data for temperature and humidity close to our prosumer place.
 
-The training datasets can be found here: [smart_meter_dataset.csv](../../datasets/).
+The training datasets can be found here: [training_dataset.csv](../../datasets/).
 You need to upload it into an object store (like an AWS S3 bucket) connected to AI Core and register the dataset as an artefact in AI Core in order to consume it.
 
 In order to execute this code in AI Core, first you need to tranform it into a Docker image and load it into the Docker registry connected to the AI Core instance.
