@@ -1,2 +1,1 @@
-# Repository for the Flexible Energy Grid use case 
-This repository hosts the solution components (python scripts, Dockerfiles, datasets) and the solution AI Core templates.
+Here you can find a simple Jupyer notebook to process the weather data in order to obtain the appropriate format for our purposes.
