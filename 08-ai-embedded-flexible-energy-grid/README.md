@@ -1,4 +1,4 @@
-# Repository for the Flexible Energy Grid use case 
+# Repository for the AI-Embedded Flexible Energy Grid use case 
 This repository hosts the components (python scripts, Dockerfiles, datasets) of the proof-of-concept developed for the AI-Embedded Flexible Energy Grid use case.
 Please, have a look to the blog posts linked below for more details.
 
@@ -7,10 +7,10 @@ Please, have a look to the blog posts linked below for more details.
 [AI-Embedded Flexible Energy Grid: implementation deep dive](https://blogs.sap.com/2023/12/19/ai-embedded-flexible-energy-grid-implementation-deep-dive/)
 
 ## Description 
-blabla
+
 Below you can find the reference architecture for the full solution we propose. The components highlighted in green are the ones we have prototyped and that you can find here in this repository.
 
-<img width="800" alt="returnpack_architecture" src="https://github.com/SAP-samples/btp-industry-use-cases/assets/18447094/bf0c953e-2cd0-4313-a32b-91cede9b2cf6">
+<img width="1472" alt="Screenshot 2023-12-18 at 15 14 28" src="https://github.com/SAP-samples/btp-industry-use-cases/assets/1317854/4b569af9-168e-4399-8fb2-f558249f963e">
 
 
 We have organized the source code and the components in general in the folders described below.
