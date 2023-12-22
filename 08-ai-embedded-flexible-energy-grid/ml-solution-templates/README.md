@@ -1,4 +1,4 @@
-Here you can find the workflow template needed to instruct AI Core about how to run the training Docker container (in this case we don't need to deploy the model in AI Core, we do it at the edge).
+Here you can find the workflow template needed to instruct AI Core about how to run the training Docker container (in our use case we don't want to deploy the model in AI Core, instead we do it at the edge).
 
 This template has to be placed in a folder of the GitHub repository connected to the AI Core instance. Then you need to create an application, that is you need to tell AI Core the folder to scan to find the template.
 
